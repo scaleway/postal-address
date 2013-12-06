@@ -33,6 +33,13 @@ class Address(object):
         self.city = city
         self.country = country
 
+    def empty(self):
+        """ Returns True only if all fields are empty. """
+        if self.line1 or self.line2 or self.zip_code or self.state or \
+           self.city or self.country:
+            return False
+        return True
+
     def validate(self):
         """ Checks required fields are set. """
         for field in self.REQUIRED_FIELDS:
