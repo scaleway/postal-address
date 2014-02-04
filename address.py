@@ -10,8 +10,8 @@ class Address(object):
     Only provides address validation for the moment, but may be used in the
     future for l10n-aware normalization and rendering.
 
-    Addresses are not persisted yet, as we don't allow organizations to have
-    more than one active at the same time.
+    Addresses are not persisted (yet ?), as we don't allow organizations to
+    have more than one active at the same time.
     """
     # Set default values
     line1 = None
