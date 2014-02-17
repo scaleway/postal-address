@@ -12,6 +12,9 @@ class Address(object):
 
     Addresses are not persisted (yet ?), as we don't allow organizations to
     have more than one active at the same time.
+
+    TODO: add helpers to normalize country and regions around ISO codes ? See:
+        https://pypi.python.org/pypi/pycountry
     """
     # Set default values
     line1 = None
