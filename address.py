@@ -40,7 +40,7 @@ class Address(object):
     def empty(self):
         """ Returns True only if all fields are empty. """
         if (self.line1 or self.line2 or self.zip_code or self.state or
-           self.city or self.country):
+                self.city or self.country):
             return False
         return True
 
