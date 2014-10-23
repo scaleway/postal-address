@@ -4,18 +4,14 @@
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
+from pycountry import countries
+
 
 class Address(object):
     """ Defines an address.
 
     Only provides address validation for the moment, but may be used in the
     future for l10n-aware normalization and rendering.
-
-    Addresses are not persisted (yet ?), as we don't allow organizations to
-    have more than one active at the same time.
-
-    TODO: add helpers to normalize country and regions around ISO codes ? See:
-        https://pypi.python.org/pypi/pycountry
     """
     # Set default values
     line1 = None
@@ -23,26 +19,28 @@ class Address(object):
     zip_code = None
     state = None
     city = None
-    country = None
+    country_code = None
 
     # Fields tested on validate()
-    REQUIRED_FIELDS = ['line1', 'zip_code', 'city', 'country']
+    REQUIRED_FIELDS = ['line1', 'zip_code', 'city', 'country_code']
 
     def __init__(self, line1=None, line2=None, zip_code=None, state=None,
-                 city=None, country=None):
+                 city=None, country_code=None):
+        """ Set address' individual components and normalize them. """
         self.line1 = line1
         self.line2 = line2
         self.zip_code = zip_code
         self.state = state
         self.city = city
-        self.country = country
+        self.country_code = country_code
+        self.normalize()
 
     def __repr__(self):
         """ Print all components of the address. """
         return '{}(line1={}, line2={}, zip_code={}, state={}, city={}, ' \
             'country={})'.format(
                 self.__class__.__name__, self.line1, self.line2, self.zip_code,
-                self.state, self.city, self.country)
+                self.state, self.city, self.country_code)
 
     def __str__(self):
         """ Returns a simple string representation of the address block. """
@@ -53,7 +51,7 @@ class Address(object):
 
         ``line1`` & ``line2`` are rendered as-is.
         A third line is composed of ``zip_code``, ``city`` and ``state``.
-        The last line feature the ``country``.
+        The last line feature country's common name.
         """
         lines = []
         if self.line1:
@@ -75,16 +73,25 @@ class Address(object):
         if line3:
             lines.append(line3)
         # Build the last line.
-        if self.country:
-            lines.append(self.country)
+        if self.country_name:
+            lines.append(self.country_name)
         # Render the address block.
         return separator.join(lines)
 
+    def normalize(self):
+        """ Normalize address fields. """
+        self.country_code = self.country_code.strip().upper()
+
     def validate(self):
-        """ Checks required fields are set. """
+        """ Check required fields and their values. """
         for field in self.REQUIRED_FIELDS:
             if not getattr(self, field):
                 raise ValueError("Address requires {}.".format(field))
+        try:
+            countries.get(alpha2=self.country_code)
+        except KeyError:
+            raise ValueError(
+                "Invalid {!r} country code.".format(self.country_code))
 
     @property
     def valid(self):
@@ -99,6 +106,13 @@ class Address(object):
     def empty(self):
         """ Return True only if all fields are empty. """
         if (self.line1 or self.line2 or self.zip_code or self.state or
-                self.city or self.country):
+                self.city or self.country_code):
             return False
         return True
+
+    @property
+    def country_name(self):
+        """ Return country's name from its code. """
+        if self.country_code:
+            return countries.get(alpha2=self.country_code).name
+        return None
