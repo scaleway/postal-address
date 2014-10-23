@@ -88,7 +88,7 @@ class Address(object):
 
     @property
     def valid(self):
-        """ Returns a boolean indicating if the address is valid. """
+        """ Return a boolean indicating if the address is valid. """
         try:
             self.validate()
         except ValueError:
@@ -97,7 +97,7 @@ class Address(object):
 
     @property
     def empty(self):
-        """ Returns True only if all fields are empty. """
+        """ Return True only if all fields are empty. """
         if (self.line1 or self.line2 or self.zip_code or self.state or
                 self.city or self.country):
             return False
