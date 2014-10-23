@@ -78,7 +78,7 @@ class Address(object):
         if self.country:
             lines.append(self.country)
         # Render the address block.
-        return separator.join([lines])
+        return separator.join(lines)
 
     def empty(self):
         """ Returns True only if all fields are empty. """
