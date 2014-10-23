@@ -37,6 +37,49 @@ class Address(object):
         self.city = city
         self.country = country
 
+    def __repr__(self):
+        """ Print all components of the address. """
+        return '{}(line1={}, line2={}, zip_code={}, state={}, city={}, ' \
+            'country={})'.format(
+                self.__class__.__name__, self.line1, self.line2, self.zip_code,
+                self.state, self.city, self.country)
+
+    def __str__(self):
+        """ Returns a simple string representation of the address block. """
+        return self.render()
+
+    def render(self, separator='\n'):
+        """ Render a human-friendly address block.
+
+        ``line1`` & ``line2`` are rendered as-is.
+        A third line is composed of ``zip_code``, ``city`` and ``state``.
+        The last line feature the ``country``.
+        """
+        lines = []
+        if self.line1:
+            lines.append(self.line1)
+        if self.line2:
+            lines.append(self.line2)
+        # Build the third line.
+        line3_elements = []
+        if self.city:
+            line3_elements.append(self.city)
+        if self.state:
+            line3_elements.append(self.state)
+        # Separate city and state by a comma.
+        line3_elements = [', '.join(line3_elements)]
+        if self.zip_code:
+            line3_elements.insert(0, self.zip_code)
+        # Separate the leading zip code and the rest by a dash.
+        line3 = ' - '.join(line3_elements)
+        if line3:
+            lines.append(line3)
+        # Build the last line.
+        if self.country:
+            lines.append(self.country)
+        # Render the address block.
+        return separator.join([lines])
+
     def empty(self):
         """ Returns True only if all fields are empty. """
         if (self.line1 or self.line2 or self.zip_code or self.state or
