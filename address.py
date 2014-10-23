@@ -80,16 +80,25 @@ class Address(object):
         # Render the address block.
         return separator.join(lines)
 
-    def empty(self):
-        """ Returns True only if all fields are empty. """
-        if (self.line1 or self.line2 or self.zip_code or self.state or
-                self.city or self.country):
-            return False
-        return True
-
     def validate(self):
         """ Checks required fields are set. """
         for field in self.REQUIRED_FIELDS:
             if not getattr(self, field):
                 raise ValueError("Address requires {}.".format(field))
+
+    @property
+    def valid(self):
+        """ Returns a boolean indicating if the address is valid. """
+        try:
+            self.validate()
+        except ValueError:
+            return False
+        return True
+
+    @property
+    def empty(self):
+        """ Returns True only if all fields are empty. """
+        if (self.line1 or self.line2 or self.zip_code or self.state or
+                self.city or self.country):
+            return False
         return True
