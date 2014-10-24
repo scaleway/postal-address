@@ -18,28 +18,27 @@ class Address(object):
     ``subdivision_code`` is an ISO 3166-2 code.
     """
 
-    # Set default values
-    line1 = None
-    line2 = None
-    zip_code = None
-    state = None
-    city = None
-    country_code = None
-    subdivision_code = None
+    # List IDs ofaddress' base-components.
+    _components = [
+        'line1', 'line2', 'zip_code', 'state', 'city',
+        'country_code', 'subdivision_code']
 
     # Fields tested on validate()
     REQUIRED_FIELDS = ['line1', 'zip_code', 'city', 'country_code']
 
-    def __init__(self, line1=None, line2=None, zip_code=None, state=None,
-                 city=None, country_code=None, subdivision_code=None):
+    def __init__(self, **kwargs):
         """ Set address' individual components and normalize them. """
-        self.line1 = line1
-        self.line2 = line2
-        self.zip_code = zip_code
-        self.state = state
-        self.city = city
-        self.country_code = country_code
-        self.subdivision_code = subdivision_code
+        # Filters out unknown address components.
+        unknown_components = set(kwargs.keys()).difference(self._components)
+        if unknown_components:
+            raise KeyError(
+                "Unsupported {!r} address components.".format(
+                    unknown_components))
+        # Register writable instance attributes.
+        self.__dict__.update(dict.fromkeys(self._components))
+        # Load provided components.
+        for component_id in self._components:
+            setattr(self, component_id, kwargs.get(component_id, None))
         self.normalize()
 
     def __repr__(self):
@@ -92,6 +91,10 @@ class Address(object):
             self.country_code = self.country_code.strip().upper()
         if self.subdivision_code:
             self.subdivision_code = self.subdivision_code.strip().upper()
+        # Normalize empty/blank strings to None.
+        for component_id in self._components:
+            if not getattr(self, component_id):
+                setattr(self, component_id, None)
 
     def validate(self):
         """ Check required fields and their values. """
