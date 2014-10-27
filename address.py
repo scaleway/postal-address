@@ -4,6 +4,9 @@
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
+from itertools import chain, imap
+from operator import attrgetter
+
 from pycountry import countries, subdivisions
 
 
@@ -160,3 +163,15 @@ class Address(object):
         if self.subdivision_code:
             return subdivisions.get(code=self.subdivision_code).type
         return None
+
+
+def territory_codes():
+    """ Return the list of recognized territory codes.
+
+    Are supported:
+        * ISO 3166-1 alpha-2 country codes
+        * ISO 3166-2 subdivision codes
+    """
+    return chain(
+        imap(attrgetter('alpha2'), countries),
+        imap(attrgetter('code'), subdivisions))
