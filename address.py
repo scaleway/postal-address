@@ -21,7 +21,7 @@ class Address(object):
     ``subdivision_code`` is an ISO 3166-2 code.
     """
 
-    # List IDs ofaddress' base-components.
+    # List IDs of address' base-components.
     _components = [
         'line1', 'line2', 'zip_code', 'state', 'city',
         'country_code', 'subdivision_code']
@@ -46,15 +46,52 @@ class Address(object):
 
     def __repr__(self):
         """ Print all components of the address. """
-        return '{}(line1={}, line2={}, zip_code={}, state={}, city={}, ' \
-            'country_code={}, subdivision_code={})'.format(
-                self.__class__.__name__, self.line1, self.line2, self.zip_code,
-                self.state, self.city, self.country_code,
-                self.subdivision_code)
+        return '{}({})'.format(
+            self.__class__.__name__,
+            ', '.join(['{}={}'.format(k, v) for k, v in self.items()]))
 
     def __str__(self):
         """ Return a simple string representation of the address block. """
         return self.render()
+
+    # Let an address be accessed like a dict of its components IDs & values.
+
+    def __iter__(self):
+        """ Iterate over component IDs. """
+        for component_id in self._components:
+            yield component_id
+
+    def __getitem__(self, key):
+        """ Return value of a component. """
+        if not isinstance(key, basestring):
+            raise TypeError
+        if key not in self._components:
+            raise KeyError
+        return getattr(self, key)
+
+    def __setitem__(self, key, val):
+        """ Set a component value. """
+        if not isinstance(key, basestring):
+            raise TypeError
+        if key not in self._components:
+            raise KeyError
+        return setattr(self, key, val)
+
+    def __len__(self):
+        """ Return the number of components. """
+        return len(self._components)
+
+    def keys(self):
+        """ Return a list of component IDs. """
+        return [k for k in self]
+
+    def values(self):
+        """ Return a list of component values. """
+        return [self[k] for k in self]
+
+    def items(self):
+        """ Return a list of components IDs & values. """
+        return [(k, self[k]) for k in self]
 
     def render(self, separator='\n'):
         """ Render a human-friendly address block.

@@ -20,6 +20,16 @@ class TestAddress(unittest.TestCase):
         self.assertEquals(address.country_code, None)
         self.assertEquals(address.subdivision_code, None)
 
+    def test_dict_access(self):
+        address = Address()
+        self.assertEquals(Address._components, address.keys())
+        self.assertEquals(set([None]), set(address.values()))
+        self.assertEquals(
+            dict.fromkeys(Address._components),
+            dict(address.items()))
+        for key in address.keys():
+            self.assertIsNone(address[key])
+
     def test_blank_string_normalization(self):
         address = Address(
             line1='',
