@@ -23,8 +23,8 @@ class Address(object):
 
     # List IDs of address' base-components.
     _components = [
-        'line1', 'line2', 'zip_code', 'state', 'city',
-        'country_code', 'subdivision_code']
+        'line1', 'line2', 'zip_code', 'city', 'country_code',
+        'subdivision_code']
 
     # Fields tested on validate()
     REQUIRED_FIELDS = ['line1', 'zip_code', 'city', 'country_code']
@@ -175,8 +175,8 @@ class Address(object):
     @property
     def empty(self):
         """ Return True only if all fields are empty. """
-        if (self.line1 or self.line2 or self.zip_code or self.state or
-                self.city or self.country_code):
+        if (self.line1 or self.line2 or self.zip_code or self.city or
+                self.country_code):
             return False
         return True
 
