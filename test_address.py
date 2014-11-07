@@ -44,6 +44,16 @@ class TestAddress(unittest.TestCase):
         self.assertEquals(address.country_code, None)
         self.assertEquals(address.subdivision_code, None)
 
+    def test_blank_line_swap(self):
+        address = Address(
+            line1='',
+            line2='10 Downing Street')
+        self.assertEquals(address.line1, '10 Downing Street')
+        self.assertEquals(address.line2, None)
+
+
+class TestTerritory(unittest.TestCase):
+
     def test_territory_codes(self):
         self.assertIn('FR', territory_codes())
         self.assertIn('FR-59', territory_codes())

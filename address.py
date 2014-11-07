@@ -135,6 +135,9 @@ class Address(object):
         for component_id in self._components:
             if not getattr(self, component_id):
                 setattr(self, component_id, None)
+        # Swap lines if the first is empty.
+        if self.line2 and not self.line1:
+            self.line1, self.line2 = self.line2, self.line1
 
     def validate(self):
         """ Check required fields and their values. """
