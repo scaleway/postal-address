@@ -19,6 +19,8 @@ class Address(object):
 
     ``country_code`` is an ISO 3166-1 alpha-2 code.
     ``subdivision_code`` is an ISO 3166-2 code.
+
+    TODO: rename zip_code to postal_code. ZIP is a US-only concept.
     """
 
     # List IDs of address' base-components.
