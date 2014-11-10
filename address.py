@@ -44,7 +44,8 @@ class Address(object):
         # Load provided components.
         for component_id in self._components:
             setattr(self, component_id, kwargs.get(component_id, None))
-        self.normalize()
+        # Normalize and validate addresses right away.
+        self.validate()
 
     def __repr__(self):
         """ Print all components of the address. """
@@ -127,46 +128,57 @@ class Address(object):
         # Render the address block.
         return separator.join(lines)
 
-    def normalize(self):
-        """ Normalize address fields. """
+    def validate(self):
+        """ Normalize address fields between themselves and check consistency.
+        """
+        # Normalize ISO codes.
         if self.country_code:
             self.country_code = self.country_code.strip().upper()
         if self.subdivision_code:
             self.subdivision_code = self.subdivision_code.strip().upper()
+
         # Normalize empty/blank strings to None.
         for component_id in self._components:
             if not getattr(self, component_id):
                 setattr(self, component_id, None)
+
         # Swap lines if the first is empty.
         if self.line2 and not self.line1:
             self.line1, self.line2 = self.line2, self.line1
 
-    def validate(self):
-        """ Check required fields and their values. """
-        for field in self.REQUIRED_FIELDS:
-            if not getattr(self, field):
-                raise ValueError("Address requires {}.".format(field))
-
-        # Check the country code exists.
-        try:
-            countries.get(alpha2=self.country_code)
-        except KeyError:
-            raise ValueError(
-                "Invalid {!r} country code.".format(self.country_code))
-
+        # Check that the subdivision code exists.
         if self.subdivision_code:
-            # Check the subdivision code exists.
             try:
                 subdiv = subdivisions.get(code=self.subdivision_code)
             except KeyError:
                 raise ValueError(
                     "Invalid {!r} subdivision code.".format(
                         self.subdivision_code))
-            # Check country is a parent of subdivision.
-            if subdiv.country_code != self.country_code:
+
+        # Check that the country code exists.
+        if self.country_code:
+            try:
+                countries.get(alpha2=self.country_code)
+            except KeyError:
                 raise ValueError(
-                    "{!r} country is not a parent {!r} subdivision.".format(
-                        self.country_code, self.subdivision_code))
+                    "Invalid {!r} country code.".format(self.country_code))
+
+        # Derive country code from subdivision if the former is not set.
+        if self.subdivision_code and not self.country_code:
+            self.country_code = subdivisions.get(
+                code=self.subdivision_code).country_code
+
+        # Check country consistency against subdivision.
+        if self.country_code and self.subdivision_code and subdivisions.get(
+                code=self.subdivision_code).country_code != self.country_code:
+            raise ValueError(
+                "{!r} country is not a parent {!r} subdivision.".format(
+                    self.country_code, self.subdivision_code))
+
+        # Check that all required fields are set.
+        for field in self.REQUIRED_FIELDS:
+            if not getattr(self, field):
+                raise ValueError("Address requires {}.".format(field))
 
     @property
     def valid(self):
