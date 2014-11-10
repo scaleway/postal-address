@@ -16,12 +16,12 @@ class TestAddress(unittest.TestCase):
     def test_default_values(self):
         address = Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Paris',
             country_code='FR')
         self.assertEquals(address.line1, '10 Downing Street')
         self.assertEquals(address.line2, None)
-        self.assertEquals(address.zip_code, '12345')
+        self.assertEquals(address.postal_code, '12345')
         self.assertEquals(address.city_name, 'Paris')
         self.assertEquals(address.country_code, 'FR')
         self.assertEquals(address.subdivision_code, None)
@@ -29,13 +29,13 @@ class TestAddress(unittest.TestCase):
     def test_dict_access(self):
         address = Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Paris',
             country_code='FR')
         self.assertSequenceEqual(set([
             'line1',
             'line2',
-            'zip_code',
+            'postal_code',
             'city_name',
             'country_code',
             'subdivision_code',
@@ -46,7 +46,7 @@ class TestAddress(unittest.TestCase):
         self.assertEquals({
             'line1': '10 Downing Street',
             'line2': None,
-            'zip_code': '12345',
+            'postal_code': '12345',
             'city_name': 'Paris',
             'country_code': 'FR',
             'subdivision_code': None,
@@ -58,7 +58,7 @@ class TestAddress(unittest.TestCase):
         address = Address(
             line1='10 Downing Street',
             line2='',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Paris',
             country_code='FR',
             subdivision_code='')
@@ -69,7 +69,7 @@ class TestAddress(unittest.TestCase):
         address = Address(
             line1='',
             line2='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Paris',
             country_code='FR')
         self.assertEquals(address.line1, '10 Downing Street')
@@ -79,13 +79,13 @@ class TestAddress(unittest.TestCase):
         address = Address(
             line1='666, hell street',
             line2='',
-            zip_code='F-6666',
+            postal_code='F-6666',
             city_name='Satantown',
             country_code=' fr          ',
             subdivision_code='fR-66  ')
         self.assertEqual(address.line1, '666, hell street')
         self.assertEqual(address.line2, None)
-        self.assertEqual(address.zip_code, 'F-6666')
+        self.assertEqual(address.postal_code, 'F-6666')
         self.assertEqual(address.city_name, 'Satantown')
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-66')
@@ -93,14 +93,14 @@ class TestAddress(unittest.TestCase):
     def test_country_subdivision_consistency(self):
         Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Paris',
             country_code='FR',
             subdivision_code='FR-75')
         with self.assertRaises(ValueError):
             Address(
                 line1='10 Downing Street',
-                zip_code='12345',
+                postal_code='12345',
                 city_name='Paris',
                 country_code='FR',
                 subdivision_code='BE-BRU')
@@ -108,7 +108,7 @@ class TestAddress(unittest.TestCase):
     def test_subdivision_derived_fields(self):
         address = Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Lille',
             subdivision_code='FR-59')
 
@@ -153,7 +153,7 @@ class TestAddress(unittest.TestCase):
     def test_subdivision_derived_city_fields(self):
         address = Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             subdivision_code='GB-LND')
 
         self.assertEquals(
@@ -181,13 +181,13 @@ class TestAddress(unittest.TestCase):
     def test_city_override_by_subdivision(self):
         Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='London, City of',
             subdivision_code='GB-LND')
         with self.assertRaises(ValueError):
             Address(
                 line1='10 Downing Street',
-                zip_code='12345',
+                postal_code='12345',
                 city_name='Paris',
                 subdivision_code='GB-LND')
 
@@ -231,7 +231,7 @@ class TestTerritory(unittest.TestCase):
     def test_subdivision_type_id_collision(self):
         simple_address = Address(
             line1='10 Downing Street',
-            zip_code='12345',
+            postal_code='12345',
             city_name='Paris',
             country_code='FR')
         # Subdivision type IDs should not collide with address fields

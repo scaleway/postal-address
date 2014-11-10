@@ -32,8 +32,6 @@ class Address(object):
 
     ``country_code`` is an ISO 3166-1 alpha-2 code.
     ``subdivision_code`` is an ISO 3166-2 code.
-
-    TODO: rename zip_code to postal_code. ZIP is a US-only concept.
     """
 
     # All normalized IDs and values of postal address components are stored
@@ -44,7 +42,7 @@ class Address(object):
     # to be set directly by the user, although their values might be normalized
     # and clean-up automatticaly by the validation method.
     _base_component_ids = [
-        'line1', 'line2', 'zip_code', 'city_name', 'country_code',
+        'line1', 'line2', 'postal_code', 'city_name', 'country_code',
         'subdivision_code']
 
     # Still, some of the free-form fields above might be overriden by special
@@ -52,7 +50,7 @@ class Address(object):
     SUBDIVISION_OVERRIDABLE_FIELDS = ['city_name']
 
     # Fields tested on validate().
-    REQUIRED_FIELDS = ['line1', 'zip_code', 'city_name', 'country_code']
+    REQUIRED_FIELDS = ['line1', 'postal_code', 'city_name', 'country_code']
 
     def __init__(self, **kwargs):
         """ Set address' individual components and normalize them. """
@@ -141,7 +139,8 @@ class Address(object):
         """ Render a human-friendly address block.
 
         ``line1`` & ``line2`` are rendered as-is.
-        A third line is composed of ``zip_code``, ``city_name`` and ``state``.
+        A third line is composed of ``postal_code``, ``city_name`` and
+        ``state``.
         The last line feature country's common name.
         """
         lines = []
@@ -157,8 +156,8 @@ class Address(object):
             line3_elements.append(self.state)
         # Separate city and state by a comma.
         line3_elements = [', '.join(line3_elements)]
-        if self.zip_code:
-            line3_elements.insert(0, self.zip_code)
+        if self.postal_code:
+            line3_elements.insert(0, self.postal_code)
         # Separate the leading zip code and the rest by a dash.
         line3 = ' - '.join(line3_elements)
         if line3:
