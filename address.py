@@ -220,7 +220,7 @@ class Address(object):
                     raise ValueError(
                         "{} subdivision conflicts with {}='{}' field.".format(
                             self.subdivision_code, component_id,
-                            component_value))
+                            self._components[component_id]))
                 self._components[component_id] = component_value
 
     def validate(self):
