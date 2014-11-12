@@ -334,6 +334,8 @@ def territory_tree(subdivision_code, include_country=True):
     while subdivision_code:
         subdiv = subdivisions.get(code=subdivision_code)
         yield subdiv
+        if not subdiv.parent_code:
+            break
         subdivision_code = subdiv.parent_code
 
     # Return country
