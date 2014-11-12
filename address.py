@@ -64,8 +64,8 @@ class Address(object):
         self._components = dict.fromkeys(self._base_component_ids)
         # Load provided components.
         self._components.update(kwargs)
-        # Normalize and validate addresses right away.
-        self.validate()
+        # Normalize addresses fields.
+        self.normalize()
 
     def __repr__(self):
         """ Print all components of the address. """
@@ -168,8 +168,8 @@ class Address(object):
         # Render the address block.
         return separator.join(lines)
 
-    def validate(self):
-        """ Normalize address fields between themselves and check consistency.
+    def normalize(self):
+        """ Normalize address fields between themselves.
         """
         # Clean-up all fields.
         empty_components = []
@@ -193,15 +193,6 @@ class Address(object):
         # Swap lines if the first is empty.
         if self.line2 and not self.line1:
             self.line1, self.line2 = self.line2, self.line1
-
-        # Check that the subdivision code exists.
-        if self.subdivision_code:
-            try:
-                subdiv = subdivisions.get(code=self.subdivision_code)
-            except KeyError:
-                raise ValueError(
-                    "Invalid {!r} subdivision code.".format(
-                        self.subdivision_code))
 
         # Populate address components with the code and name of all
         # subdivision's parents. This part has the authority to overrides
@@ -231,6 +222,19 @@ class Address(object):
                             self.subdivision_code, component_id,
                             component_value))
                 self._components[component_id] = component_value
+
+    def validate(self):
+        """ Check fields consistency and requirements.
+        """
+
+        # Check that the subdivision code exists.
+        if self.subdivision_code:
+            try:
+                subdiv = subdivisions.get(code=self.subdivision_code)
+            except KeyError:
+                raise ValueError(
+                    "Invalid {!r} subdivision code.".format(
+                        self.subdivision_code))
 
         # Check that the country code exists.
         if self.country_code:
