@@ -36,7 +36,7 @@ class Address(object):
 
     # All normalized IDs and values of postal address components are stored
     # here.
-    #_components = {}
+    # _components = {}
 
     # Base components of postal address. Those are free-form fields, allowed
     # to be set directly by the user, although their values might be normalized
