@@ -230,7 +230,7 @@ class Address(object):
         # Check that the subdivision code exists.
         if self.subdivision_code:
             try:
-                subdiv = subdivisions.get(code=self.subdivision_code)
+                subdivisions.get(code=self.subdivision_code)
             except KeyError:
                 raise ValueError(
                     "Invalid {!r} subdivision code.".format(
