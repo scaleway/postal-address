@@ -216,7 +216,8 @@ class TestTerritory(unittest.TestCase):
             'GB-LND',  # City of London, United Kingdom, City corporation
             'KP-01',   # P’yŏngyang, North Korea, Capital city
             'KP-13',   # Nasŏn (Najin-Sŏnbong), North Korea, Special city
-            'KR-11',   # Seoul Teugbyeolsi, South Korea, Capital Metropolitan City
+            'KR-11',   # Seoul Teugbyeolsi, South Korea, Capital Metropolitan
+                       # City
             'HU-HV',   # Hódmezővásárhely, Hungary, City with county rights
             'LV-RIX',  # Rīga, Latvia, Republican City
             'ME-15',   # Plužine, Montenegro, Municipality
