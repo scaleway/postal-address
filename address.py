@@ -466,7 +466,7 @@ def subdivision_type_id(subdivision_type_name):
 
     This method transform and normalize any of these into Python-firendly IDs.
     """
-    type_id = slugify(subdivision_type_name).replace('-', '_')
+    type_id = slugify(subdivision_type_name, to_lower=True).replace('-', '_')
 
     # Any occurence of the 'city' or 'municipality' string in the type
     # overrides its classification as a city.
