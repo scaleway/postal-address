@@ -22,6 +22,13 @@ from pycountry import countries, subdivisions
 
 from slugify import slugify
 
+try:
+    from itertools import imap
+except ImportError:  # pragma: no cover
+    basestring = (str, bytes)
+    unicode = str
+    imap = map
+
 
 class Address(object):
 
