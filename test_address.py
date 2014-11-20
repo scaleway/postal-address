@@ -249,7 +249,7 @@ class TestTerritory(unittest.TestCase):
                     '{}', '{}_code', '{}_name', '{}_type_name']:
                 component_id = component_id_template.format(subdiv_type_id)
                 if component_id in Address.SUBDIVISION_OVERRIDABLE_FIELDS:
-                    self.assertIn(component_id, Address._base_component_ids)
+                    self.assertIn(component_id, Address.BASE_COMPONENT_IDS)
                     self.assertTrue(hasattr(simple_address, component_id))
                 else:
                     self.assertFalse(hasattr(simple_address, component_id))

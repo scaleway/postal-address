@@ -41,27 +41,28 @@ class Address(object):
     # Base components of postal address. Those are free-form fields, allowed
     # to be set directly by the user, although their values might be normalized
     # and clean-up automatticaly by the validation method.
-    _base_component_ids = [
+    BASE_COMPONENT_IDS = frozenset([
         'line1', 'line2', 'postal_code', 'city_name', 'country_code',
-        'subdivision_code']
+        'subdivision_code'])
 
     # Still, some of the free-form fields above might be overriden by special
     # cases of ISO 3166-2 subdivision codes.
-    SUBDIVISION_OVERRIDABLE_FIELDS = ['city_name']
+    SUBDIVISION_OVERRIDABLE_FIELDS = frozenset(['city_name'])
 
     # Fields tested on validate().
-    REQUIRED_FIELDS = ['line1', 'postal_code', 'city_name', 'country_code']
+    REQUIRED_FIELDS = frozenset([
+        'line1', 'postal_code', 'city_name', 'country_code'])
 
     def __init__(self, **kwargs):
         """ Set address' individual components and normalize them. """
         # Only base components are allowed to be set directly.
-        unknown_components = set(kwargs).difference(self._base_component_ids)
+        unknown_components = set(kwargs).difference(self.BASE_COMPONENT_IDS)
         if unknown_components:
             raise KeyError(
                 "{!r} components are not allowed to be set freely.".format(
                     unknown_components))
         # Initialize base components values.
-        self._components = dict.fromkeys(self._base_component_ids)
+        self._components = dict.fromkeys(self.BASE_COMPONENT_IDS)
         # Load provided components.
         self._components.update(kwargs)
         # Normalize addresses fields.
@@ -80,13 +81,13 @@ class Address(object):
 
     def __getattr__(self, name):
         """ Expose components as attributes. """
-        if name in self._components or name in self._base_component_ids:
+        if name in self._components or name in self.BASE_COMPONENT_IDS:
             return self._components.get(name, None)
         raise AttributeError
 
     def __setattr__(self, name, value):
         """ Allow update of address components as an attribute. """
-        if name in self._base_component_ids:
+        if name in self.BASE_COMPONENT_IDS:
             self._components[name] = value
             return
         super(Address, self).__setattr__(name, value)
@@ -113,7 +114,7 @@ class Address(object):
 
     def __delitem__(self, key):
         """ Remove component. """
-        if key in self._base_component_ids:
+        if key in self.BASE_COMPONENT_IDS:
             self._components[key] = None
         else:
             del self._components[key]
