@@ -15,7 +15,7 @@ http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
-from itertools import chain, imap
+from itertools import chain
 from operator import attrgetter
 
 from pycountry import countries, subdivisions
