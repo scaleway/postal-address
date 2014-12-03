@@ -325,15 +325,15 @@ class Address(object):
 
 
 def territory_codes():
-    """ Return the list of recognized territory codes.
+    """ Return a set of recognized territory codes.
 
     Are supported:
         * ISO 3166-1 alpha-2 country codes
         * ISO 3166-2 subdivision codes
     """
-    return chain(
+    return set(chain(
         imap(attrgetter('alpha2'), countries),
-        imap(attrgetter('code'), subdivisions))
+        imap(attrgetter('code'), subdivisions)))
 
 
 def territory_tree(subdivision_code, include_country=True):
