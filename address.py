@@ -19,7 +19,6 @@ from itertools import chain
 from operator import attrgetter
 
 from pycountry import countries, subdivisions
-
 from slugify import slugify
 
 try:
