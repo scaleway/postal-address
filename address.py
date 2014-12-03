@@ -7,8 +7,8 @@ u""" Utilities for address parsing and rendering.
 The reason above is why we need fine-grained and meticulous territory
 management and normalization.
 
-Postal address parsing and rendering is hard. Much hard than you expect.
-Please read:
+Postal address parsing, normalization and rendering is hard. Much harder than
+you think. Please read:
 http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/
 """
 
