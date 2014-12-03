@@ -51,13 +51,15 @@ class Address(object):
         'line1', 'line2', 'postal_code', 'city_name', 'country_code',
         'subdivision_code'])
 
-    # Still, some of the free-form fields above might be overriden by special
-    # cases of ISO 3166-2 subdivision codes.
-    SUBDIVISION_OVERRIDABLE_FIELDS = frozenset(['city_name'])
+    # List of subdivision-derived metadata IDs which are allowed to collide
+    # with base component IDs.
+    SUBDIVISION_METADATA_WHITELIST = frozenset(['city_name'])
+    assert SUBDIVISION_METADATA_WHITELIST.issubset(BASE_COMPONENT_IDS)
 
     # Fields tested on validate().
     REQUIRED_FIELDS = frozenset([
         'line1', 'postal_code', 'city_name', 'country_code'])
+    assert REQUIRED_FIELDS.issubset(BASE_COMPONENT_IDS)
 
     def __init__(self, **kwargs):
         """ Set address' individual components and normalize them. """
@@ -201,34 +203,48 @@ class Address(object):
         if self.line2 and not self.line1:
             self.line1, self.line2 = self.line2, self.line1
 
-        # Populate address components with the code and name of all
-        # subdivision's parents. This part has the authority to overrides
-        # city_name and and country_code fields.
+        # Try to set default subdivision from country if not set.
+        if self.country_code and not self.subdivision_code:
+            self.subdivision_code = default_subdivision_code(self.country_code)
+
+        # Populate address components with metadata of all subdivision parents.
         if self.subdivision_code:
-            parent_data = {}
-            for parent in territory_tree(self.subdivision_code):
-                if parent.__class__.__name__ == 'Country':
-                    parent_data['country_code'] = parent.alpha2
-                else:
-                    parent_type_id = subdivision_type_id(parent.type)
-                    parent_data.update({
-                        '{}'.format(
-                            parent_type_id): parent,
-                        '{}_code'.format(
-                            parent_type_id): parent.code,
-                        '{}_name'.format(
-                            parent_type_id): parent.name,
-                        '{}_type_name'.format(
-                            parent_type_id): parent.type})
-            for component_id, component_value in parent_data.items():
-                if self._components.get(
-                        component_id, None) is not None and self._components[
-                            component_id] != component_value:
-                    raise ValueError(
-                        "{} subdivision conflicts with {}='{}' field.".format(
-                            self.subdivision_code, component_id,
-                            self._components[component_id]))
-                self._components[component_id] = component_value
+            parent_metadata = {
+                # Any subdivision has a parent country.
+                'country_code': normalize_country_code(self.subdivision_code)}
+
+            # Add metadata of each subdivision parent.
+            for parent_subdiv in territory_tree(
+                    self.subdivision_code, include_country=False):
+                parent_metadata.update(subdivision_metadata(parent_subdiv))
+
+            # Parent metadata are not allowed to overwrite address components
+            # if not blank.
+            for component_id, new_value in parent_metadata.items():
+                assert new_value  # New metadata are not allowed to be blank.
+                current_value = self._components.get(component_id)
+                if current_value and component_id in self.BASE_COMPONENT_IDS:
+
+                    # Build the list of substitute values that are equivalent
+                    # to our new normalized target.
+                    alias_values = set([new_value])
+                    if component_id == 'country_code':
+                        # Allow normalization if the current country code is
+                        # the direct parent of a subdivision which also have
+                        # its own country code.
+                        alias_values.add(subdivisions.get(
+                            code=self.subdivision_code).country_code)
+
+                    # Change of current value is allowed if it is a direct
+                    # substitute to our new normalized value.
+                    if current_value not in alias_values:
+                        raise ValueError(
+                            "{} subdivision is trying to replace {}={!r} field"
+                            " by {}={!r}".format(
+                                self.subdivision_code, component_id,
+                                current_value, component_id, new_value))
+
+            self._components.update(parent_metadata)
 
     def validate(self):
         """ Check fields consistency and requirements.
@@ -252,8 +268,9 @@ class Address(object):
                     "Invalid {!r} country code.".format(self.country_code))
 
         # Check country consistency against subdivision.
-        if self.country_code and self.subdivision_code and subdivisions.get(
-                code=self.subdivision_code).country_code != self.country_code:
+        if self.country_code and self.subdivision_code and \
+                normalize_country_code(
+                    self.subdivision_code) != self.country_code:
             raise ValueError(
                 "{!r} country is not a parent {!r} subdivision.".format(
                     self.country_code, self.subdivision_code))
@@ -318,8 +335,8 @@ class Address(object):
     @property
     def subdivision_type_id(self):
         """ Return subdivision's type as a Python-friendly ID string. """
-        if self.subdivision_type_name:
-            return subdivision_type_id(self.subdivision_type_name)
+        if self.subdivision:
+            return subdivision_type_id(self.subdivision)
         return None
 
 
@@ -362,7 +379,72 @@ def territory_parents(subdivision_code, include_country=True):
             yield subdivision
 
 
-def subdivision_type_id(subdivision_type_name):
+# Map subdivision ISO 3166-2 codes to their officially assigned
+# ISO 3166-1 alpha-2 country codes.
+# Source: https://en.wikipedia.org/wiki
+# /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
+SUBDIVISION_COUNTRY_OVERLAPS = {
+    'CN-71': 'TW',  # Taiwan
+    'CN-91': 'HK',  # Hong Kong
+    'CN-92': 'MO',  # Macao
+    'FI-01': 'AX',  # Åland
+    'FR-BL': 'BL',  # Saint Barthélemy
+    'FR-GF': 'GF',  # French Guiana
+    'FR-GP': 'GP',  # Guadeloupe
+    'FR-MF': 'MF',  # Saint Martin
+    'FR-MQ': 'MQ',  # Martinique
+    'FR-NC': 'NC',  # New Caledonia
+    'FR-PF': 'PF',  # French Polynesia
+    'FR-PM': 'PM',  # Saint Pierre and Miquelon
+    'FR-RE': 'RE',  # Réunion
+    'FR-TF': 'TF',  # French Southern Territories
+    'FR-WF': 'WF',  # Wallis and Futuna
+    'FR-YT': 'YT',  # Mayotte
+    'NL-AW': 'AW',  # Aruba
+    'NL-BQ1': 'BQ',  # Bonaire
+    'NL-BQ2': 'BQ',  # Saba
+    'NL-BQ3': 'BQ',  # Sint Eustatius
+    'NL-CW': 'CW',  # Curaçao
+    'NL-SX': 'SX',  # Sint Maarten
+    'NO-21': 'SJ',  # Svalbard
+    'NO-22': 'SJ',  # Jan Mayen
+    'US-AS': 'AS',  # American Samoa
+    'US-GU': 'GU',  # Guam
+    'US-MP': 'MP',  # Northern Mariana Islands
+    'US-PR': 'PR',  # Puerto Rico
+    'US-UM': 'UM',  # United States Minor Outlying Islands
+    'US-VI': 'VI',  # Virgin Islands, U.S.
+}
+
+
+# Build the reverse index of the subdivision/country overlap mapping above.
+DEFAULT_SUBDIVISIONS = {}
+for k, v in SUBDIVISION_COUNTRY_OVERLAPS.items():
+    DEFAULT_SUBDIVISIONS.setdefault(v, []).append(k)
+
+
+def normalize_country_code(subdivision_code):
+    """ Return the normalized country code of a subdivisions.
+
+    For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
+    the later instead of the parent ISO 3166-2 top entry.
+    """
+    return SUBDIVISION_COUNTRY_OVERLAPS.get(
+        subdivision_code, subdivisions.get(code=subdivision_code).country_code)
+
+
+def default_subdivision_code(country_code):
+    """ Return the default subdivision code of a country.
+
+    The result can be guessed only if there is a 1:1 overlap between a country
+    code and a subdivision code.
+    """
+    default_subdivisions = DEFAULT_SUBDIVISIONS.get(country_code)
+    if default_subdivisions and len(default_subdivisions) == 1:
+        return default_subdivisions[0]
+
+
+def subdivision_type_id(subdivision):
     """ Normalize subdivision type name into a Python-friendly ID.
 
     Here is the list of all subdivision types defined by ``pycountry`` v1.8::
@@ -473,7 +555,7 @@ def subdivision_type_id(subdivision_type_name):
 
     This method transform and normalize any of these into Python-firendly IDs.
     """
-    type_id = slugify(subdivision_type_name, to_lower=True).replace('-', '_')
+    type_id = slugify(subdivision.type, to_lower=True).replace('-', '_')
 
     # Any occurence of the 'city' or 'municipality' string in the type
     # overrides its classification as a city.
@@ -481,3 +563,24 @@ def subdivision_type_id(subdivision_type_name):
         type_id = 'city'
 
     return type_id
+
+
+def subdivision_metadata(subdivision):
+    """ Return a serialize dict of subdivision metadata.
+
+    Metadata IDs are derived from subdivision type.
+    """
+    subdiv_type_id = subdivision_type_id(subdivision)
+    metadata = {
+        '{}'.format(subdiv_type_id): subdivision,
+        '{}_code'.format(subdiv_type_id): subdivision.code,
+        '{}_name'.format(subdiv_type_id): subdivision.name,
+        '{}_type_name'.format(subdiv_type_id): subdivision.type}
+
+    # Check that we are not producing metadata IDs colliding with address
+    # components.
+    assert not set(metadata).difference(
+        Address.SUBDIVISION_METADATA_WHITELIST).issubset(
+            Address.BASE_COMPONENT_IDS)
+
+    return metadata
