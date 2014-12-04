@@ -4,7 +4,6 @@ from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
 
-from itertools import imap
 from operator import attrgetter
 import re
 import unittest
@@ -14,6 +13,13 @@ from pycountry import countries, subdivisions
 from address import (
     Address, default_subdivision_code, normalize_country_code, territory_codes,
     SUBDIVISION_COUNTRY_OVERLAPS, subdivision_metadata, subdivision_type_id)
+
+try:
+    from itertools import imap
+except ImportError:  # pragma: no cover
+    basestring = (str, bytes)
+    unicode = str
+    imap = map
 
 
 class TestAddress(unittest.TestCase):
