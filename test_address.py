@@ -25,21 +25,21 @@ class TestAddress(unittest.TestCase):
 
     def test_default_values(self):
         address = Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
             city_name='Paris',
             country_code='FR')
-        self.assertEquals(address.line1, '10 Downing Street')
+        self.assertEquals(address.line1, '10, avenue des Champs Elysées')
         self.assertEquals(address.line2, None)
-        self.assertEquals(address.postal_code, '12345')
+        self.assertEquals(address.postal_code, '75008')
         self.assertEquals(address.city_name, 'Paris')
         self.assertEquals(address.country_code, 'FR')
         self.assertEquals(address.subdivision_code, None)
 
     def test_dict_access(self):
         address = Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
             city_name='Paris',
             country_code='FR')
         self.assertSequenceEqual(set([
@@ -51,12 +51,13 @@ class TestAddress(unittest.TestCase):
             'subdivision_code',
         ]), set(address.keys()))
         self.assertEquals(
-            set([None, '10 Downing Street', '12345', 'Paris', 'FR']),
+            set([None, '10, avenue des Champs Elysées',
+                 '75008', 'Paris', 'FR']),
             set(address.values()))
         self.assertEquals({
-            'line1': '10 Downing Street',
+            'line1': '10, avenue des Champs Elysées',
             'line2': None,
-            'postal_code': '12345',
+            'postal_code': '75008',
             'city_name': 'Paris',
             'country_code': 'FR',
             'subdivision_code': None,
@@ -66,9 +67,9 @@ class TestAddress(unittest.TestCase):
 
     def test_blank_string_normalization(self):
         address = Address(
-            line1='10 Downing Street',
+            line1='10, avenue des Champs Elysées',
             line2='',
-            postal_code='12345',
+            postal_code='75008',
             city_name='Paris',
             country_code='FR',
             subdivision_code='')
@@ -77,52 +78,53 @@ class TestAddress(unittest.TestCase):
 
     def test_space_normalization(self):
         address = Address(
-            line1='   666, hell street   ',
+            line1='   10, avenue des Champs Elysées   ',
             line2='    ',
-            postal_code='   F-6666   ',
-            city_name='   Satantown  ',
+            postal_code='   75008   ',
+            city_name='   Paris  ',
             country_code=' fr          ',
-            subdivision_code='fR-66  ')
-        self.assertEqual(address.line1, '666, hell street')
+            subdivision_code=' fR-75  ')
+        self.assertEqual(address.line1, '10, avenue des Champs Elysées')
         self.assertEqual(address.line2, None)
-        self.assertEqual(address.postal_code, 'F-6666')
-        self.assertEqual(address.city_name, 'Satantown')
+        self.assertEqual(address.postal_code, '75008')
+        self.assertEqual(address.city_name, 'Paris')
         self.assertEqual(address.country_code, 'FR')
-        self.assertEqual(address.subdivision_code, 'FR-66')
+        self.assertEqual(address.subdivision_code, 'FR-75')
 
     def test_blank_line_swap(self):
         address = Address(
             line1='',
-            line2='10 Downing Street',
-            postal_code='12345',
+            line2='10, avenue des Champs Elysées',
+            postal_code='75008',
             city_name='Paris',
             country_code='FR')
-        self.assertEquals(address.line1, '10 Downing Street')
+        self.assertEquals(address.line1, '10, avenue des Champs Elysées')
         self.assertEquals(address.line2, None)
 
     def test_country_subdivision_validation(self):
         Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
             city_name='Paris',
             country_code='FR',
             subdivision_code='FR-75')
         with self.assertRaises(ValueError):
             Address(
-                line1='10 Downing Street',
-                postal_code='12345',
+                line1='10, avenue des Champs Elysées',
+                postal_code='75008',
                 city_name='Paris',
                 country_code='FR',
                 subdivision_code='BE-BRU')
         with self.assertRaises(ValueError):
             Address(
-                line1='10 Downing Street',
-                postal_code='12345',
+                line1='10, avenue des Champs Elysées',
+                postal_code='75008',
                 city_name='Paris',
                 country_code='FR',
                 subdivision_code='US-GU')
 
     def test_country_subdivision_reconciliation(self):
+        # Perfect, already normalized country and subdivision.
         address1 = Address(
             line1='1273 Pale San Vitores Road',
             postal_code='96913',
@@ -130,6 +132,7 @@ class TestAddress(unittest.TestCase):
             country_code='GU',
             subdivision_code='US-GU')
 
+        # Non-normalized country.
         address2 = Address(
             line1='1273 Pale San Vitores Road',
             postal_code='96913',
@@ -137,12 +140,14 @@ class TestAddress(unittest.TestCase):
             country_code='US',
             subdivision_code='US-GU')
 
+        # Country only, from which we guess the subdivision.
         address3 = Address(
             line1='1273 Pale San Vitores Road',
             postal_code='96913',
             city_name='Tamuning',
             country_code='GU')
 
+        # Subdivision only, from which we derive the country.
         address4 = Address(
             line1='1273 Pale San Vitores Road',
             postal_code='96913',
@@ -159,8 +164,8 @@ class TestAddress(unittest.TestCase):
 
     def test_subdivision_derived_fields(self):
         address = Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='31, place du Théatre',
+            postal_code='59000',
             city_name='Lille',
             subdivision_code='FR-59')
 
@@ -204,8 +209,8 @@ class TestAddress(unittest.TestCase):
 
     def test_subdivision_derived_city_fields(self):
         address = Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='2 King Edward Street',
+            postal_code='EC1A 1HQ',
             subdivision_code='GB-LND')
 
         self.assertEquals(
@@ -232,14 +237,14 @@ class TestAddress(unittest.TestCase):
 
     def test_city_override_by_subdivision(self):
         Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='2 King Edward Street',
+            postal_code='EC1A 1HQ',
             city_name='London, City of',
             subdivision_code='GB-LND')
         with self.assertRaises(ValueError):
             Address(
-                line1='10 Downing Street',
-                postal_code='12345',
+                line1='2 King Edward Street',
+                postal_code='EC1A 1HQ',
                 city_name='Paris',
                 subdivision_code='GB-LND')
 
@@ -311,8 +316,8 @@ class TestTerritory(unittest.TestCase):
         # The subdivision metadata IDs we derived from subdivision types should
         # not collide with Address class internals.
         simple_address = Address(
-            line1='10 Downing Street',
-            postal_code='12345',
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
             city_name='Paris',
             country_code='FR')
 
