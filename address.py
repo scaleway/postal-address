@@ -297,9 +297,13 @@ class Address(object):
                 return False
         return True
 
-    def __nonzero__(self):
-        """ Consider the instance to be True if not empty."""
+    def __bool__(self):
+        """ Consider the instance to be True if not empty. """
         return not self.empty
+
+    def __nonzero__(self):
+        """ Python2 retro-compatibility of ``__bool__()``. """
+        return self.__bool__()
 
     @property
     def country(self):
