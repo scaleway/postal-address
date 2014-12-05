@@ -297,6 +297,10 @@ class Address(object):
                 return False
         return True
 
+    def __nonzero__(self):
+        """ Consider the instance to be True if not empty."""
+        return not self.empty
+
     @property
     def country(self):
         """ Return country object. """

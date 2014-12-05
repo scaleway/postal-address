@@ -23,6 +23,17 @@ except ImportError:  # pragma: no cover
 
 class TestAddress(unittest.TestCase):
 
+    def test_emptiness(self):
+        address = Address()
+        self.assertTrue(address.empty)
+        self.assertFalse(address)
+        self.assertTrue(not address)
+
+        address.line1 = '10, avenue des Champs Elysées'
+        self.assertFalse(address.empty)
+        self.assertTrue(address)
+        self.assertFalse(not address)
+
     def test_default_values(self):
         address = Address(
             line1='10, avenue des Champs Elysées',
