@@ -10,8 +10,10 @@ import unittest
 from pycountry import countries, subdivisions
 
 from address import (
-    Address, default_subdivision_code, normalize_country_code, territory_codes,
-    SUBDIVISION_COUNTRY_OVERLAPS, subdivision_metadata, subdivision_type_id)
+    Address, default_subdivision_code, normalize_country_code,
+    supported_territory_codes, country_aliases,
+    territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES,
+    subdivision_metadata, subdivision_type_id)
 
 try:
     from itertools import imap
@@ -173,6 +175,40 @@ class TestAddress(unittest.TestCase):
             self.assertEqual(address.country_code, 'GU')
             self.assertEqual(address.subdivision_code, 'US-GU')
 
+    def test_country_alias_normalization(self):
+        # Test normalization of non-normalized country of a subdivision
+        # of a country aliased subdivision.
+        address1 = Address(
+            line1='Bunker building 746',
+            postal_code='XXX No postal code on this atoll',
+            city_name='Johnston Atoll',
+            country_code='UM',
+            subdivision_code='UM-67')
+        address2 = Address(
+            line1='Bunker building 746',
+            postal_code='XXX No postal code on this atoll',
+            city_name='Johnston Atoll',
+            subdivision_code='UM-67')
+        for address in [address1, address2]:
+            self.assertEqual(address.country_code, 'UM')
+            self.assertEqual(address.subdivision_code, 'UM-67')
+
+        # Test normalization of TW subdivisions.
+        address1 = Address(
+            line1='No.276, Zhongshan Rd.',
+            postal_code='95001',
+            city_name='Taitung City',
+            country_code='TW',
+            subdivision_code='TW-TTT')
+        address2 = Address(
+            line1='No.276, Zhongshan Rd.',
+            postal_code='95001',
+            city_name='Taitung City',
+            subdivision_code='TW-TTT')
+        for address in [address1, address2]:
+            self.assertEqual(address.country_code, 'TW')
+            self.assertEqual(address.subdivision_code, 'TW-TTT')
+
     def test_subdivision_derived_fields(self):
         address = Address(
             line1='31, place du Théatre',
@@ -263,36 +299,96 @@ class TestAddress(unittest.TestCase):
 class TestTerritory(unittest.TestCase):
     # Test territory utils
 
-    def test_territory_codes(self):
-        self.assertIn('FR', territory_codes())
-        self.assertIn('FR-59', territory_codes())
-        self.assertNotIn('FRE', territory_codes())
+    def test_supported_territory_codes(self):
+        self.assertIn('FR', supported_territory_codes())
+        self.assertIn('FR-59', supported_territory_codes())
+        self.assertNotIn('FRE', supported_territory_codes())
+
+    def test_territory_code_overlap(self):
+        # Check that all codes from each classifications we rely on are not
+        # overlapping.
+        self.assertFalse(
+            set(imap(attrgetter('alpha2'), countries)).intersection(
+                imap(attrgetter('code'), subdivisions)))
 
     def test_territory_exception_definition(self):
         # Check that all codes used in constants to define exceptionnal
         # treatment are valid and recognized.
-        for subdiv_code in SUBDIVISION_COUNTRY_OVERLAPS.keys():
-            subdivisions.get(code=subdiv_code)
-        for country_code in set(SUBDIVISION_COUNTRY_OVERLAPS.values()):
-            countries.get(alpha2=country_code)
+        for subdiv_code, alias_code in SUBDIVISION_ALIASES.items():
+            self.assertIn(subdiv_code, supported_territory_codes())
+            self.assertIn(alias_code, supported_territory_codes())
+        for subdiv_code, alias_code in COUNTRY_ALIASES.items():
+            self.assertIn(alias_code, supported_territory_codes())
+            # Aliased country codes are not supposed to be supported by
+            # pycountry, as it's the main reason to define an alias in the
+            # first place.
+            self.assertNotIn(
+                subdiv_code, imap(attrgetter('alpha2'), countries))
 
     def test_country_code_reconciliation(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
-        for subdiv_code in SUBDIVISION_COUNTRY_OVERLAPS.keys():
+        for subdiv_code in SUBDIVISION_ALIASES.keys():
             self.assertEquals(
                 normalize_country_code(subdiv_code),
-                SUBDIVISION_COUNTRY_OVERLAPS[subdiv_code])
+                SUBDIVISION_ALIASES[subdiv_code])
         for subdiv_code in set(
                 imap(attrgetter('code'), subdivisions)).difference(
-                    SUBDIVISION_COUNTRY_OVERLAPS):
+                    SUBDIVISION_ALIASES):
             self.assertEquals(
                 normalize_country_code(subdiv_code),
                 subdivisions.get(code=subdiv_code).country_code)
 
     def test_default_subdivision_code(self):
         self.assertEquals(default_subdivision_code('FR'), None)
-        self.assertEquals(default_subdivision_code('BQ'), None)
         self.assertEquals(default_subdivision_code('GU'), 'US-GU')
+        self.assertEquals(default_subdivision_code('SJ'), None)
+
+    def test_territory_parents_codes(self):
+        self.assertEquals(
+            list(territory_parents_codes('FR-59')),
+            ['FR-59', 'FR-O', 'FR'])
+        self.assertEquals(
+            list(territory_parents_codes('FR-59', include_country=False)),
+            ['FR-59', 'FR-O'])
+        self.assertEquals(
+            list(territory_parents_codes('FR')),
+            ['FR'])
+        self.assertEquals(
+            list(territory_parents_codes('FR', include_country=False)),
+            [])
+
+    def test_alias_normalization(self):
+        # Check country alias to a country.
+        self.assertEquals(
+            list(territory_parents_codes('DG')),
+            ['IO'])
+
+        # Check country alias to a subdivision.
+        self.assertEquals(
+            list(territory_parents_codes('TA')),
+            ['SH-TA', 'SH'])
+
+        # Check subdivision alias to a country.
+        self.assertEquals(
+            list(territory_parents_codes('MQ')),
+            ['MQ'])
+        self.assertEquals(
+            list(territory_parents_codes('FR-MQ')),
+            ['MQ'])
+
+        # Check subdivision alias to a subdivision.
+        self.assertEquals(
+            list(territory_parents_codes('BQ-SE')),
+            ['BQ-SE', 'BQ'])
+        self.assertEquals(
+            list(territory_parents_codes('NL-BQ3')),
+            ['BQ-SE', 'BQ'])
+
+    def test_country_aliases(self):
+        self.assertEquals(country_aliases('UM-67'), set(['US', 'UM']))
+        self.assertEquals(country_aliases('UM'), set(['US', 'UM']))
+        self.assertEquals(country_aliases('US'), set(['US']))
+        self.assertEquals(country_aliases('BQ-BO'), set(['NL', 'BQ']))
 
     def test_subdivision_type_id_conversion(self):
         # Conversion of subdivision types into IDs must be python friendly

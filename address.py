@@ -193,7 +193,7 @@ class Address(object):
         for component_id in empty_components:
             del self[component_id]
 
-        # Normalize ISO codes.
+        # Normalize territory codes.
         if self.country_code:
             self.country_code = self.country_code.upper()
         if self.subdivision_code:
@@ -214,7 +214,7 @@ class Address(object):
                 'country_code': normalize_country_code(self.subdivision_code)}
 
             # Add metadata of each subdivision parent.
-            for parent_subdiv in territory_tree(
+            for parent_subdiv in territory_parents(
                     self.subdivision_code, include_country=False):
                 parent_metadata.update(subdivision_metadata(parent_subdiv))
 
@@ -348,109 +348,7 @@ class Address(object):
         return None
 
 
-def territory_codes():
-    """ Return a set of recognized territory codes.
-
-    Are supported:
-        * ISO 3166-1 alpha-2 country codes
-        * ISO 3166-2 subdivision codes
-    """
-    return set(chain(
-        imap(attrgetter('alpha2'), countries),
-        imap(attrgetter('code'), subdivisions)))
-
-
-def territory_tree(subdivision_code, include_country=True):
-    """ Return the whole hierarchy of territories, up to the country.
-
-    Values returned by the generator are either subdivisions or country
-    objects, starting from the provided subdivision and up its way to
-    the top administrative territory (i.e. country).
-    """
-    while subdivision_code:
-        subdiv = subdivisions.get(code=subdivision_code)
-        yield subdiv
-        if not subdiv.parent_code:
-            break
-        subdivision_code = subdiv.parent_code
-
-    # Return country
-    if include_country:
-        yield subdivisions.get(code=subdivision_code).country
-
-
-def territory_parents(subdivision_code, include_country=True):
-    """ Return hierarchy of territories, but the provided subdivision. """
-    for index, subdivision in enumerate(territory_tree(
-            subdivision_code, include_country=include_country)):
-        if index > 0:
-            yield subdivision
-
-
-# Map subdivision ISO 3166-2 codes to their officially assigned
-# ISO 3166-1 alpha-2 country codes.
-# Source: https://en.wikipedia.org/wiki
-# /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
-SUBDIVISION_COUNTRY_OVERLAPS = {
-    'CN-71': 'TW',  # Taiwan
-    'CN-91': 'HK',  # Hong Kong
-    'CN-92': 'MO',  # Macao
-    'FI-01': 'AX',  # Åland
-    'FR-BL': 'BL',  # Saint Barthélemy
-    'FR-GF': 'GF',  # French Guiana
-    'FR-GP': 'GP',  # Guadeloupe
-    'FR-MF': 'MF',  # Saint Martin
-    'FR-MQ': 'MQ',  # Martinique
-    'FR-NC': 'NC',  # New Caledonia
-    'FR-PF': 'PF',  # French Polynesia
-    'FR-PM': 'PM',  # Saint Pierre and Miquelon
-    'FR-RE': 'RE',  # Réunion
-    'FR-TF': 'TF',  # French Southern Territories
-    'FR-WF': 'WF',  # Wallis and Futuna
-    'FR-YT': 'YT',  # Mayotte
-    'NL-AW': 'AW',  # Aruba
-    'NL-BQ1': 'BQ',  # Bonaire
-    'NL-BQ2': 'BQ',  # Saba
-    'NL-BQ3': 'BQ',  # Sint Eustatius
-    'NL-CW': 'CW',  # Curaçao
-    'NL-SX': 'SX',  # Sint Maarten
-    'NO-21': 'SJ',  # Svalbard
-    'NO-22': 'SJ',  # Jan Mayen
-    'US-AS': 'AS',  # American Samoa
-    'US-GU': 'GU',  # Guam
-    'US-MP': 'MP',  # Northern Mariana Islands
-    'US-PR': 'PR',  # Puerto Rico
-    'US-UM': 'UM',  # United States Minor Outlying Islands
-    'US-VI': 'VI',  # Virgin Islands, U.S.
-}
-
-
-# Build the reverse index of the subdivision/country overlap mapping above.
-DEFAULT_SUBDIVISIONS = {}
-for k, v in SUBDIVISION_COUNTRY_OVERLAPS.items():
-    DEFAULT_SUBDIVISIONS.setdefault(v, []).append(k)
-
-
-def normalize_country_code(subdivision_code):
-    """ Return the normalized country code of a subdivisions.
-
-    For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
-    the later instead of the parent ISO 3166-2 top entry.
-    """
-    return SUBDIVISION_COUNTRY_OVERLAPS.get(
-        subdivision_code, subdivisions.get(code=subdivision_code).country_code)
-
-
-def default_subdivision_code(country_code):
-    """ Return the default subdivision code of a country.
-
-    The result can be guessed only if there is a 1:1 overlap between a country
-    code and a subdivision code.
-    """
-    default_subdivisions = DEFAULT_SUBDIVISIONS.get(country_code)
-    if default_subdivisions and len(default_subdivisions) == 1:
-        return default_subdivisions[0]
-
+# Subdivisions utils.
 
 def subdivision_type_id(subdivision):
     """ Normalize subdivision type name into a Python-friendly ID.
@@ -592,3 +490,196 @@ def subdivision_metadata(subdivision):
             Address.BASE_COMPONENT_IDS)
 
     return metadata
+
+
+# Territory utils.
+
+COUNTRY_ALIASES = {
+    # Source:
+    # https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Exceptional_reservations
+    'AC': 'SH-AC',  # Ascension Island
+    'CP': 'FR-CP',  # Clipperton Island
+    'DG': 'IO',     # Diego Garcia
+    # 'EA': ['ES-ML', 'ES-CE'],  # Ceuta and Melilla
+    'FX': 'FR',     # France, Metropolitan
+    'IC': 'ES-CN',  # Canary Islands
+    'TA': 'SH-TA',  # Tristan da Cunha
+    # European Commision country code exceptions.
+    # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
+    'UK': 'GB',  # United Kingdom
+    'EL': 'GR',  # Greece
+}
+
+
+SUBDIVISION_ALIASES = {
+    # Map subdivision ISO 3166-2 codes to their officially assigned
+    # ISO 3166-1 alpha-2 country codes.
+    # Source: https://en.wikipedia.org/wiki
+    # /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
+    'CN-71': 'TW',  # Taiwan
+    'CN-91': 'HK',  # Hong Kong
+    'CN-92': 'MO',  # Macao
+    'FI-01': 'AX',  # Åland
+    'FR-BL': 'BL',  # Saint Barthélemy
+    'FR-GF': 'GF',  # French Guiana
+    'FR-GP': 'GP',  # Guadeloupe
+    'FR-MF': 'MF',  # Saint Martin
+    'FR-MQ': 'MQ',  # Martinique
+    'FR-NC': 'NC',  # New Caledonia
+    'FR-PF': 'PF',  # French Polynesia
+    'FR-PM': 'PM',  # Saint Pierre and Miquelon
+    'FR-RE': 'RE',  # Réunion
+    'FR-TF': 'TF',  # French Southern Territories
+    'FR-WF': 'WF',  # Wallis and Futuna
+    'FR-YT': 'YT',  # Mayotte
+    'NL-AW': 'AW',  # Aruba
+    'NL-BQ1': 'BQ-BO',  # Bonaire
+    'NL-BQ2': 'BQ-SA',  # Saba
+    'NL-BQ3': 'BQ-SE',  # Sint Eustatius
+    'NL-CW': 'CW',  # Curaçao
+    'NL-SX': 'SX',  # Sint Maarten
+    'NO-21': 'SJ',  # Svalbard
+    'NO-22': 'SJ',  # Jan Mayen
+    'US-AS': 'AS',  # American Samoa
+    'US-GU': 'GU',  # Guam
+    'US-MP': 'MP',  # Northern Mariana Islands
+    'US-PR': 'PR',  # Puerto Rico
+    'US-UM': 'UM',  # United States Minor Outlying Islands
+    'US-VI': 'VI',  # Virgin Islands, U.S.
+}
+
+
+# Build the reverse index of aliases defined above.
+REVERSE_MAPPING = {}
+for mapping in [COUNTRY_ALIASES, SUBDIVISION_ALIASES]:
+    for alias_code, target_code in mapping.items():
+        REVERSE_MAPPING.setdefault(target_code, set()).add(alias_code)
+
+
+def supported_territory_codes():
+    """ Return a set of recognized territory codes.
+
+    Are supported:
+        * ISO 3166-1 alpha-2 country codes
+        * ISO 3166-2 subdivision codes
+    """
+    return set(chain(
+        imap(attrgetter('alpha2'), countries),
+        imap(attrgetter('code'), subdivisions),
+        COUNTRY_ALIASES.keys()))
+
+
+def normalize_territory_code(territory_code, resolve_aliases=True):
+    """ Normalize any string into a territory code. """
+    territory_code = territory_code.strip().upper()
+    if territory_code not in supported_territory_codes():
+        raise ValueError(
+            'Unrecognized {!r} territory code.'.format(territory_code))
+    if resolve_aliases:
+        territory_code = COUNTRY_ALIASES.get(territory_code, territory_code)
+        territory_code = SUBDIVISION_ALIASES.get(
+            territory_code, territory_code)
+    return territory_code
+
+
+def normalize_country_code(subdivision_code):
+    """ Return the normalized country code of a subdivisions.
+
+    For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
+    the later instead of the parent ISO 3166-2 top entry.
+    """
+    return SUBDIVISION_ALIASES.get(
+        subdivision_code, subdivisions.get(code=subdivision_code).country_code)
+
+
+def default_subdivision_code(country_code):
+    """ Return the default subdivision code of a country.
+
+    The result can be guessed only if there is a 1:1 mapping between a country
+    code and a subdivision code.
+    """
+    # Build the reverse index of the subdivision/country alias mapping.
+    default_subdiv = {}
+    for suddiv_code, alias_code in SUBDIVISION_ALIASES.items():
+        # Skip non-country
+        if len(alias_code) == 2:
+            default_subdiv.setdefault(alias_code, []).append(suddiv_code)
+
+    default_subdivisions = default_subdiv.get(country_code)
+    if default_subdivisions and len(default_subdivisions) == 1:
+        return default_subdivisions[0]
+
+
+def territory_parents(territory_code, include_country=True):
+    """ Return the whole hierarchy of territories, up to the country.
+
+    Values returned by the generator are either subdivisions or country
+    objects, starting from the provided territory and up its way to the top
+    administrative territory (i.e. country).
+    """
+    tree = []
+
+    # If the provided territory code is a country, return it right away.
+    territory_code = normalize_territory_code(territory_code)
+    if territory_code in imap(attrgetter('alpha2'), countries):
+        if include_country:
+            tree.append(countries.get(alpha2=territory_code))
+        return tree
+
+    # Else, resolve the territory as if it's a subdivision code.
+    subdivision_code = territory_code
+    while subdivision_code:
+        subdiv = subdivisions.get(code=subdivision_code)
+        tree.append(subdiv)
+        if not subdiv.parent_code:
+            break
+        subdivision_code = subdiv.parent_code
+
+    # Return country
+    if include_country:
+        tree.append(subdivisions.get(code=subdivision_code).country)
+
+    return tree
+
+
+def territory_parents_codes(territory_code, include_country=True):
+    """ Like territory_parents but return normalized codes instead of objects.
+    """
+    for territory in territory_parents(
+            territory_code, include_country=include_country):
+        full_class_name = '{}.{}'.format(
+            territory.__module__, territory.__class__.__name__)
+        if full_class_name == 'pycountry.db.Country':
+            yield territory.alpha2
+        elif full_class_name == 'pycountry.db.Subdivision':
+            yield territory.code
+        else:
+            raise "Unrecognized {!r} territory.".format(territory)
+
+
+def country_aliases(territory_code):
+    """ List valid country code aliases of a territory.
+
+    Mainly used to check if a non-normalized country code can safely be
+    replaced by its normalized form.
+    """
+    country_codes = set()
+
+    # Add a country code right away in our aliases.
+    if territory_code in imap(attrgetter('alpha2'), countries):
+        country_codes.add(territory_code)
+
+    # A subdivision code triggers a walk along the non-normalized parent tree
+    # and look for aliases at each level.
+    else:
+        subdiv = subdivisions.get(code=territory_code)
+        parent_code = subdiv.parent_code
+        if not parent_code:
+            parent_code = subdiv.country.alpha2
+        country_codes.update(country_aliases(parent_code))
+
+    # Hunt for aliases
+    for mapped_code in REVERSE_MAPPING.get(territory_code, []):
+        country_codes.update(country_aliases(mapped_code))
+
+    return country_codes
