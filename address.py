@@ -206,6 +206,10 @@ class Address(object):
         # Try to set default subdivision from country if not set.
         if self.country_code and not self.subdivision_code:
             self.subdivision_code = default_subdivision_code(self.country_code)
+            # If the country set its own subdivision, reset it. It will be
+            # properly re-guessed below.
+            if self.subdivision_code:
+                self.country_code = None
 
         # Populate address components with metadata of all subdivision parents.
         if self.subdivision_code:
@@ -588,8 +592,11 @@ def normalize_country_code(subdivision_code):
     For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
     the later instead of the parent ISO 3166-2 top entry.
     """
-    return SUBDIVISION_ALIASES.get(
+    normalized_code = SUBDIVISION_ALIASES.get(
         subdivision_code, subdivisions.get(code=subdivision_code).country_code)
+    if normalized_code not in imap(attrgetter('alpha2'), countries):
+        normalized_code = subdivisions.get(code=normalized_code).country_code
+    return normalized_code
 
 
 def default_subdivision_code(country_code):
@@ -600,14 +607,20 @@ def default_subdivision_code(country_code):
     """
     # Build the reverse index of the subdivision/country alias mapping.
     default_subdiv = {}
-    for suddiv_code, alias_code in SUBDIVISION_ALIASES.items():
+    for subdiv_code, alias_code in SUBDIVISION_ALIASES.items():
         # Skip non-country
         if len(alias_code) == 2:
-            default_subdiv.setdefault(alias_code, []).append(suddiv_code)
+            default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
+
+    # Include countries directly mapping to a subdivision.
+    for alias_code, subdiv_code in COUNTRY_ALIASES.items():
+        # Skip non-subdiv
+        if len(subdiv_code) > 3:
+            default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
 
     default_subdivisions = default_subdiv.get(country_code)
     if default_subdivisions and len(default_subdivisions) == 1:
-        return default_subdivisions[0]
+        return default_subdivisions.pop()
 
 
 def territory_parents(territory_code, include_country=True):

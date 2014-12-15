@@ -176,6 +176,14 @@ class TestAddress(unittest.TestCase):
             self.assertEqual(address.subdivision_code, 'US-GU')
 
     def test_country_alias_normalization(self):
+        address = Address(
+            line1='Barack 31',
+            postal_code='XXX No postal code on this atoll',
+            city_name='Clipperton Island',
+            country_code='CP')
+        self.assertEqual(address.country_code, 'FR')
+        self.assertEqual(address.subdivision_code, 'FR-CP')
+
         # Test normalization of non-normalized country of a subdivision
         # of a country aliased subdivision.
         address1 = Address(
@@ -328,9 +336,11 @@ class TestTerritory(unittest.TestCase):
     def test_country_code_reconciliation(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
         for subdiv_code in SUBDIVISION_ALIASES.keys():
+            target_code = SUBDIVISION_ALIASES[subdiv_code]
+            if len(target_code) != 2:
+                target_code = subdivisions.get(code=target_code).country_code
             self.assertEquals(
-                normalize_country_code(subdiv_code),
-                SUBDIVISION_ALIASES[subdiv_code])
+                normalize_country_code(subdiv_code), target_code)
         for subdiv_code in set(
                 imap(attrgetter('code'), subdivisions)).difference(
                     SUBDIVISION_ALIASES):
