@@ -23,6 +23,25 @@ Python module to parse, normalize and render postal addresses.
     :alt: Popularity
 
 
+Motivation
+----------
+
+    « What ties us to territory is tax. »
+    -- Kevin Deldycke, 2014-11-07
+
+The reason above is why we need fine-grained and meticulous territory
+management and normalization. This project aims to solve this problem once for
+all.
+
+Don't get me wrong, this work is a huge undertaking. Postal address parsing,
+normalization and rendering is hard. Much harder than you think. Please read:
+http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/
+
+This library is still in its early stages, but is good enough to implement
+the new European Directives on VAT, which requires all e-commerce shops to
+guess the locality of their EU customers depending on their billing address.
+
+
 License
 -------
 

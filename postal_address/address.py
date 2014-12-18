@@ -20,17 +20,6 @@
 
 u""" Utilities for address parsing and rendering.
 
-    « What ties us to territory is tax. »
-    -- Kevin Deldycke, 2014-11-07
-
-The reason above is why we need fine-grained and meticulous territory
-management and normalization.
-
-Postal address parsing, normalization and rendering is hard. Much harder than
-you think. Please read:
-http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/
-
-
 .. data:: SUBDIVISION_COUNTRY_OVERLAPS
 
    Mapping of countries and their subdivisions.
