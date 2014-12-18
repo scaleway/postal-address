@@ -1,7 +1,7 @@
 ChangeLog
 =========
 
-0.2.0 (unreleased)
+0.2.0 (2014-12-18)
 ------------------
 
 * Package the whole module for proper distribution.
