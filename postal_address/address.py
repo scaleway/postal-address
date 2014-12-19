@@ -20,6 +20,18 @@
 
 u""" Utilities for address parsing and rendering.
 
+.. data:: COUNTRY_ALIASES
+
+.. data:: SUBDIVISION_ALIASES
+
+   Map subdivision ISO 3166-2 codes to their officially assigned ISO 3166-1
+   alpha-2 country codes. Source: https://en.wikipedia.org/wiki
+   /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
+
+.. data:: REVERSE_MAPPING
+
+   Reverse index of the SUBDIVISION_ALIASES mapping defined above.
+
 .. data:: SUBDIVISION_COUNTRY_OVERLAPS
 
    Mapping of countries and their subdivisions.
@@ -542,10 +554,6 @@ COUNTRY_ALIASES = {
 
 
 SUBDIVISION_ALIASES = {
-    # Map subdivision ISO 3166-2 codes to their officially assigned
-    # ISO 3166-1 alpha-2 country codes.
-    # Source: https://en.wikipedia.org/wiki
-    # /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
     'CN-71': 'TW',  # Taiwan
     'CN-91': 'HK',  # Hong Kong
     'CN-92': 'MO',  # Macao
