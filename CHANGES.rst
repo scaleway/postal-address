@@ -5,7 +5,7 @@ ChangeLog
 0.2.1 (unreleased)
 ------------------
 
-* No changes yet.
+* Remove backward compatibility with 0.1.0.
 
 
 0.2.0 (2014-12-18)

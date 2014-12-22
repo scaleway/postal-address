@@ -31,22 +31,6 @@ u""" Utilities for address parsing and rendering.
 .. data:: REVERSE_MAPPING
 
    Reverse index of the SUBDIVISION_ALIASES mapping defined above.
-
-.. data:: SUBDIVISION_COUNTRY_OVERLAPS
-
-   Mapping of countries and their subdivisions.
-
-   .. deprecated:: 0.1.0
-
-      Switch to SUBDIVISION_ALIASES.
-
-.. data:: DEFAULT_SUBDIVISIONS
-
-   Reverse mapping of countries and their subdivisions.
-
-   .. deprecated:: 0.1.0
-
-      Switch to REVERSE_MAPPING.
 """
 
 from __future__ import (unicode_literals, print_function, absolute_import,
@@ -585,38 +569,13 @@ SUBDIVISION_ALIASES = {
     'US-UM': 'UM',  # United States Minor Outlying Islands
     'US-VI': 'VI',  # Virgin Islands, U.S.
 }
-# .. deprecated:: 0.1.0
-SUBDIVISION_COUNTRY_OVERLAPS = SUBDIVISION_ALIASES
 
-# Build the reverse index of the subdivision/country overlap mapping above.
-# .. deprecated:: 0.1.0
-DEFAULT_SUBDIVISIONS = {}
-for k, v in SUBDIVISION_ALIASES.items():
-    DEFAULT_SUBDIVISIONS.setdefault(v, []).append(k)
 
 # Build the reverse index of aliases defined above.
 REVERSE_MAPPING = {}
 for mapping in [COUNTRY_ALIASES, SUBDIVISION_ALIASES]:
     for alias_code, target_code in mapping.items():
         REVERSE_MAPPING.setdefault(target_code, set()).add(alias_code)
-
-
-def territory_codes():
-    """ Return a set of recognized territory codes.
-
-    Are supported:
-        * ISO 3166-1 alpha-2 country codes
-        * ISO 3166-2 subdivision codes
-
-    .. deprecated:: 0.1.0
-
-       Please switch to supported_territory_codes
-    """
-    warnings.warn('Please switch to supported_territory_codes',
-                  DeprecationWarning)
-    return set(chain(
-        imap(attrgetter('alpha2'), countries),
-        imap(attrgetter('code'), subdivisions)))
 
 
 def supported_territory_codes():
