@@ -10,6 +10,12 @@ ChangeLog
 * Split territory utils out to their own file. See #3.
 
 
+0.2.1 (2014-12-22)
+------------------
+
+* Push a new release to fix cached desynced packages on cheeseshops and clones.
+
+
 0.2.0 (2014-12-18)
 ------------------
 
