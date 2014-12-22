@@ -42,6 +42,63 @@ the new European Directives on VAT, which requires all e-commerce shops to
 guess the locality of their EU customers depending on their billing address.
 
 
+Release process
+---------------
+
+Start from the ``develop`` branch:
+
+.. code-block:: bash
+
+    git clone git@github.com:online-labs/postal-address.git
+    git checkout develop
+
+Update revision to its release number and update change log:
+
+.. code-block:: bash
+
+    vi ./postal_address/__init__.py
+    vi ./CHANGES.rst
+
+Create a release commit, tag it and merge it back to ``master`` branch:
+
+.. code-block:: bash
+
+    git add ./postal_address/__init__.py ./CHANGES.rst
+    git commit -m "Release vXX.XX.XX"
+    git tag "vXX.XX.XX"
+    git push
+    git push --tags
+    git checkout master
+    git pull
+    git merge "vXX.XX.XX"
+    git push
+
+Push packaging to the test cheeseshop:
+
+.. code-block:: bash
+
+    python setup.py register -r testpypi
+    pip install wheel
+    python setup.py sdist bdist_egg bdist_wheel upload -r testpypi
+
+Publish packaging to PyPi:
+
+.. code-block:: bash
+
+    python setup.py register -r pypi
+    python setup.py sdist bdist_egg bdist_wheel upload -r pypi
+
+Bump revision back to its development state:
+
+.. code-block:: bash
+
+    git checkout develop
+    vi ./postal_address/__init__.py
+    vi ./CHANGES.rst
+    git add ./postal_address/__init__.py ./CHANGES.rst
+    git commit -m "Post release version bump."
+
+
 License
 -------
 
