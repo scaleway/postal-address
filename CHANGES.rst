@@ -6,6 +6,8 @@ ChangeLog
 ------------------
 
 * Remove backward compatibility with 0.1.0.
+* Allow direct import of classes from module root.
+* Split territory utils out to their own file. See #3.
 
 
 0.2.0 (2014-12-18)
