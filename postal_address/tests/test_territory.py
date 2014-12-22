@@ -132,11 +132,28 @@ class TestTerritory(unittest.TestCase):
             list(territory_parents_codes('NL-BQ3')),
             ['BQ-SE', 'BQ'])
 
+        # Non 1:1 alias mapping should be non-destructive and keep the
+        # subdivision.
+        #self.assertEquals(
+        #    list(territory_parents_codes('NO-22')),
+        #    ['NO-22', 'SJ'])
+
     def test_country_aliases(self):
         self.assertEquals(country_aliases('UM-67'), set(['US', 'UM']))
         self.assertEquals(country_aliases('UM'), set(['US', 'UM']))
         self.assertEquals(country_aliases('US'), set(['US']))
+
         self.assertEquals(country_aliases('BQ-BO'), set(['NL', 'BQ']))
+        #self.assertEquals(country_aliases('NL-BQ2'), set(['NL', 'BQ']))
+
+        #self.assertEquals(country_aliases('NO-21'), set(['SJ', 'NO']))
+
+        #self.assertEquals(country_aliases('DG'), set(['DG', 'IO']))
+        #self.assertEquals(country_aliases('IO'), set(['DG', 'IO']))
+
+        #self.assertEquals(country_aliases('FR'), set(['FR', 'FX']))
+        #self.assertEquals(country_aliases('FR-CP'), set(['FR', 'CP', 'FX']))
+        #self.assertEquals(country_aliases('CP'), set(['FR', 'CP', 'FX']))
 
     def test_subdivision_type_id_conversion(self):
         # Conversion of subdivision types into IDs must be python friendly
