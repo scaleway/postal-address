@@ -35,8 +35,8 @@ all.
 
 Don't get me wrong, this work is a huge undertaking. Postal address parsing,
 normalization and rendering is hard. Much harder than you think. Please read the
-famous [*Falsehoods programmers believe about addresses*]
-(http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/)
+famous `*Falsehoods programmers believe about addresses*
+<http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/>`_
 pamphlet.
 
 This library is still in its early stages, but is good enough to implement
