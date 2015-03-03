@@ -36,10 +36,6 @@ u""" Utilities for address parsing and rendering.
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
-from itertools import chain
-from operator import attrgetter
-import warnings
-
 from pycountry import countries, subdivisions
 from slugify import slugify
 

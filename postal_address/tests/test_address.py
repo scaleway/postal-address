@@ -21,8 +21,6 @@
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
-from operator import attrgetter
-import re
 import unittest
 
 from pycountry import countries, subdivisions
