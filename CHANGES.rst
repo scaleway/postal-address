@@ -8,6 +8,10 @@ ChangeLog
 * Remove backward compatibility with 0.1.0.
 * Allow direct import of classes from module root.
 * Split territory utils out to their own file. See #3.
+* Rename ``normalize_country_code`` to ``country_from_subdivision``. Mark the
+  former as deprecated.
+* Address normalization is now non-blocking. It simply reset invalid components
+  to None. Only a call to ``validate`` method check data consistency.
 
 
 0.2.1 (2014-12-22)

@@ -40,15 +40,8 @@ from pycountry import countries, subdivisions
 from slugify import slugify
 
 from .territory import (
-    default_subdivision_code, normalize_country_code, territory_parents)
-
-
-try:
-    from itertools import imap
-except ImportError:  # pragma: no cover
-    basestring = (str, bytes)
-    unicode = str
-    imap = map
+    country_from_subdivision, default_subdivision_code,
+    normalize_territory_code, territory_parents)
 
 
 class Address(object):
@@ -200,7 +193,12 @@ class Address(object):
         return separator.join(lines)
 
     def normalize(self):
-        """ Normalize address fields between themselves.
+        """ Normalize address fields.
+
+        If values are unrecognized or invalid, they will be set to None.
+
+        You need to call back ``validate`` method afterwards to properly check
+        that the fully-qualified address is valid.
         """
         # Clean-up all fields.
         empty_components = []
@@ -215,11 +213,17 @@ class Address(object):
         for component_id in empty_components:
             del self[component_id]
 
-        # Normalize territory codes.
-        if self.country_code:
-            self.country_code = self.country_code.upper()
-        if self.subdivision_code:
-            self.subdivision_code = self.subdivision_code.upper()
+        # Normalize territory codes. Unrecognized territory codes are reset
+        # to None.
+        for territory_id in ['country_code', 'subdivision_code']:
+            territory_code = getattr(self, territory_id)
+            if territory_code:
+                try:
+                    code = normalize_territory_code(
+                        territory_code, resolve_aliases=False)
+                except ValueError:
+                    code = None
+                setattr(self, territory_id, code)
 
         # Swap lines if the first is empty.
         if self.line2 and not self.line1:
@@ -236,8 +240,9 @@ class Address(object):
         # Populate address components with metadata of all subdivision parents.
         if self.subdivision_code:
             parent_metadata = {
-                # Any subdivision has a parent country.
-                'country_code': normalize_country_code(self.subdivision_code)}
+                # All subdivisions have a parent country.
+                'country_code': country_from_subdivision(
+                    self.subdivision_code)}
 
             # Add metadata of each subdivision parent.
             for parent_subdiv in territory_parents(
@@ -274,6 +279,8 @@ class Address(object):
 
     def validate(self):
         """ Check fields consistency and requirements.
+
+        Properly check that fields are consistent between themselves.
         """
 
         # Check that the subdivision code exists.
@@ -295,7 +302,7 @@ class Address(object):
 
         # Check country consistency against subdivision.
         if self.country_code and self.subdivision_code and \
-                normalize_country_code(
+                country_from_subdivision(
                     self.subdivision_code) != self.country_code:
             raise ValueError(
                 "{!r} country is not a parent {!r} subdivision.".format(

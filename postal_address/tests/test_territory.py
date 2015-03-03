@@ -29,7 +29,7 @@ from pycountry import countries, subdivisions
 from postal_address.address import (
     Address, subdivision_metadata, subdivision_type_id)
 from postal_address.territory import (
-    default_subdivision_code, normalize_country_code,
+    country_from_subdivision, default_subdivision_code,
     supported_territory_codes, country_aliases,
     territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES)
 
@@ -78,12 +78,12 @@ class TestTerritory(unittest.TestCase):
             if len(target_code) != 2:
                 target_code = subdivisions.get(code=target_code).country_code
             self.assertEquals(
-                normalize_country_code(subdiv_code), target_code)
+                country_from_subdivision(subdiv_code), target_code)
         for subdiv_code in set(
                 imap(attrgetter('code'), subdivisions)).difference(
                     SUBDIVISION_ALIASES):
             self.assertEquals(
-                normalize_country_code(subdiv_code),
+                country_from_subdivision(subdiv_code),
                 subdivisions.get(code=subdiv_code).country_code)
 
     def test_default_subdivision_code(self):

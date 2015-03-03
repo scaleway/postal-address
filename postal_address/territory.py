@@ -134,16 +134,44 @@ def normalize_territory_code(territory_code, resolve_aliases=True):
 
 
 def normalize_country_code(subdivision_code):
-    """ Return the normalized country code of a subdivisions.
+    """ Return the normalized country code from a subdivision code.
+
+    If no country is found, or the subdivision code is incorrect, ``None`` is
+    returned.
+
+    For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
+    the later instead of the parent ISO 3166-2 top entry.
+
+    .. deprecated:: 0.3.0
+
+       Use country_from_subdivision instead.
+    """
+    warnings.warn('Please use country_from_subdivision', DeprecationWarning)
+    return country_from_subdivision(subdivision_code)
+
+
+def country_from_subdivision(subdivision_code):
+    """ Return the normalized country code from a subdivision code.
+
+    If no country is found, or the subdivision code is incorrect, ``None`` is
+    returned.
 
     For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
     the later instead of the parent ISO 3166-2 top entry.
     """
-    normalized_code = SUBDIVISION_ALIASES.get(
-        subdivision_code, subdivisions.get(code=subdivision_code).country_code)
-    if normalized_code not in imap(attrgetter('alpha2'), countries):
-        normalized_code = subdivisions.get(code=normalized_code).country_code
-    return normalized_code
+    # Resolve subdivision alias.
+    code = SUBDIVISION_ALIASES.get(subdivision_code, subdivision_code)
+
+    # We have a country code, return it right away.
+    if code in imap(attrgetter('alpha2'), countries):
+        return code
+
+    # Try to extract country code from subdivision.
+    try:
+        subdiv = subdivisions.get(code=code)
+    except KeyError:
+        return None
+    return subdiv.country_code
 
 
 def default_subdivision_code(country_code):

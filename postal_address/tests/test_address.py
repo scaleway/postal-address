@@ -25,20 +25,7 @@ import unittest
 
 from pycountry import countries, subdivisions
 
-from postal_address.address import (
-    Address, subdivision_metadata, subdivision_type_id)
-from postal_address.territory import (
-    default_subdivision_code, normalize_country_code,
-    supported_territory_codes, country_aliases,
-    territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES)
-
-
-try:
-    from itertools import imap
-except ImportError:  # pragma: no cover
-    basestring = (str, bytes)
-    unicode = str
-    imap = map
+from postal_address.address import Address
 
 
 class TestAddress(unittest.TestCase):
@@ -106,6 +93,36 @@ class TestAddress(unittest.TestCase):
             subdivision_code='')
         self.assertEquals(address.line2, None)
         self.assertEquals(address.subdivision_code, None)
+
+    def test_invalid_code_normalization(self):
+        # Invalid country and subdivision codes are normalized to None.
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
+            city_name='Paris',
+            subdivision_code='42')
+        self.assertEquals(address.country_code, None)
+        self.assertEquals(address.subdivision_code, None)
+        self.assertEquals(address.valid, False)
+
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
+            city_name='Paris',
+            country_code='MARS')
+        self.assertEquals(address.country_code, None)
+        self.assertEquals(address.subdivision_code, None)
+        self.assertEquals(address.valid, False)
+
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
+            city_name='Paris',
+            country_code='MARS',
+            subdivision_code='42')
+        self.assertEquals(address.country_code, None)
+        self.assertEquals(address.subdivision_code, None)
+        self.assertEquals(address.valid, False)
 
     def test_space_normalization(self):
         address = Address(
