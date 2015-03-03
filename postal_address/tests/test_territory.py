@@ -37,8 +37,6 @@ from postal_address.territory import (
 try:
     from itertools import imap
 except ImportError:  # pragma: no cover
-    basestring = (str, bytes)
-    unicode = str
     imap = map
 
 
