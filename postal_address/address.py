@@ -36,6 +36,11 @@ u""" Utilities for address parsing and rendering.
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
+try:
+    basestring
+except ImportError:  # pragma: no cover
+    basestring = (str, bytes)
+
 from pycountry import countries, subdivisions
 from slugify import slugify
 
