@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.3.0 (unreleased)
+0.3.0 (2015-03-04)
 ------------------
 
 * Remove backward compatibility with 0.1.0.
