@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2014 Online SAS and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2015 Online SAS and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@ocs.online.net>
 #                         Gilles Dartiguelongue <gdartiguelongue@ocs.online.net>
 #
