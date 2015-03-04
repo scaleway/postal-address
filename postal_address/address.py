@@ -38,7 +38,7 @@ from __future__ import (unicode_literals, print_function, absolute_import,
 
 try:
     basestring
-except ImportError:  # pragma: no cover
+except NameError:  # pragma: no cover
     basestring = (str, bytes)
 
 from pycountry import countries, subdivisions
