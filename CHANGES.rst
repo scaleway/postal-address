@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.3.1 (unreleased)
+0.3.1 (2015-03-05)
 ------------------
 
 * Fix rendering of state in address.
