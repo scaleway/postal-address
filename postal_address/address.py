@@ -181,8 +181,8 @@ class Address(object):
         line3_elements = []
         if self.city_name:
             line3_elements.append(self.city_name)
-        if hasattr(self, 'state'):
-            line3_elements.append(self.state)
+        if hasattr(self, 'state_name'):
+            line3_elements.append(self.state_name)
         # Separate city and state by a comma.
         line3_elements = [', '.join(line3_elements)]
         if self.postal_code:

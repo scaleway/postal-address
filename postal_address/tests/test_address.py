@@ -393,3 +393,15 @@ class TestAddress(unittest.TestCase):
                 postal_code='EC1A 1HQ',
                 city_name='Paris',
                 subdivision_code='GB-LND')
+
+    def test_rendering(self):
+        address = Address(
+            line1='Platz der Republik 1',
+            postal_code='11011',
+            city_name='Berlin',
+            subdivision_code='DE-BE')
+        self.assertEquals(
+            address.render(),
+            """Platz der Republik 1
+11011 - Berlin, Berlin
+Germany""")
