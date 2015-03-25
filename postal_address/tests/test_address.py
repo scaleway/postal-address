@@ -41,6 +41,11 @@ class TestAddress(unittest.TestCase):
         self.assertTrue(address)
         self.assertFalse(not address)
 
+    def test_bad_field(self):
+        with self.assertRaises(KeyError):
+            address = Address(
+                bad_field='Blah blah blah')
+
     def test_default_values(self):
         address = Address(
             line1='10, avenue des Champs Elysées',
