@@ -8,6 +8,7 @@ ChangeLog
 * Show subdivision as-is in rendered address if not already printed by state,
   country or city.
 * Document stability policy. Closes #8.
+* Change internals to refer to address components as ``fields``.
 
 
 0.3.3 (2015-03-25)

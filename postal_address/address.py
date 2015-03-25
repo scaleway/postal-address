@@ -137,130 +137,149 @@ class Address(object):
 
     """ Define a postal address.
 
-    Only provides address validation for the moment, but may be used in the
-    future for l10n-aware normalization and rendering.
+    All addresses share the following fields:
+    * ``line1`` (required): a non-constrained string.
+    * ``line2``: a non-constrained string.
+    * ``postal_code`` (required): a non-constrained string (see issue #2).
+    * ``city_name`` (required): a non-constrained string.
+    * ``country_code`` (required): an ISO 3166-1 alpha-2 code.
+    * ``subdivision_code``: an ISO 3166-2 code.
 
-    ``country_code`` is an ISO 3166-1 alpha-2 code.
-    ``subdivision_code`` is an ISO 3166-2 code.
+    At instanciation, the ``normalize()`` method is called. The latter try to
+    clean-up the data and populate empty fields that can be derived from
+    others. As such, ``city_name`` can be overriden by ``subdivision_code``.
+    See the internal ``SUBDIVISION_METADATA_WHITELIST`` constant.
+
+    If inconsistencies are found at the normalization step, they are left as-is
+    to give a chance to the ``validate()`` method to catch them. Which means
+    that, after each normalization (including the one at initialization), it is
+    your job to call the ``validate()`` method manually to check that the
+    address is good.
     """
 
-    # All normalized IDs and values of postal address components are stored
-    # here.
-    # _components = {}
+    # All normalized field's IDs and values of the address are stored here.
+    # _fields = {}
 
-    # Base components of postal address. Those are free-form fields, allowed
+    # Fields common to any postal address. Those are free-form fields, allowed
     # to be set directly by the user, although their values might be normalized
     # and clean-up automatticaly by the validation method.
-    BASE_COMPONENT_IDS = frozenset([
+    BASE_FIELD_IDS = frozenset([
         'line1', 'line2', 'postal_code', 'city_name', 'country_code',
         'subdivision_code'])
 
     # List of subdivision-derived metadata IDs which are allowed to collide
-    # with base component IDs.
+    # with base field IDs.
     SUBDIVISION_METADATA_WHITELIST = frozenset(['city_name'])
-    assert SUBDIVISION_METADATA_WHITELIST.issubset(BASE_COMPONENT_IDS)
+    assert SUBDIVISION_METADATA_WHITELIST.issubset(BASE_FIELD_IDS)
 
     # Fields tested on validate().
     REQUIRED_FIELDS = frozenset([
         'line1', 'postal_code', 'city_name', 'country_code'])
-    assert REQUIRED_FIELDS.issubset(BASE_COMPONENT_IDS)
+    assert REQUIRED_FIELDS.issubset(BASE_FIELD_IDS)
 
     def __init__(self, **kwargs):
-        """ Set address' individual components and normalize them. """
-        # Only base components are allowed to be set directly.
-        unknown_components = set(kwargs).difference(self.BASE_COMPONENT_IDS)
-        if unknown_components:
+        """ Set address' individual fields and normalize them. """
+        # Only common fields are allowed to be set directly.
+        unknown_fields = set(kwargs).difference(self.BASE_FIELD_IDS)
+        if unknown_fields:
             raise KeyError(
-                "{!r} components are not allowed to be set freely.".format(
-                    unknown_components))
-        # Initialize base components values.
-        self._components = dict.fromkeys(self.BASE_COMPONENT_IDS)
-        # Load provided components.
-        self._components.update(kwargs)
+                "{!r} fields are not allowed to be set freely.".format(
+                    unknown_fields))
+        # Initialize base fields values.
+        self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
+        # Load provided fields.
+        self._fields.update(kwargs)
         # Normalize addresses fields.
         self.normalize()
 
     def __repr__(self):
-        """ Print all components of the address. """
+        """ Print all fields available from the address. """
         return '{}({})'.format(
             self.__class__.__name__,
             ', '.join([
-                '{}={!r}'.format(k, v) for k, v in self._components.items()]))
+                '{}={!r}'.format(k, v) for k, v in self._fields.items()]))
 
     def __str__(self):
         """ Return a simple string representation of the address block. """
         return self.render()
 
     def __getattr__(self, name):
-        """ Expose components as attributes. """
-        if name in self._components or name in self.BASE_COMPONENT_IDS:
-            return self._components.get(name, None)
+        """ Expose fields as attributes. """
+        if name in self._fields or name in self.BASE_FIELD_IDS:
+            return self._fields.get(name, None)
         raise AttributeError
 
     def __setattr__(self, name, value):
-        """ Allow update of address components as an attribute. """
-        if name in self.BASE_COMPONENT_IDS:
-            self._components[name] = value
+        """ Allow update of address fields as attributes. """
+        if name in self.BASE_FIELD_IDS:
+            self._fields[name] = value
             return
         super(Address, self).__setattr__(name, value)
 
-    # Let an address be accessed like a dict of its components IDs & values.
+    # Let an address be accessed like a dict of its fields IDs & values.
 
     def __len__(self):
-        """ Return the number of components. """
-        return len(self._components)
+        """ Return the number of fields. """
+        return len(self._fields)
 
     def __getitem__(self, key):
-        """ Return value of a component. """
+        """ Return the value of a field. """
         if not isinstance(key, basestring):
             raise TypeError
-        return self._components[key]
+        return self._fields[key]
 
     def __setitem__(self, key, value):
-        """ Set a component value. """
+        """ Set a field's value. """
         if not isinstance(key, basestring):
             raise TypeError
-        if key not in self._components:
+        if key not in self._fields:
             raise KeyError
-        self._components[key] = value
+        self._fields[key] = value
 
     def __delitem__(self, key):
-        """ Remove component. """
-        if key in self.BASE_COMPONENT_IDS:
-            self._components[key] = None
+        """ Remove a field. """
+        if key in self.BASE_FIELD_IDS:
+            self._fields[key] = None
         else:
-            del self._components[key]
+            del self._fields[key]
 
     def __iter__(self):
-        """ Iterate over component IDs. """
-        for component_id in self._components:
-            yield component_id
+        """ Iterate over field IDs. """
+        for field_id in self._fields:
+            yield field_id
 
     def keys(self):
-        """ Return a list of component IDs. """
-        return self._components.keys()
+        """ Return a list of field IDs. """
+        return self._fields.keys()
 
     def values(self):
-        """ Return a list of component values. """
-        return self._components.values()
+        """ Return a list of field values. """
+        return self._fields.values()
 
     def items(self):
-        """ Return a list of components IDs & values. """
-        return self._components.items()
+        """ Return a list of field IDs & values. """
+        return self._fields.items()
 
     def render(self, separator='\n'):
         """ Render a human-friendly address block.
 
-        ``line1`` & ``line2`` are rendered as-is.
-        A third line is composed of ``postal_code``, ``city_name`` and
-        ``state``.
-        The last line feature country's common name.
+        The block is composed of:
+        * The ``line1`` field rendered as-is if not empty.
+        * The ``line2`` field rendered as-is if not empty.
+        * A third line made of the postal code, the city name and state name if
+          any is set.
+        * A fourth optionnal line with the subdivision name if its value does
+          not overlap with the city, state or country name.
+        * The last line feature country's common name.
         """
         lines = []
+
         if self.line1:
             lines.append(self.line1)
+
         if self.line2:
             lines.append(self.line2)
+
         # Build the third line.
         line3_elements = []
         if self.city_name:
@@ -275,6 +294,7 @@ class Address(object):
         line3 = ' - '.join(line3_elements)
         if line3:
             lines.append(line3)
+
         # Compare the vanilla subdivision name to properties that are based on
         # it and used in the current ``render()`` method to produce a printable
         # address. If none overlap, then print an additional line with the
@@ -287,10 +307,12 @@ class Address(object):
             if hasattr(self, prop_id)]
         if self.subdivision_name not in subdiv_based_values:
             lines.append(self.subdivision_name)
+
         # Place the country line at the end.
         if self.country_name:
             lines.append(self.country_name)
-        # Render the address block.
+
+        # Render the address block with the provided separator.
         return separator.join(lines)
 
     def normalize(self):
@@ -298,21 +320,20 @@ class Address(object):
 
         If values are unrecognized or invalid, they will be set to None.
 
-        You need to call back ``validate`` method afterwards to properly check
-        that the fully-qualified address is valid.
+        You need to call back the ``validate()`` method afterwards to properly
+        check that the fully-qualified address is ready for consumption.
         """
         # Clean-up all fields.
-        empty_components = []
-        for component_id in self._components:
+        empty_fields = []
+        for field_id in self._fields:
             # Remove leading and trailing white spaces.
-            if isinstance(self._components[component_id], basestring):
-                self._components[component_id] = self._components[
-                    component_id].strip()
+            if isinstance(self._fields[field_id], basestring):
+                self._fields[field_id] = self._fields[field_id].strip()
             # Get rid of empty/blank strings.
-            if not getattr(self, component_id):
-                empty_components.append(component_id)
-        for component_id in empty_components:
-            del self[component_id]
+            if not getattr(self, field_id):
+                empty_fields.append(field_id)
+        for field_id in empty_fields:
+            del self[field_id]
 
         # Normalize territory codes. Unrecognized territory codes are reset
         # to None.
@@ -338,7 +359,8 @@ class Address(object):
             if self.subdivision_code:
                 self.country_code = None
 
-        # Populate address components with metadata of all subdivision parents.
+        # Automaticcaly populate address fields with metadata extracted from
+        # all subdivision parents.
         if self.subdivision_code:
             parent_metadata = {
                 # All subdivisions have a parent country.
@@ -350,17 +372,17 @@ class Address(object):
                     self.subdivision_code, include_country=False):
                 parent_metadata.update(subdivision_metadata(parent_subdiv))
 
-            # Parent metadata are not allowed to overwrite address components
+            # Parent metadata are not allowed to overwrite address fields
             # if not blank.
-            for component_id, new_value in parent_metadata.items():
+            for field_id, new_value in parent_metadata.items():
                 assert new_value  # New metadata are not allowed to be blank.
-                current_value = self._components.get(component_id)
-                if current_value and component_id in self.BASE_COMPONENT_IDS:
+                current_value = self._fields.get(field_id)
+                if current_value and field_id in self.BASE_FIELD_IDS:
 
                     # Build the list of substitute values that are equivalent
                     # to our new normalized target.
                     alias_values = set([new_value])
-                    if component_id == 'country_code':
+                    if field_id == 'country_code':
                         # Allow normalization if the current country code is
                         # the direct parent of a subdivision which also have
                         # its own country code.
@@ -373,10 +395,10 @@ class Address(object):
                         raise ValueError(
                             "{} subdivision is trying to replace {}={!r} field"
                             " by {}={!r}".format(
-                                self.subdivision_code, component_id,
-                                current_value, component_id, new_value))
+                                self.subdivision_code, field_id, current_value,
+                                field_id, new_value))
 
-            self._components.update(parent_metadata)
+            self._fields.update(parent_metadata)
 
     def validate(self):
         """ Check fields consistency and requirements.
@@ -410,9 +432,9 @@ class Address(object):
                     self.country_code, self.subdivision_code))
 
         # Check that all required fields are set.
-        for field in self.REQUIRED_FIELDS:
-            if not getattr(self, field):
-                raise ValueError("Address requires {}.".format(field))
+        for field_id in self.REQUIRED_FIELDS:
+            if not getattr(self, field_id):
+                raise ValueError("Address requires {}.".format(field_id))
 
     @property
     def valid(self):
@@ -426,7 +448,7 @@ class Address(object):
     @property
     def empty(self):
         """ Return True only if all fields are empty. """
-        for value in set(self._components.values()):
+        for value in set(self._fields.values()):
             if value:
                 return False
         return True
@@ -618,10 +640,10 @@ def subdivision_metadata(subdivision):
         '{}_type_name'.format(subdiv_type_id): subdivision.type}
 
     # Check that we are not producing metadata IDs colliding with address
-    # components.
+    # fields.
     assert not set(metadata).difference(
         Address.SUBDIVISION_METADATA_WHITELIST).issubset(
-            Address.BASE_COMPONENT_IDS)
+            Address.BASE_FIELD_IDS)
 
     return metadata
 
