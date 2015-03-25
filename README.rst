@@ -100,6 +100,7 @@ Push packaging to the test cheeseshop:
 
     python setup.py register -r testpypi
     pip install wheel
+    rm -rf ./build ./dist
     python setup.py sdist bdist_egg bdist_wheel upload -r testpypi
 
 Publish packaging to PyPi:
@@ -107,6 +108,7 @@ Publish packaging to PyPi:
 .. code-block:: bash
 
     python setup.py register -r pypi
+    rm -rf ./build ./dist
     python setup.py sdist bdist_egg bdist_wheel upload -r pypi
 
 Bump revision back to its development state:
