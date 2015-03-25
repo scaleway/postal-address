@@ -191,7 +191,19 @@ class Address(object):
         line3 = ' - '.join(line3_elements)
         if line3:
             lines.append(line3)
-        # Build the last line.
+        # Compare the vanilla subdivision name to properties that are based on
+        # it and used in the current ``render()`` method to produce a printable
+        # address. If none overlap, then print an additional line with the
+        # subdivision name as-is to provide extra, non-redundant, territory
+        # precision.
+        subdiv_based_properties = [
+            'city_name', 'state_name', 'country_name']
+        subdiv_based_values = [
+            getattr(self, prop_id) for prop_id in subdiv_based_properties
+            if hasattr(self, prop_id)]
+        if self.subdivision_name not in subdiv_based_values:
+            lines.append(self.subdivision_name)
+        # Place the country line at the end.
         if self.country_name:
             lines.append(self.country_name)
         # Render the address block.

@@ -5,7 +5,8 @@ ChangeLog
 0.3.2 (unreleased)
 ------------------
 
-* No changes yet.
+* Show subdivision as-is in rendered address if not already printed by state,
+  country or city.
 
 
 0.3.1 (2015-03-05)

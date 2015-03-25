@@ -395,6 +395,19 @@ class TestAddress(unittest.TestCase):
                 subdivision_code='GB-LND')
 
     def test_rendering(self):
+        # Test rendering of a state.
+        address = Address(
+            line1='1600 Amphitheatre Parkway',
+            postal_code='94043',
+            city_name='Mountain View',
+            subdivision_code='US-CA')
+        self.assertEquals(
+            address.render(),
+            """1600 Amphitheatre Parkway
+94043 - Mountain View, California
+United States""")
+
+        # Test rendering of a city which is also its own state.
         address = Address(
             line1='Platz der Republik 1',
             postal_code='11011',
@@ -405,3 +418,40 @@ class TestAddress(unittest.TestCase):
             """Platz der Republik 1
 11011 - Berlin, Berlin
 Germany""")
+
+        # Test rendering of subdivision name as-is for extra precision.
+        address = Address(
+            line1='Dummy address',
+            postal_code='F-12345',
+            city_name='Dummy city',
+            country_code='CP')
+        self.assertEquals(
+            address.render(),
+            """Dummy address
+F-12345 - Dummy city
+Clipperton
+France""")
+
+        # Test deduplication of subdivision and country.
+        address = Address(
+            line1='Dummy address',
+            postal_code='F-12345',
+            city_name='Dummy city',
+            country_code='RE',
+            subdivision_code='FR-RE')
+        self.assertEquals(
+            address.render(),
+            """Dummy address
+F-12345 - Dummy city
+Réunion""")
+
+        # Test deduplication of subdivision and city.
+        address = Address(
+            line1='2 King Edward Street',
+            postal_code='EC1A 1HQ',
+            subdivision_code='GB-LND')
+        self.assertEquals(
+            address.render(),
+            """2 King Edward Street
+EC1A 1HQ - London, City of
+United Kingdom""")
