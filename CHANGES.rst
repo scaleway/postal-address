@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.3.2 (unreleased)
+0.4.0 (unreleased)
 ------------------
 
 * Show subdivision as-is in rendered address if not already printed by state,
