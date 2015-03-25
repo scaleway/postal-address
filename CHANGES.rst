@@ -2,6 +2,13 @@ ChangeLog
 =========
 
 
+0.3.2 (unreleased)
+------------------
+
+* Add backward compatibility to the ``0.2`` series following territory utils
+  split out of the ``address`` module. See #8.
+
+
 0.3.1 (2015-03-05)
 ------------------
 

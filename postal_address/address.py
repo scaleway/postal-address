@@ -22,15 +22,81 @@ u""" Utilities for address parsing and rendering.
 
 .. data:: COUNTRY_ALIASES
 
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
 .. data:: SUBDIVISION_ALIASES
 
-   Map subdivision ISO 3166-2 codes to their officially assigned ISO 3166-1
-   alpha-2 country codes. Source: https://en.wikipedia.org/wiki
-   /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
 
 .. data:: REVERSE_MAPPING
 
-   Reverse index of the SUBDIVISION_ALIASES mapping defined above.
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: supported_territory_codes()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: normalize_territory_code()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: normalize_country_code()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: default_subdivision_code()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: territory_tree()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: territory_parents()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: territory_parents_codes()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
+.. function:: country_aliases()
+
+   .. deprecated:: 0.3.0
+
+      Import from ``postal_address.territory`` instead of
+      ``postal_address.address``.
+
 """
 
 from __future__ import (unicode_literals, print_function, absolute_import,
@@ -41,12 +107,60 @@ try:
 except NameError:  # pragma: no cover
     basestring = (str, bytes)
 
+import warnings
+
 from pycountry import countries, subdivisions
 from slugify import slugify
 
 from .territory import (
     country_from_subdivision, default_subdivision_code,
     normalize_territory_code, territory_parents)
+# Territory utils below are now used locally but provides backward-
+# compatibility following their splitting out of the ``address`` module.
+# See issue #8 and commit b7eb50.
+warnings.warn(
+    'COUNTRY_ALIASES has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'SUBDIVISION_ALIASES has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'REVERSE_MAPPING has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'supported_territory_codes has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'normalize_territory_code has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'normalize_country_code has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'default_subdivision_code has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'territory_tree has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'territory_parents has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'territory_parents_codes has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+warnings.warn(
+    'country_aliases has been moved from postal_address.address to '
+    'postal_address.territory.', DeprecationWarning)
+from .territory import (
+    COUNTRY_ALIASES,
+    SUBDIVISION_ALIASES,
+    REVERSE_MAPPING,
+    supported_territory_codes,
+    normalize_country_code,
+    territory_tree,
+    territory_parents_codes,
+    country_aliases,
+)
 
 
 class Address(object):
