@@ -615,7 +615,7 @@ def subdivision_type_id(subdivision):
         state
         zone
 
-    This method transform and normalize any of these into Python-firendly IDs.
+    This method transform and normalize any of these into Python-friendly IDs.
     """
     type_id = slugify(subdivision.type, to_lower=True).replace('-', '_')
 
