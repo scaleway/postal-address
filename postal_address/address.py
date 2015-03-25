@@ -502,7 +502,7 @@ def subdivision_type_id(subdivision):
     type_id = slugify(subdivision.type, to_lower=True).replace('-', '_')
 
     # Any occurence of the 'city' or 'municipality' string in the type
-    # overrides its classification as a city.
+    # overrides its classification to a city.
     if set(['city', 'municipality']).intersection(type_id.split('_')):
         type_id = 'city'
 
