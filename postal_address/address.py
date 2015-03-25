@@ -20,6 +20,9 @@
 
 u""" Utilities for address parsing and rendering.
 
+Only provides address validation for the moment, but may be used in the future
+for localized rendering (see issue #4).
+
 .. data:: COUNTRY_ALIASES
 
    .. deprecated:: 0.3.0
