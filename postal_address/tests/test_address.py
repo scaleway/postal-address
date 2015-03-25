@@ -444,6 +444,28 @@ France""")
             """Dummy address
 F-12345 - Dummy city
 Réunion""")
+        address = Address(
+            line1='Dummy address',
+            postal_code='F-12345',
+            city_name='Dummy city',
+            country_code='IC')
+        self.assertEquals(
+            address.render(),
+            """Dummy address
+F-12345 - Dummy city
+Canarias
+Spain""")
+        address = Address(
+            line1='Dummy address',
+            postal_code='F-12345',
+            city_name='Dummy city',
+            subdivision_code='ES-CN')
+        self.assertEquals(
+            address.render(),
+            """Dummy address
+F-12345 - Dummy city
+Canarias
+Spain""")
 
         # Test deduplication of subdivision and city.
         address = Address(
