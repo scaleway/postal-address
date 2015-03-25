@@ -7,6 +7,7 @@ ChangeLog
 
 * Show subdivision as-is in rendered address if not already printed by state,
   country or city.
+* Document stability policy. Closes #8.
 
 
 0.3.1 (2015-03-05)
