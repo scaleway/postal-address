@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.3.2 (unreleased)
+0.3.2 (2015-03-25)
 ------------------
 
 * Add backward compatibility to the ``0.2`` series following territory utils
