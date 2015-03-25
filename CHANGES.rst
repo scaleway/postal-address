@@ -9,6 +9,8 @@ ChangeLog
   country or city.
 * Document stability policy. Closes #8.
 * Change internals to refer to address components as ``fields``.
+* Raise custom exception on address validation a detailed list of invalid
+  fields in one go. Closes #7.
 
 
 0.3.3 (2015-03-25)

@@ -136,6 +136,40 @@ from .territory import (
 )
 
 
+class InvalidAddress(Exception):
+    """ Custom exception providing details about address failing validation.
+    """
+
+    def __init__(self, required_fields=None, invalid_fields=None,
+                 inconsistent_fields=None, extra_msg=None):
+        """ Exception keep internally a classification of bad fields. """
+        super(InvalidAddress, self).__init__()
+        self.required_fields = required_fields if required_fields else set()
+        self.invalid_fields = invalid_fields if invalid_fields else set()
+        self.inconsistent_fields = inconsistent_fields if inconsistent_fields \
+            else set()
+        self.extra_msg = extra_msg
+
+    def __str__(self):
+        """ Human-readable error. """
+        reasons = []
+        if self.required_fields:
+            reasons.append('{} {} required'.format(
+                ', '.join(self.required_fields),
+                'is' if len(self.required_fields) == 1 else 'are'))
+        if self.invalid_fields:
+            reasons.append('{} {} invalid'.format(
+                ', '.join(self.invalid_fields),
+                'is' if len(self.invalid_fields) == 1 else 'are'))
+        if self.inconsistent_fields:
+            for field_id_1, field_id_2 in self.inconsistent_fields:
+                reasons.append('{} is inconsistent with {}'.format(
+                    field_id_1, field_id_2))
+        if self.extra_msg:
+            reasons.append(self.extra_msg)
+        return '{}.'.format('; '.join(reasons))
+
+
 class Address(object):
 
     """ Define a postal address.
@@ -395,56 +429,68 @@ class Address(object):
                     # Change of current value is allowed if it is a direct
                     # substitute to our new normalized value.
                     if current_value not in alias_values:
-                        raise ValueError(
-                            "{} subdivision is trying to replace {}={!r} field"
-                            " by {}={!r}".format(
-                                self.subdivision_code, field_id, current_value,
+                        raise InvalidAddress(
+                            inconsistent_fields=set([
+                                (field_id, 'subdivision_code')]),
+                            extra_msg="{} subdivision is trying to replace "
+                            "{}={!r} field by {}={!r}".format(
+                                self.subdivision_code,
+                                field_id, current_value,
                                 field_id, new_value))
 
             self._fields.update(parent_metadata)
 
     def validate(self):
-        """ Check fields consistency and requirements.
+        """ Check fields consistency and requirements in one go.
 
-        Properly check that fields are consistent between themselves.
+        Properly check that fields are consistent between themselves, and only
+        raise an exception at the end, for the whole address object. Our custom
+        exception will provide a detailed status of bad fields.
         """
-
-        # Check that the subdivision code exists.
-        if self.subdivision_code:
-            try:
-                subdivisions.get(code=self.subdivision_code)
-            except KeyError:
-                raise ValueError(
-                    "Invalid {!r} subdivision code.".format(
-                        self.subdivision_code))
-
-        # Check that the country code exists.
-        if self.country_code:
-            try:
-                countries.get(alpha2=self.country_code)
-            except KeyError:
-                raise ValueError(
-                    "Invalid {!r} country code.".format(self.country_code))
-
-        # Check country consistency against subdivision.
-        if self.country_code and self.subdivision_code and \
-                country_from_subdivision(
-                    self.subdivision_code) != self.country_code:
-            raise ValueError(
-                "{!r} country is not a parent {!r} subdivision.".format(
-                    self.country_code, self.subdivision_code))
+        # Keep a classification of bad fields along the validation process.
+        required_fields = set()
+        invalid_fields = set()
+        inconsistent_fields = set()
 
         # Check that all required fields are set.
         for field_id in self.REQUIRED_FIELDS:
             if not getattr(self, field_id):
-                raise ValueError("Address requires {}.".format(field_id))
+                required_fields.add(field_id)
+
+        # Check all fields for invalidity, only if not previously flagged as
+        # required.
+        if 'country_code' not in required_fields:
+            # Check that the country code exists.
+            try:
+                countries.get(alpha2=self.country_code)
+            except KeyError:
+                invalid_fields.add('country_code')
+        if self.subdivision_code and 'subdivision_code' not in required_fields:
+            # Check that the country code exists.
+            try:
+                subdivisions.get(code=self.subdivision_code)
+            except KeyError:
+                invalid_fields.add('subdivision_code')
+
+        # Check country consistency against subdivision, only if none of the
+        # two fields were previously flagged as required or invalid.
+        if not set(['country_code', 'subdivision_code']).intersection(
+                required_fields.union(invalid_fields)) and \
+                country_from_subdivision(
+                    self.subdivision_code) != self.country_code:
+            inconsistent_fields.add(('country_code', 'subdivision_code'))
+
+        # Raise our custom exception at last.
+        if required_fields or invalid_fields or inconsistent_fields:
+            raise InvalidAddress(
+                required_fields, invalid_fields, inconsistent_fields)
 
     @property
     def valid(self):
         """ Return a boolean indicating if the address is valid. """
         try:
             self.validate()
-        except ValueError:
+        except InvalidAddress:
             return False
         return True
 
