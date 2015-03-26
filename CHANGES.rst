@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.4.3 (unreleased)
+0.4.3 (2015-03-26)
 ------------------
 
 * Fix rendering of subdivision-less addresses.
