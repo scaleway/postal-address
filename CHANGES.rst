@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.4.1 (unreleased)
+0.4.1 (2015-03-26)
 ------------------
 
 * Base our custom ``InvalidAddress`` exception on ``ValueError`` to increase
