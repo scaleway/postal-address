@@ -136,7 +136,7 @@ from .territory import (
 )
 
 
-class InvalidAddress(Exception):
+class InvalidAddress(ValueError):
     """ Custom exception providing details about address failing validation.
     """
 

@@ -5,7 +5,8 @@ ChangeLog
 0.4.1 (unreleased)
 ------------------
 
-* No changes yet.
+* Base our custom ``InvalidAddress`` exception on ``ValueError`` to increase
+  backward compatibility.
 
 
 0.4.0 (2015-03-25)
