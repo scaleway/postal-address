@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.4.2 (unreleased)
+0.4.2 (2015-03-26)
 ------------------
 
 * Fix ``country_code`` to ``subdivision_code`` validation if the latter is not
