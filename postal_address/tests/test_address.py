@@ -515,6 +515,18 @@ class TestAddress(unittest.TestCase):
             err.inconsistent_fields, set([('city_name', 'subdivision_code')]))
 
     def test_rendering(self):
+        # Test subdivision-less rendering.
+        address = Address(
+            line1='BP 438',
+            postal_code='75366',
+            city_name='Paris CEDEX 08',
+            country_code='FR')
+        self.assertEquals(
+            address.render(),
+            """BP 438
+75366 - Paris CEDEX 08
+France""")
+
         # Test rendering of a state.
         address = Address(
             line1='1600 Amphitheatre Parkway',

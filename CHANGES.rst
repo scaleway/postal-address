@@ -5,7 +5,7 @@ ChangeLog
 0.4.3 (unreleased)
 ------------------
 
-* No changes yet.
+* Fix rendering of subdivision-less addresses.
 
 
 0.4.2 (2015-03-26)

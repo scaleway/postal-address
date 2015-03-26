@@ -342,7 +342,8 @@ class Address(object):
         subdiv_based_values = [
             getattr(self, prop_id) for prop_id in subdiv_based_properties
             if hasattr(self, prop_id)]
-        if self.subdivision_name not in subdiv_based_values:
+        if self.subdivision_name and \
+                self.subdivision_name not in subdiv_based_values:
             lines.append(self.subdivision_name)
 
         # Place the country line at the end.
