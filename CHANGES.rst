@@ -5,7 +5,8 @@ ChangeLog
 0.4.2 (unreleased)
 ------------------
 
-* No changes yet.
+* Fix ``country_code`` to ``subdivision_code`` validation if the latter is not
+  set.
 
 
 0.4.1 (2015-03-26)

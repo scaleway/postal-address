@@ -89,6 +89,16 @@ class TestAddress(unittest.TestCase):
             self.assertEquals(getattr(address, key), address[key])
 
     def test_address_validation(self):
+        # Test valid address.
+        address = Address(
+            line1='address_line1',
+            line2='address_line2',
+            postal_code='75000',
+            city_name='Paris',
+            country_code='US',
+            subdivision_code=None)
+        self.assertEquals(address.valid, True)
+
         # Test required fields at validation.
         address = Address(
             line1=None,

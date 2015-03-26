@@ -474,8 +474,9 @@ class Address(object):
 
         # Check country consistency against subdivision, only if none of the
         # two fields were previously flagged as required or invalid.
-        if not set(['country_code', 'subdivision_code']).intersection(
-                required_fields.union(invalid_fields)) and \
+        if self.subdivision_code and not set(
+                ['country_code', 'subdivision_code']).intersection(
+                    required_fields.union(invalid_fields)) and \
                 country_from_subdivision(
                     self.subdivision_code) != self.country_code:
             inconsistent_fields.add(('country_code', 'subdivision_code'))
