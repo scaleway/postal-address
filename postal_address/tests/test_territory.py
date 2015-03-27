@@ -71,15 +71,24 @@ class TestTerritory(unittest.TestCase):
         # Check that all codes used in constants to define exceptionnal
         # treatment are valid and recognized.
         for subdiv_code, alias_code in SUBDIVISION_ALIASES.items():
-            self.assertIn(subdiv_code, supported_territory_codes())
-            self.assertIn(alias_code, supported_territory_codes())
-        for subdiv_code, alias_code in COUNTRY_ALIASES.items():
-            self.assertIn(alias_code, supported_territory_codes())
+            self.assertIn(subdiv_code, supported_subdivision_codes())
+            # Target alias is supposed to be a valid subdivision or country
+            # recognized by pycountry right away.
+            self.assertIn(
+                alias_code, set(imap(attrgetter('alpha2'), countries)).union(
+                    imap(attrgetter('code'), subdivisions)))
+
+        for country_code, alias_code in COUNTRY_ALIASES.items():
             # Aliased country codes are not supposed to be supported by
             # pycountry, as it's the main reason to define an alias in the
             # first place.
             self.assertNotIn(
-                subdiv_code, imap(attrgetter('alpha2'), countries))
+                country_code, imap(attrgetter('alpha2'), countries))
+            # Target alias is supposed to be a valid subdivision or country
+            # recognized by pycountry right away.
+            self.assertIn(
+                alias_code, set(imap(attrgetter('alpha2'), countries)).union(
+                    imap(attrgetter('code'), subdivisions)))
 
     def test_country_code_reconciliation(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
