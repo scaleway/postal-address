@@ -5,7 +5,8 @@ ChangeLog
 0.4.4 (unreleased)
 ------------------
 
-* No changes yet.
+* Remove deprecated ``territory.territory_tree()`` method which provide 0.1.0
+  backward compatibility. It should have been removed in the 0.3.0 release.
 
 
 0.4.3 (2015-03-26)

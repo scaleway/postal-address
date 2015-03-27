@@ -196,21 +196,6 @@ def default_subdivision_code(country_code):
         return default_subdivisions.pop()
 
 
-def territory_tree(territory_code, include_country=True):
-    """ Return the whole hierarchy of territories, up to the country.
-
-    Values returned by the generator are either subdivisions or country
-    objects, starting from the provided subdivision and up its way to
-    the top administrative territory (i.e. country).
-
-    .. deprecated:: 0.1.0
-
-       Use territory_parents instead.
-    """
-    warnings.warn('Please use territory_parents', DeprecationWarning)
-    return territory_parents(territory_code, include_country)
-
-
 def territory_parents(territory_code, include_country=True):
     """ Return the whole hierarchy of territories, up to the country.
 
