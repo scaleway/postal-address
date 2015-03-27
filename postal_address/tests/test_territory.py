@@ -90,7 +90,7 @@ class TestTerritory(unittest.TestCase):
                 alias_code, set(imap(attrgetter('alpha2'), countries)).union(
                     imap(attrgetter('code'), subdivisions)))
 
-    def test_country_code_reconciliation(self):
+    def test_country_from_subdivision(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
         for subdiv_code in SUBDIVISION_ALIASES.keys():
             target_code = SUBDIVISION_ALIASES[subdiv_code]
