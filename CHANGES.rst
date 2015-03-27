@@ -5,9 +5,10 @@ ChangeLog
 0.5.0 (unreleased)
 ------------------
 
-* Remove backward compatibility with 0.3.0 series.
-* Remove deprecated ``territory.territory_tree()`` method which provide 0.1.0
-  backward compatibility. It should have been removed in the 0.3.0 release.
+* Remove backward compatibility with ``0.3`` series.
+* Remove deprecated ``territory.territory_tree()`` method which provided
+  backward compatibilityì with the ``0.1`` series. It should have been removed
+  in the ``0.3.0`` release.
 * Split-up ``supported_territory_codes()`` ìnto ``supported_country_codes()``
   and ``supported_subdivision_codes()``.
 
@@ -65,7 +66,7 @@ ChangeLog
 0.3.0 (2015-03-04)
 ------------------
 
-* Remove backward compatibility with 0.1.0.
+* Remove backward compatibility with the ``0.1`` series.
 * Allow direct import of classes from module root.
 * Split territory utils out to their own file. See #3.
 * Rename ``normalize_country_code`` to ``country_from_subdivision``. Mark the
@@ -89,7 +90,8 @@ ChangeLog
 0.1.1 (2014-12-16)
 ------------------
 
-* Restore partial backward compatibility with address module from 0.1.0.
+* Restore partial backward compatibility with address module from the ``0.1``
+  series.
 
 
 0.1.0 (2014-12-15)
