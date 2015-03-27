@@ -30,7 +30,8 @@ from postal_address.address import (
     Address, subdivision_metadata, subdivision_type_id)
 from postal_address.territory import (
     country_from_subdivision, default_subdivision_code,
-    supported_territory_codes, country_aliases,
+    supported_territory_codes, supported_country_codes,
+    supported_subdivision_codes, country_aliases,
     territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES)
 
 
@@ -47,6 +48,17 @@ class TestTerritory(unittest.TestCase):
         self.assertIn('FR', supported_territory_codes())
         self.assertIn('FR-59', supported_territory_codes())
         self.assertNotIn('FRE', supported_territory_codes())
+
+    def test_supported_country_codes(self):
+        self.assertIn('FR', supported_country_codes())
+        self.assertIn('FX', supported_country_codes())
+        self.assertIn('UK', supported_country_codes())
+        self.assertNotIn('FR-59', supported_country_codes())
+
+    def test_supported_subdivision_codes(self):
+        self.assertIn('FR-59', supported_subdivision_codes())
+        self.assertNotIn('FR', supported_subdivision_codes())
+        self.assertNotIn('UK', supported_subdivision_codes())
 
     def test_territory_code_overlap(self):
         # Check that all codes from each classifications we rely on are not

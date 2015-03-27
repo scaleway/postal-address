@@ -107,15 +107,30 @@ for mapping in [COUNTRY_ALIASES, SUBDIVISION_ALIASES]:
 
 def supported_territory_codes():
     """ Return a set of recognized territory codes.
+    """
+    return supported_country_codes().union(supported_subdivision_codes())
+
+
+def supported_country_codes():
+    """ Return a set of recognized country codes.
 
     Are supported:
-        * ISO 3166-1 alpha-2 country codes
-        * ISO 3166-2 subdivision codes
+        * ISO 3166-1 alpha-2 country codes and exceptional reservations
+        * European Commision country code exceptions
     """
     return set(chain(
         imap(attrgetter('alpha2'), countries),
-        imap(attrgetter('code'), subdivisions),
+        # Include ISO and EC exceptions.
         COUNTRY_ALIASES.keys()))
+
+
+def supported_subdivision_codes():
+    """ Return a set of recognized subdivision codes.
+
+    Are supported:
+        * ISO 3166-2 subdivision codes
+    """
+    return set(imap(attrgetter('code'), subdivisions))
 
 
 def normalize_territory_code(territory_code, resolve_aliases=True):
@@ -161,7 +176,7 @@ def country_from_subdivision(subdivision_code):
     code = SUBDIVISION_ALIASES.get(subdivision_code, subdivision_code)
 
     # We have a country code, return it right away.
-    if code in imap(attrgetter('alpha2'), countries):
+    if code in supported_country_codes():
         return code
 
     # Try to extract country code from subdivision.
@@ -207,7 +222,7 @@ def territory_parents(territory_code, include_country=True):
 
     # If the provided territory code is a country, return it right away.
     territory_code = normalize_territory_code(territory_code)
-    if territory_code in imap(attrgetter('alpha2'), countries):
+    if territory_code in supported_country_codes():
         if include_country:
             tree.append(countries.get(alpha2=territory_code))
         return tree
@@ -252,7 +267,7 @@ def country_aliases(territory_code):
     country_codes = set()
 
     # Add a country code right away in our aliases.
-    if territory_code in imap(attrgetter('alpha2'), countries):
+    if territory_code in supported_country_codes():
         country_codes.add(territory_code)
 
     # A subdivision code triggers a walk along the non-normalized parent tree
