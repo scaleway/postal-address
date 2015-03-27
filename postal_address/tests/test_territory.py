@@ -171,8 +171,15 @@ class TestTerritory(unittest.TestCase):
         self.assertEquals(country_aliases('IO'), set(['DG', 'IO']))
 
         self.assertEquals(country_aliases('FR'), set(['FR', 'FX']))
+
         self.assertEquals(country_aliases('FR-CP'), set(['FR', 'CP', 'FX']))
         #self.assertEquals(country_aliases('CP'), set(['FR', 'CP', 'FX']))
+
+        #self.assertEquals(country_aliases('FR-RE'), set(['FR', 'FX', 'RE']))
+        self.assertEquals(country_aliases('RE'), set(['FR', 'FX', 'RE']))
+
+        self.assertEquals(country_aliases('GB'), set(['UK', 'GB']))
+        #self.assertEquals(country_aliases('UK'), set(['UK', 'GB']))
 
     def test_subdivision_type_id_conversion(self):
         # Conversion of subdivision types into IDs must be python friendly
