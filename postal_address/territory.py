@@ -37,7 +37,6 @@ from __future__ import (unicode_literals, print_function, absolute_import,
 
 from itertools import chain
 from operator import attrgetter
-import warnings
 
 from pycountry import countries, subdivisions
 
@@ -144,23 +143,6 @@ def normalize_territory_code(territory_code, resolve_aliases=True):
         territory_code = SUBDIVISION_ALIASES.get(
             territory_code, territory_code)
     return territory_code
-
-
-def normalize_country_code(subdivision_code):
-    """ Return the normalized country code from a subdivision code.
-
-    If no country is found, or the subdivision code is incorrect, ``None`` is
-    returned.
-
-    For subdivisions having their own ISO 3166-1 alpha-2 country code, returns
-    the later instead of the parent ISO 3166-2 top entry.
-
-    .. deprecated:: 0.3.0
-
-       Use country_from_subdivision instead.
-    """
-    warnings.warn('Please use country_from_subdivision', DeprecationWarning)
-    return country_from_subdivision(subdivision_code)
 
 
 def country_from_subdivision(subdivision_code):
