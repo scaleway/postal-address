@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.4.4 (unreleased)
+0.5.0 (unreleased)
 ------------------
 
 * Remove deprecated ``territory.territory_tree()`` method which provide 0.1.0
