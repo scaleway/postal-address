@@ -168,10 +168,10 @@ class TestTerritory(unittest.TestCase):
         #self.assertEquals(country_aliases('NO-21'), set(['SJ', 'NO']))
 
         #self.assertEquals(country_aliases('DG'), set(['DG', 'IO']))
-        #self.assertEquals(country_aliases('IO'), set(['DG', 'IO']))
+        self.assertEquals(country_aliases('IO'), set(['DG', 'IO']))
 
-        #self.assertEquals(country_aliases('FR'), set(['FR', 'FX']))
-        #self.assertEquals(country_aliases('FR-CP'), set(['FR', 'CP', 'FX']))
+        self.assertEquals(country_aliases('FR'), set(['FR', 'FX']))
+        self.assertEquals(country_aliases('FR-CP'), set(['FR', 'CP', 'FX']))
         #self.assertEquals(country_aliases('CP'), set(['FR', 'CP', 'FX']))
 
     def test_subdivision_type_id_conversion(self):

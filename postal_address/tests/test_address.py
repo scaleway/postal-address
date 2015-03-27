@@ -352,11 +352,9 @@ class TestAddress(unittest.TestCase):
         #     city_name='Johnston Atoll',
         #     country_code='US',
         #     subdivision_code='UM-67')
-        for address in [address1, address2]:  # , address3]:
+        for address in [address1, address2]:  # address3
             self.assertEqual(address.country_code, 'UM')
             self.assertEqual(address.subdivision_code, 'UM-67')
-
-        return
 
         # Test normalization of non-normalized country of a subdivision
         # aliased to a subdivision.
@@ -372,31 +370,31 @@ class TestAddress(unittest.TestCase):
             postal_code='XXX No postal code on Bonaire',
             city_name='Bonaire',
             subdivision_code='BQ-BO')
-        address3 = Address(
-            line1='Kaya Grandi 67',
-            postal_code='XXX No postal code on Bonaire',
-            city_name='Bonaire',
-            country_code='NL',
-            subdivision_code='BQ-BO')
-        address4 = Address(
-            line1='Kaya Grandi 67',
-            postal_code='XXX No postal code on Bonaire',
-            city_name='Bonaire',
-            country_code='BQ',
-            subdivision_code='NL-BQ1')
-        address5 = Address(
-            line1='Kaya Grandi 67',
-            postal_code='XXX No postal code on Bonaire',
-            city_name='Bonaire',
-            subdivision_code='NL-BQ1')
-        address6 = Address(
-            line1='Kaya Grandi 67',
-            postal_code='XXX No postal code on Bonaire',
-            city_name='Bonaire',
-            country_code='NL',
-            subdivision_code='NL-BQ1')
+        # address3 = Address(
+        #     line1='Kaya Grandi 67',
+        #     postal_code='XXX No postal code on Bonaire',
+        #     city_name='Bonaire',
+        #     country_code='NL',
+        #     subdivision_code='BQ-BO')
+        # address4 = Address(
+        #     line1='Kaya Grandi 67',
+        #     postal_code='XXX No postal code on Bonaire',
+        #     city_name='Bonaire',
+        #     country_code='BQ',
+        #     subdivision_code='NL-BQ1')
+        # address5 = Address(
+        #     line1='Kaya Grandi 67',
+        #     postal_code='XXX No postal code on Bonaire',
+        #     city_name='Bonaire',
+        #     subdivision_code='NL-BQ1')
+        # address6 = Address(
+        #     line1='Kaya Grandi 67',
+        #     postal_code='XXX No postal code on Bonaire',
+        #     city_name='Bonaire',
+        #     country_code='NL',
+        #     subdivision_code='NL-BQ1')
         for address in [
-                address1, address2, address3, address4, address5, address6]:
+                address1, address2]:  # address3, address4, address5, address6
             self.assertEqual(address.country_code, 'BQ')
             self.assertEqual(address.subdivision_code, 'BQ-BO')
 
@@ -412,13 +410,13 @@ class TestAddress(unittest.TestCase):
             postal_code='95001',
             city_name='Taitung City',
             subdivision_code='TW-TTT')
-        address3 = Address(
-            line1='No.276, Zhongshan Rd.',
-            postal_code='95001',
-            city_name='Taitung City',
-            country_code='CN',
-            subdivision_code='TW-TTT')
-        for address in [address1, address2, address3]:
+        # address3 = Address(
+        #     line1='No.276, Zhongshan Rd.',
+        #     postal_code='95001',
+        #     city_name='Taitung City',
+        #     country_code='CN',
+        #     subdivision_code='TW-TTT')
+        for address in [address1, address2]:  # address3]:
             self.assertEqual(address.country_code, 'TW')
             self.assertEqual(address.subdivision_code, 'TW-TTT')
 
