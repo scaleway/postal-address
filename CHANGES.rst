@@ -7,9 +7,9 @@ ChangeLog
 
 * Remove backward compatibility with ``0.3`` series.
 * Remove deprecated ``territory.territory_tree()`` method which provided
-  backward compatibilityì with the ``0.1`` series. It should have been removed
+  backward compatibilityi with the ``0.1`` series. It should have been removed
   in the ``0.3.0`` release.
-* Split-up ``supported_territory_codes()`` ìnto ``supported_country_codes()``
+* Split-up ``supported_territory_codes()`` into ``supported_country_codes()``
   and ``supported_subdivision_codes()``.
 
 
