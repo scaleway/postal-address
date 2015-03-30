@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.5.1 (unreleased)
+0.5.1 (2015-03-30)
 ------------------
 
 * Fix bad released version.
