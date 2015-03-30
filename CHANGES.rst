@@ -5,13 +5,14 @@ ChangeLog
 0.5.0 (unreleased)
 ------------------
 
+* Increase capabilities of alias resolution by ``country_aliases()`` method, 
+  which in turns increase address normalization efficiency.
 * Remove backward compatibility with ``0.3`` series.
 * Remove deprecated ``territory.territory_tree()`` method which provided
   backward compatibilityi with the ``0.1`` series. It should have been removed
   in the ``0.3.0`` release.
 * Split-up ``supported_territory_codes()`` into ``supported_country_codes()``
   and ``supported_subdivision_codes()``.
-
 
 0.4.3 (2015-03-26)
 ------------------
