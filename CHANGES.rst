@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.5.0 (unreleased)
+0.5.0 (2015-03-30)
 ------------------
 
 * Increase capabilities of alias resolution by ``country_aliases()`` method,
