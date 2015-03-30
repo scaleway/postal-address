@@ -59,14 +59,14 @@ class InvalidAddress(ValueError):
         reasons = []
         if self.required_fields:
             reasons.append('{} {} required'.format(
-                ', '.join(self.required_fields),
+                ', '.join(sorted(self.required_fields)),
                 'is' if len(self.required_fields) == 1 else 'are'))
         if self.invalid_fields:
             reasons.append('{} {} invalid'.format(
-                ', '.join(self.invalid_fields),
+                ', '.join(sorted(self.invalid_fields)),
                 'is' if len(self.invalid_fields) == 1 else 'are'))
         if self.inconsistent_fields:
-            for field_id_1, field_id_2 in self.inconsistent_fields:
+            for field_id_1, field_id_2 in sorted(self.inconsistent_fields):
                 reasons.append('{} is inconsistent with {}'.format(
                     field_id_1, field_id_2))
         if self.extra_msg:

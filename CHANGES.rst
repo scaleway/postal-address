@@ -5,8 +5,8 @@ ChangeLog
 0.5.2 (unreleased)
 ------------------
 
-* No changes yet.
-
+* Always sort fields in error messages to improve reproducibility when
+  unit testing.
 
 0.5.1 (2015-03-30)
 ------------------
