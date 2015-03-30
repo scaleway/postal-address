@@ -181,6 +181,10 @@ class TestTerritory(unittest.TestCase):
         self.assertEquals(country_aliases('GB'), set(['UK', 'GB']))
         #self.assertEquals(country_aliases('UK'), set(['UK', 'GB']))
 
+        self.assertEquals(country_aliases('IM'), set(['IM']))
+
+        self.assertEquals(country_aliases('MC'), set(['MC']))
+
     def test_subdivision_type_id_conversion(self):
         # Conversion of subdivision types into IDs must be python friendly
         attribute_regexp = re.compile('[a-z][a-z0-9_]*$')

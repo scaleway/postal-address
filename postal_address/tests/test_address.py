@@ -333,6 +333,14 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-CP')
 
+        address = Address(
+            line1='16 rue de Millo',
+            postal_code='98000',
+            city_name='La Condamine',
+            subdivision_code='MC-CO')
+        self.assertEqual(address.country_code, 'MC')
+        self.assertEqual(address.subdivision_code, 'MC-CO')
+
         # Test normalization of non-normalized country of a subdivision
         # of a country aliased subdivision.
         address1 = Address(
