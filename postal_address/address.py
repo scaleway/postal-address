@@ -336,7 +336,8 @@ class Address(object):
                     if current_value not in alias_values:
                         raise InvalidAddress(
                             inconsistent_fields=set([
-                                (field_id, 'subdivision_code')]),
+                                tuple(sorted((
+                                    field_id, 'subdivision_code')))]),
                             extra_msg="{} subdivision is trying to replace "
                             "{}={!r} field by {}={!r}".format(
                                 self.subdivision_code,
@@ -384,7 +385,8 @@ class Address(object):
                     required_fields.union(invalid_fields)) and \
                 country_from_subdivision(
                     self.subdivision_code) != self.country_code:
-            inconsistent_fields.add(('country_code', 'subdivision_code'))
+            inconsistent_fields.add(
+                tuple(sorted(('country_code', 'subdivision_code'))))
 
         # Raise our custom exception at last.
         if required_fields or invalid_fields or inconsistent_fields:

@@ -7,6 +7,7 @@ ChangeLog
 
 * Always sort fields in error messages to improve reproducibility when
   unit testing.
+* Deduplicate inconsistent field entries in custom address exception.
 
 0.5.1 (2015-03-30)
 ------------------
