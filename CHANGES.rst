@@ -5,7 +5,7 @@ ChangeLog
 0.5.3 (unreleased)
 ------------------
 
-* No changes yet.
+* Add an option to bypass Address' strict normalization.
 
 
 0.5.2 (2015-03-30)

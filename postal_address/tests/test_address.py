@@ -520,6 +520,92 @@ class TestAddress(unittest.TestCase):
         self.assertEquals(
             err.inconsistent_fields, set([('city_name', 'subdivision_code')]))
 
+    def test_non_strict_mode_normalization(self):
+        # Test city name override by subdivision code.
+        address = Address(
+            strict=False,
+            line1='2 King Edward Street',
+            postal_code='EC1A 1HQ',
+            city_name='Dummy city',
+            subdivision_code='GB-LND')
+        self.assertEqual(address.line1, '2 King Edward Street')
+        self.assertEqual(address.line2, None)
+        self.assertEqual(address.postal_code, 'EC1A 1HQ')
+        self.assertEqual(address.city_name, 'London, City of')
+        self.assertEqual(address.country_code, 'GB')
+        self.assertEqual(address.subdivision_code, 'GB-LND')
+
+        address = Address(
+            strict=False,
+            line1='4 Bulevardul Nicolae Bålcescu',
+            postal_code='010051',
+            city_name='Dummy city',
+            subdivision_code='RO-B')
+        self.assertEqual(address.line1, '4 Bulevardul Nicolae Bålcescu')
+        self.assertEqual(address.line2, None)
+        self.assertEqual(address.postal_code, '010051')
+        self.assertEqual(address.city_name, 'București')
+        self.assertEqual(address.country_code, 'RO')
+        self.assertEqual(address.subdivision_code, 'RO-B')
+
+        address = Address(
+            strict=False,
+            line1='15 Ngô Quyền',
+            postal_code='10000',
+            city_name='Dummy city',
+            subdivision_code='VN-HN')
+        self.assertEqual(address.line1, '15 Ngô Quyền')
+        self.assertEqual(address.line2, None)
+        self.assertEqual(address.postal_code, '10000')
+        self.assertEqual(address.city_name, 'Hà Nội')
+        self.assertEqual(address.country_code, 'VN')
+        self.assertEqual(address.subdivision_code, 'VN-HN')
+
+        # Test country override by subdivision code.
+        address = Address(
+            strict=False,
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
+            city_name='Paris',
+            country_code='FR',
+            subdivision_code='BE-BRU')
+        self.assertEqual(address.line1, '10, avenue des Champs Elysées')
+        self.assertEqual(address.line2, None)
+        self.assertEqual(address.postal_code, '75008')
+        self.assertEqual(address.city_name, 'Paris')
+        self.assertEqual(address.country_code, 'BE')
+        self.assertEqual(address.subdivision_code, 'BE-BRU')
+
+        address = Address(
+            strict=False,
+            line1='Barack 31',
+            postal_code='XXX No postal code',
+            city_name='Clipperton Island',
+            country_code='CP',
+            subdivision_code='FR-CP')
+        self.assertEqual(address.line1, 'Barack 31')
+        self.assertEqual(address.line2, None)
+        self.assertEqual(address.postal_code, 'XXX No postal code')
+        self.assertEqual(address.city_name, 'Clipperton Island')
+        self.assertEqual(address.country_code, 'FR')
+        self.assertEqual(address.subdivision_code, 'FR-CP')
+
+        # Test both city and country override by subdivision code.
+        address = Address(
+            strict=False,
+            line1='9F., No. 290, Sec. 4, Zhongxiao E. Rd.',
+            postal_code='10694',
+            city_name='Dummy city',
+            country_code='FR',
+            subdivision_code='TW-TNN')
+        self.assertEqual(
+            address.line1, '9F., No. 290, Sec. 4, Zhongxiao E. Rd.')
+        self.assertEqual(address.line2, None)
+        self.assertEqual(address.postal_code, '10694')
+        self.assertEqual(address.city_name, 'Tainan City')
+        self.assertEqual(address.country_code, 'TW')
+        self.assertEqual(address.subdivision_code, 'TW-TNN')
+
     def test_rendering(self):
         # Test subdivision-less rendering.
         address = Address(

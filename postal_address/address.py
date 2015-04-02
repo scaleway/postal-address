@@ -118,8 +118,11 @@ class Address(object):
         'line1', 'postal_code', 'city_name', 'country_code'])
     assert REQUIRED_FIELDS.issubset(BASE_FIELD_IDS)
 
-    def __init__(self, **kwargs):
-        """ Set address' individual fields and normalize them. """
+    def __init__(self, strict=True, **kwargs):
+        """ Set address' individual fields and normalize them.
+
+        By default, normalization is ``strict``.
+        """
         # Only common fields are allowed to be set directly.
         unknown_fields = set(kwargs).difference(self.BASE_FIELD_IDS)
         if unknown_fields:
@@ -131,7 +134,7 @@ class Address(object):
         # Load provided fields.
         self._fields.update(kwargs)
         # Normalize addresses fields.
-        self.normalize()
+        self.normalize(strict=strict)
 
     def __repr__(self):
         """ Print all fields available from the address. """
@@ -257,10 +260,15 @@ class Address(object):
         # Render the address block with the provided separator.
         return separator.join(lines)
 
-    def normalize(self):
+    def normalize(self, strict=True):
         """ Normalize address fields.
 
         If values are unrecognized or invalid, they will be set to None.
+
+        By default, the normalization is ``strict``: metadata derived from
+        territory's parents are not allowed to overwrite valid address fields
+        entered by the user. If set to ``False``, territory-derived values
+        takes precedence over user's.
 
         You need to call back the ``validate()`` method afterwards to properly
         check that the fully-qualified address is ready for consumption.
@@ -315,34 +323,36 @@ class Address(object):
                 parent_metadata.update(subdivision_metadata(parent_subdiv))
 
             # Parent metadata are not allowed to overwrite address fields
-            # if not blank.
-            for field_id, new_value in parent_metadata.items():
-                assert new_value  # New metadata are not allowed to be blank.
-                current_value = self._fields.get(field_id)
-                if current_value and field_id in self.BASE_FIELD_IDS:
+            # if not blank, unless strict mode is de-activated.
+            if strict:
+                for field_id, new_value in parent_metadata.items():
+                    # New metadata are not allowed to be blank.
+                    assert new_value
+                    current_value = self._fields.get(field_id)
+                    if current_value and field_id in self.BASE_FIELD_IDS:
 
-                    # Build the list of substitute values that are equivalent
-                    # to our new normalized target.
-                    alias_values = set([new_value])
-                    if field_id == 'country_code':
-                        # Allow normalization if the current country code is
-                        # the direct parent of a subdivision which also have
-                        # its own country code.
-                        alias_values.add(subdivisions.get(
-                            code=self.subdivision_code).country_code)
+                        # Build the list of substitute values that are
+                        # equivalent to our new normalized target.
+                        alias_values = set([new_value])
+                        if field_id == 'country_code':
+                            # Allow normalization if the current country code
+                            # is the direct parent of a subdivision which also
+                            # have its own country code.
+                            alias_values.add(subdivisions.get(
+                                code=self.subdivision_code).country_code)
 
-                    # Change of current value is allowed if it is a direct
-                    # substitute to our new normalized value.
-                    if current_value not in alias_values:
-                        raise InvalidAddress(
-                            inconsistent_fields=set([
-                                tuple(sorted((
-                                    field_id, 'subdivision_code')))]),
-                            extra_msg="{} subdivision is trying to replace "
-                            "{}={!r} field by {}={!r}".format(
-                                self.subdivision_code,
-                                field_id, current_value,
-                                field_id, new_value))
+                        # Change of current value is allowed if it is a direct
+                        # substitute to our new normalized value.
+                        if current_value not in alias_values:
+                            raise InvalidAddress(
+                                inconsistent_fields=set([
+                                    tuple(sorted((
+                                        field_id, 'subdivision_code')))]),
+                                extra_msg="{} subdivision is trying to replace"
+                                " {}={!r} field by {}={!r}".format(
+                                    self.subdivision_code,
+                                    field_id, current_value,
+                                    field_id, new_value))
 
             self._fields.update(parent_metadata)
 
