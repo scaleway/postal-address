@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
-__version__ = '0.5.3.dev'
+__version__ = '0.6.0.dev'
 
 
 from .address import Address

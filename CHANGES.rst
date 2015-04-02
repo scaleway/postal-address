@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.5.3 (unreleased)
+0.6.0 (unreleased)
 ------------------
 
 * Add an option to bypass Address' strict normalization.
