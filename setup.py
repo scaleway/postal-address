@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2015 Online SAS and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@ocs.online.net>
 #
 # This program is Free Software; you can redistribute it and/or
@@ -51,9 +51,9 @@ setup(
     description="Parse, normalize and render postal addresses.",
     long_description=get_long_description(),
 
-    author='Online Labs',
-    author_email='opensource@labs.online.net',
-    url='http://github.com/online-labs/postal-address',
+    author='Scaleway',
+    author_email='opensource@scaleway.com',
+    url='http://github.com/scaleway/postal-address',
     license='GPLv2+',
 
     install_requires=[

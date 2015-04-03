@@ -6,14 +6,14 @@ Python module to parse, normalize and render postal addresses.
 .. image:: https://img.shields.io/pypi/v/postal-address.svg?style=flat
     :target: https://pypi.python.org/pypi/postal-address
     :alt: Last release
-.. image:: https://img.shields.io/travis/online-labs/postal-address/develop.svg?style=flat
-    :target: https://travis-ci.org/online-labs/postal-address
+.. image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
+    :target: https://travis-ci.org/scaleway/postal-address
     :alt: Unit-tests status
-.. image:: https://img.shields.io/coveralls/online-labs/postal-address/develop.svg?style=flat
-    :target: https://coveralls.io/r/online-labs/postal-address?branch=develop
+.. image:: https://img.shields.io/coveralls/scaleway/postal-address/develop.svg?style=flat
+    :target: https://coveralls.io/r/scaleway/postal-address?branch=develop
     :alt: Coverage Status
-.. image:: https://img.shields.io/requires/github/online-labs/postal-address/master.svg?style=flat
-    :target: https://requires.io/github/online-labs/postal-address/requirements/?branch=master
+.. image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
+    :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
     :alt: Requirements freshness
 .. image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
     :target: https://www.gnu.org/licenses/gpl-2.0.html
@@ -70,7 +70,7 @@ Start from the ``develop`` branch:
 
 .. code-block:: bash
 
-    git clone git@github.com:online-labs/postal-address.git
+    git clone git@github.com:scaleway/postal-address.git
     git checkout develop
 
 Update revision to its release number and update change log:
@@ -127,4 +127,4 @@ License
 
 This software is licensed under the `GNU General Public License v2 or later
 (GPLv2+)
-<https://github.com/online-labs/postal-address/blob/master/LICENSE>`_.
+<https://github.com/scaleway/postal-address/blob/master/LICENSE>`_.
