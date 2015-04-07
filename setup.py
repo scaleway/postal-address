@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
-#                         Kevin Deldycke <kdeldycke@ocs.online.net>
+#                         Kevin Deldycke <kdeldycke@scaleway.com>
 #
 # This program is Free Software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
