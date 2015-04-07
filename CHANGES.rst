@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.6.1 (unreleased)
+0.6.1 (2015-04-07)
 ------------------
 
 * Update all Online Labs references to Scaleway.
