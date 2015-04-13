@@ -137,11 +137,20 @@ class Address(object):
         self.normalize(strict=strict)
 
     def __repr__(self):
-        """ Print all fields available from the address. """
+        """ Print all fields available from the address.
+
+        Also include internal fields disguised as properties.
+        """
+        # Repr all plain fields.
+        fields_repr = ['{}={!r}'.format(k, v) for k, v in self._fields.items()]
+        # Repr all internal properties.
+        for internal_id in [
+                'valid', 'empty', 'country_name', 'subdivision_name',
+                'subdivision_type_name', 'subdivision_type_id']:
+            fields_repr.append(
+                '{}={!r}'.format(internal_id, getattr(self, internal_id)))
         return '{}({})'.format(
-            self.__class__.__name__,
-            ', '.join([
-                '{}={!r}'.format(k, v) for k, v in self._fields.items()]))
+            self.__class__.__name__, ', '.join(sorted(fields_repr)))
 
     def __str__(self):
         """ Return a simple string representation of the address block. """

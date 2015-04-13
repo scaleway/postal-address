@@ -5,7 +5,8 @@ ChangeLog
 0.6.2 (unreleased)
 ------------------
 
-* No changes yet.
+* Include internal fields disguised as properties when ``repr``-ing the
+  ``Address`` object.
 
 
 0.6.1 (2015-04-07)

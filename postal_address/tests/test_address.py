@@ -59,6 +59,28 @@ class TestAddress(unittest.TestCase):
         self.assertEquals(address.country_code, 'FR')
         self.assertEquals(address.subdivision_code, None)
 
+    def test_repr(self):
+        address = Address(
+            line1='4 place du général Leclerc',
+            postal_code='91401',
+            city_name='Orsay',
+            country_code='FR')
+        self.assertEquals(
+            repr(address), str(
+                "Address("
+                "city_name=u'Orsay', "
+                "country_code=u'FR', "
+                "country_name=u'France', "
+                "empty=False, "
+                "line1=u'4 place du g\\xe9n\\xe9ral Leclerc', "
+                "line2=None, "
+                "postal_code=u'91401', "
+                "subdivision_code=None, "
+                "subdivision_name=None, "
+                "subdivision_type_id=None, "
+                "subdivision_type_name=None, "
+                "valid=True)"))
+
     def test_dict_access(self):
         address = Address(
             line1='10, avenue des Champs Elysées',
