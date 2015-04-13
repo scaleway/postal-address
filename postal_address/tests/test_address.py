@@ -473,6 +473,7 @@ class TestAddress(unittest.TestCase):
         #     subdivision_code='TW-TTT')
         for address in [address1, address2]:  # address3]:
             self.assertEqual(address.country_code, 'TW')
+            self.assertEqual(address.country_name, 'Taiwan')
             self.assertEqual(address.subdivision_code, 'TW-TTT')
 
     def test_subdivision_derived_fields(self):
@@ -651,6 +652,7 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(address.postal_code, '10694')
         self.assertEqual(address.city_name, 'Tainan City')
         self.assertEqual(address.country_code, 'TW')
+        self.assertEqual(address.country_name, 'Taiwan')
         self.assertEqual(address.subdivision_code, 'TW-TNN')
 
     def test_rendering(self):

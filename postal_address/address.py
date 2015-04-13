@@ -446,8 +446,15 @@ class Address(object):
 
     @property
     def country_name(self):
-        """ Return country's name. """
+        """ Return country's name.
+
+        Common name always takes precedence over the default name, as the
+        latter isoften pompous, and sometimes false (i.e. not in sync with
+        current political situation).
+        """
         if self.country:
+            if hasattr(self.country, 'common_name'):
+                return self.country.common_name
             return self.country.name
         return None
 

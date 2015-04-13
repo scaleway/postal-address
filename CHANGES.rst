@@ -7,6 +7,8 @@ ChangeLog
 
 * Include internal fields disguised as properties when ``repr``-ing the
   ``Address`` object.
+* Always use the common name of a country if available instead of its official
+  default value.
 
 
 0.6.1 (2015-04-07)
