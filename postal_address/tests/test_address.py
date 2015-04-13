@@ -21,6 +21,7 @@
 from __future__ import (unicode_literals, print_function, absolute_import,
                         division)
 
+import sys
 import unittest
 
 from pycountry import countries, subdivisions
@@ -59,27 +60,51 @@ class TestAddress(unittest.TestCase):
         self.assertEquals(address.country_code, 'FR')
         self.assertEquals(address.subdivision_code, None)
 
-    def test_repr(self):
+    @unittest.skipIf(sys.version_info.major > 2, "Python 2-only test.")
+    def test_repr_python2(self):
         address = Address(
             line1='4 place du général Leclerc',
             postal_code='91401',
             city_name='Orsay',
             country_code='FR')
         self.assertEquals(
-            repr(address), str(
-                "Address("
-                "city_name=u'Orsay', "
-                "country_code=u'FR', "
-                "country_name=u'France', "
-                "empty=False, "
-                "line1=u'4 place du g\\xe9n\\xe9ral Leclerc', "
-                "line2=None, "
-                "postal_code=u'91401', "
-                "subdivision_code=None, "
-                "subdivision_name=None, "
-                "subdivision_type_id=None, "
-                "subdivision_type_name=None, "
-                "valid=True)"))
+            repr(address),
+            "Address("
+            "city_name=u'Orsay', "
+            "country_code=u'FR', "
+            "country_name=u'France', "
+            "empty=False, "
+            "line1=u'4 place du g\\xe9n\\xe9ral Leclerc', "
+            "line2=None, "
+            "postal_code=u'91401', "
+            "subdivision_code=None, "
+            "subdivision_name=None, "
+            "subdivision_type_id=None, "
+            "subdivision_type_name=None, "
+            "valid=True)")
+
+    @unittest.skipIf(sys.version_info.major < 3, "Python 3-only test.")
+    def test_repr_python3(self):
+        address = Address(
+            line1='4 place du général Leclerc',
+            postal_code='91401',
+            city_name='Orsay',
+            country_code='FR')
+        self.assertEquals(
+            repr(address),
+            "Address("
+            "city_name='Orsay', "
+            "country_code='FR', "
+            "country_name='France', "
+            "empty=False, "
+            "line1='4 place du général Leclerc', "
+            "line2=None, "
+            "postal_code='91401', "
+            "subdivision_code=None, "
+            "subdivision_name=None, "
+            "subdivision_type_id=None, "
+            "subdivision_type_name=None, "
+            "valid=True)")
 
     def test_dict_access(self):
         address = Address(
