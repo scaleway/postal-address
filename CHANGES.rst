@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.7.0 (unreleased)
+0.7.0 (2015-04-14)
 ------------------
 
 * Include internal fields disguised as properties when ``repr``-ing the
