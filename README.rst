@@ -15,7 +15,7 @@ Python module to parse, normalize and render postal addresses.
 .. image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
     :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
     :alt: Requirements freshness
-.. image:: https://img.shields.io/scrutinizer/g/filp/whoops.svg?style=flat
+.. image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
     :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
     :alt: Code Quality
 .. image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
