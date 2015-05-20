@@ -31,13 +31,14 @@ try:
     basestring
 except NameError:  # pragma: no cover
     basestring = (str, bytes)
+from random import choice, randint
 
 from pycountry import countries, subdivisions
 from slugify import slugify
 
 from .territory import (
     country_from_subdivision, default_subdivision_code,
-    territory_parents, normalize_territory_code)
+    supported_subdivision_codes, territory_parents, normalize_territory_code)
 
 
 class InvalidAddress(ValueError):
@@ -485,6 +486,40 @@ class Address(object):
         if self.subdivision:
             return subdivision_type_id(self.subdivision)
         return None
+
+
+# Address utils.
+
+def random_word(word_lenght=8):
+    """ Return a readable random string.
+
+    Source:
+    http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
+    """
+    return ''.join([choice(
+        'aeiou' if i % 2 else 'bcdfghklmnprstvw') for i in range(word_lenght)])
+
+
+def random_phrase(word_count=4, min_word_lenght=2, max_word_lenght=10):
+    """ Return a readable random phrase.
+
+    Source:
+    http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
+    """
+    return ' '.join([random_word(randint(
+        min_word_lenght, max_word_lenght)) for _ in range(word_count)])
+
+
+def random_address():
+    """ Return a random, valid address. """
+    return Address(
+        strict=False,
+        line1='{} {}'.format(
+            randint(1, 999), random_phrase(word_count=2).title()),
+        line2=random_phrase(word_count=2).title(),
+        city_name=random_word().title(),
+        postal_code=str(randint(1000, 9999999)),
+        subdivision_code=choice(list(supported_subdivision_codes())))
 
 
 # Subdivisions utils.

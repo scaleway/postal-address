@@ -5,7 +5,7 @@ ChangeLog
 0.7.1 (unreleased)
 ------------------
 
-* No changes yet.
+* Add utility method to generate random addresses for test mockups.
 
 
 0.7.0 (2015-04-14)

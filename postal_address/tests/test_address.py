@@ -26,7 +26,7 @@ import unittest
 
 from pycountry import countries, subdivisions
 
-from postal_address.address import Address, InvalidAddress
+from postal_address.address import Address, InvalidAddress, random_address
 
 
 class TestAddress(unittest.TestCase):
@@ -750,3 +750,10 @@ Spain""")
             """2 King Edward Street
 EC1A 1HQ - London, City of
 United Kingdom""")
+
+    def test_random_address(self):
+        """ Test generation, validation and rendering of random addresses. """
+        for _ in range(42):
+            address = random_address()
+            address.validate()
+            address.render()
