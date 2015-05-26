@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.7.2 (unreleased)
+0.7.2 (2015-05-26)
 ------------------
 
 * Fix encoding of README and CHANGES. Closes #12.
