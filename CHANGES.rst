@@ -5,7 +5,7 @@ ChangeLog
 0.7.2 (unreleased)
 ------------------
 
-* No changes yet.
+* Be explicit about encoding when reading README and CHANGES.
 
 
 0.7.1 (2015-05-20)
