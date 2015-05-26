@@ -5,7 +5,7 @@ ChangeLog
 0.7.2 (unreleased)
 ------------------
 
-* Be explicit about encoding when reading README and CHANGES.
+* Fix encoding of README and CHANGES. Closes #12.
 
 
 0.7.1 (2015-05-20)
