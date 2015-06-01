@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.7.3 (unreleased)
+0.8.0 (unreleased)
 ------------------
 
 * Normalize all white spaces, not only leadings and trailings.
