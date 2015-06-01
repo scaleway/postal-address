@@ -32,6 +32,8 @@ try:
 except NameError:  # pragma: no cover
     basestring = (str, bytes)
 from random import choice, randint
+import re
+import string
 
 from pycountry import countries, subdivisions
 from slugify import slugify
@@ -283,14 +285,28 @@ class Address(object):
         You need to call back the ``validate()`` method afterwards to properly
         check that the fully-qualified address is ready for consumption.
         """
-        # Clean-up all fields.
-        empty_fields = []
+        # Strip postal codes of any characters but alphanumerics, spaces and
+        # hyphens.
+        if self.postal_code:
+            self.postal_code = self.postal_code.upper()
+            # Remove unrecognized characters.
+            self.postal_code = re.compile(
+                r'[^A-Z0-9 -]').sub('', self.postal_code)
+            # Reduce sequences of mixed hyphens and spaces to single hyphen.
+            self.postal_code = re.compile(
+                r'[^A-Z0-9]*-+[^A-Z0-9]*').sub('-', self.postal_code)
+            # Edge case: remove leading and trailing hyphens and spaces.
+            self.postal_code = self.postal_code.strip('-')
+
+        # Normalize spaces.
         for field_id in self._fields:
-            # Normalize spaces.
             if isinstance(self._fields[field_id], basestring):
                 self._fields[field_id] = ' '.join(
                     self._fields[field_id].split())
-            # Get rid of empty/blank strings.
+
+        # Reset empty and blank strings.
+        empty_fields = []
+        for field_id in self._fields:
             if not getattr(self, field_id):
                 empty_fields.append(field_id)
         for field_id in empty_fields:
@@ -511,6 +527,13 @@ def random_phrase(word_count=4, min_word_lenght=2, max_word_lenght=10):
         min_word_lenght, max_word_lenght)) for _ in range(word_count)])
 
 
+def random_postal_code():
+    """ Return a parsable random postal code. """
+    return ''.join([
+        choice(string.ascii_uppercase + string.digits + '- ')
+        for _ in range(randint(4, 10))])
+
+
 def random_address():
     """ Return a random, valid address. """
     return Address(
@@ -519,7 +542,7 @@ def random_address():
             randint(1, 999), random_phrase(word_count=2).title()),
         line2=random_phrase(word_count=2).title(),
         city_name=random_word().title(),
-        postal_code=str(randint(1000, 9999999)),
+        postal_code=random_postal_code(),
         subdivision_code=choice(list(supported_subdivision_codes())))
 
 

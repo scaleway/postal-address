@@ -298,6 +298,36 @@ class TestAddress(unittest.TestCase):
         self.assertIsNotNone(address.postal_code)
         self.assertIsNotNone(address.city_name)
 
+    def test_postal_code_normalization(self):
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='   -  f-  - -  75008 -   ',
+            city_name='Paris',
+            country_code='FR')
+        self.assertEqual(address.postal_code, 'F-75008')
+
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='--   aAA 77b   -    - - --___--- sd-  fs - df'
+            'sd--$^$^$^---fsf  -sd xd --',
+            city_name='Paris',
+            country_code='FR')
+        self.assertEqual(address.postal_code, 'AAA 77B-SD-FS-DFSD-FSF-SD XD')
+
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='J/PPB1>6/_',
+            city_name='Paris',
+            country_code='FR')
+        self.assertEqual(address.postal_code, 'JPPB16')
+
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code=' * * * aAA 77b   -    -',
+            city_name='Paris',
+            country_code='FR')
+        self.assertEqual(address.postal_code, 'AAA 77B')
+
     def test_blank_line_swap(self):
         address = Address(
             line1='',
@@ -645,7 +675,7 @@ class TestAddress(unittest.TestCase):
             subdivision_code='FR-CP')
         self.assertEqual(address.line1, 'Barack 31')
         self.assertEqual(address.line2, None)
-        self.assertEqual(address.postal_code, 'XXX No postal code')
+        self.assertEqual(address.postal_code, 'XXX NO POSTAL CODE')
         self.assertEqual(address.city_name, 'Clipperton Island')
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-CP')
