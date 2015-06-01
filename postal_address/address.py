@@ -296,6 +296,10 @@ class Address(object):
         for field_id in empty_fields:
             del self[field_id]
 
+        # Swap lines if the first is empty.
+        if self.line2 and not self.line1:
+            self.line1, self.line2 = self.line2, self.line1
+
         # Normalize territory codes. Unrecognized territory codes are reset
         # to None.
         for territory_id in ['country_code', 'subdivision_code']:
@@ -307,10 +311,6 @@ class Address(object):
                 except ValueError:
                     code = None
                 setattr(self, territory_id, code)
-
-        # Swap lines if the first is empty.
-        if self.line2 and not self.line1:
-            self.line1, self.line2 = self.line2, self.line1
 
         # Try to set default subdivision from country if not set.
         if self.country_code and not self.subdivision_code:
