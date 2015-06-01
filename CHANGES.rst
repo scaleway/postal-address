@@ -5,7 +5,7 @@ ChangeLog
 0.7.3 (unreleased)
 ------------------
 
-* No changes yet.
+* Normalize all white spaces, not only leadings and trailings.
 
 
 0.7.2 (2015-05-26)

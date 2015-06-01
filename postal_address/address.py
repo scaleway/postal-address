@@ -286,9 +286,10 @@ class Address(object):
         # Clean-up all fields.
         empty_fields = []
         for field_id in self._fields:
-            # Remove leading and trailing white spaces.
+            # Normalize spaces.
             if isinstance(self._fields[field_id], basestring):
-                self._fields[field_id] = self._fields[field_id].strip()
+                self._fields[field_id] = ' '.join(
+                    self._fields[field_id].split())
             # Get rid of empty/blank strings.
             if not getattr(self, field_id):
                 empty_fields.append(field_id)

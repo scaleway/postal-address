@@ -273,16 +273,16 @@ class TestAddress(unittest.TestCase):
 
     def test_space_normalization(self):
         address = Address(
-            line1='   10, avenue des Champs Elysées   ',
+            line1='   10, avenue    des \n   Champs Elysées   ',
             line2='    ',
-            postal_code='   75008   ',
-            city_name='   Paris  ',
+            postal_code='   F     75008   ',
+            city_name='   Paris   City    ',
             country_code=' fr          ',
             subdivision_code=' fR-75  ')
         self.assertEqual(address.line1, '10, avenue des Champs Elysées')
         self.assertEqual(address.line2, None)
-        self.assertEqual(address.postal_code, '75008')
-        self.assertEqual(address.city_name, 'Paris')
+        self.assertEqual(address.postal_code, 'F 75008')
+        self.assertEqual(address.city_name, 'Paris City')
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-75')
 
