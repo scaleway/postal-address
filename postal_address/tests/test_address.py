@@ -286,6 +286,18 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-75')
 
+    def test_unicode_mess(self):
+        address = Address(
+            line1='ब ♎ 1F: ̹ƶώ㎂🐎🐙💊 ꧲⋉ ⦼ Ė꧵┵',
+            line2='⫇⻛⋯ ǖ╶🐎🐙💊ᵞᚘ⎢ ⚗ ⑆  ͋ụ 0 ⇚  � ῐ ',
+            postal_code='3☾Ă⻛🐎🐙💊ȁ�ƈ₟Ǆ✒὘',
+            city_name='Į🐎🐙💊❤Ệ▋',
+            country_code='FR')
+        self.assertIsNotNone(address.line1)
+        self.assertIsNotNone(address.line2)
+        self.assertIsNotNone(address.postal_code)
+        self.assertIsNotNone(address.city_name)
+
     def test_blank_line_swap(self):
         address = Address(
             line1='',

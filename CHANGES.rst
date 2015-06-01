@@ -6,6 +6,7 @@ ChangeLog
 ------------------
 
 * Normalize all white spaces, not only leadings and trailings.
+* Test that the Address object is able to digest unicode messs.
 
 
 0.7.2 (2015-05-26)
