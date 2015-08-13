@@ -9,7 +9,7 @@ Python module to parse, normalize and render postal addresses.
 .. image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
     :target: https://travis-ci.org/scaleway/postal-address
     :alt: Unit-tests status
-.. image:: https://img.shields.io/coveralls/scaleway/postal-address/develop.svg?style=flat
+.. image:: https://coveralls.io/repos/scaleway/postal-address/badge.svg?branch=develop&service=github
     :target: https://coveralls.io/r/scaleway/postal-address?branch=develop
     :alt: Coverage Status
 .. image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
