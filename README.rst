@@ -3,27 +3,31 @@ Postal Address
 
 Python module to parse, normalize and render postal addresses.
 
-.. image:: https://img.shields.io/pypi/v/postal-address.svg?style=flat
+Stable release: |release| |license| |dependencies| |popularity|
+
+Development: |build| |quality| |coverage|
+
+.. |release| image:: https://img.shields.io/pypi/v/postal-address.svg?style=flat
     :target: https://pypi.python.org/pypi/postal-address
     :alt: Last release
-.. image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
-    :target: https://travis-ci.org/scaleway/postal-address
-    :alt: Unit-tests status
-.. image:: https://coveralls.io/repos/scaleway/postal-address/badge.svg?branch=develop&service=github
-    :target: https://coveralls.io/r/scaleway/postal-address?branch=develop
-    :alt: Coverage Status
-.. image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
-    :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
-    :alt: Requirements freshness
-.. image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
-    :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
-    :alt: Code Quality
-.. image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
+.. |license| image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
     :target: http://opensource.org/licenses/BSD-2-Clause
     :alt: Software license
-.. image:: https://img.shields.io/pypi/dm/postal-address.svg?style=flat
+.. |popularity| image:: https://img.shields.io/pypi/dm/postal-address.svg?style=flat
     :target: https://pypi.python.org/pypi/postal-address#downloads
     :alt: Popularity
+.. |dependencies| image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
+    :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
+    :alt: Requirements freshness
+.. |build| image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
+    :target: https://travis-ci.org/scaleway/postal-address
+    :alt: Unit-tests status
+.. |coverage| image::  https://coveralls.io/repos/scaleway/postal-address/badge.svg?branch=develop&service=github
+    :target: https://coveralls.io/r/scaleway/postal-address?branch=develop
+    :alt: Coverage Status
+.. |quality| image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
+    :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
+    :alt: Code Quality
 
 
 Motivation
