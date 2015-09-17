@@ -8,7 +8,7 @@
 # License at http://opensource.org/licenses/BSD-2-Clause
 
 
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 
 
 from .address import Address
