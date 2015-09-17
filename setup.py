@@ -5,19 +5,9 @@
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #                         Bastien Chatelard <bchatelard@scaleway.com>
 #
-# This program is Free Software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# Licensed under the BSD 2-Clause License (the "License"); you may not use this
+# file except in compliance with the License. You may obtain a copy of the
+# License at http://opensource.org/licenses/BSD-2-Clause
 
 import codecs
 import os
@@ -57,7 +47,7 @@ setup(
     author='Scaleway',
     author_email='opensource@scaleway.com',
     url='http://github.com/scaleway/postal-address',
-    license='GPLv2+',
+    license='BSD',
 
     install_requires=[
         'awesome-slugify',
@@ -72,7 +62,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',

@@ -19,7 +19,7 @@ Python module to parse, normalize and render postal addresses.
     :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
     :alt: Code Quality
 .. image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
-    :target: https://www.gnu.org/licenses/gpl-2.0.html
+    :target: http://opensource.org/licenses/BSD-2-Clause
     :alt: Software license
 .. image:: https://img.shields.io/pypi/dm/postal-address.svg?style=flat
     :target: https://pypi.python.org/pypi/postal-address#downloads
@@ -128,6 +128,5 @@ Bump revision back to its development state:
 License
 -------
 
-This software is licensed under the `GNU General Public License v2 or later
-(GPLv2+)
-<https://github.com/scaleway/postal-address/blob/master/LICENSE>`_.
+This software is licensed under the `BSD 2-Clause License
+<https://github.com/scaleway/postal-address/blob/develop/LICENSE.rst>`_.

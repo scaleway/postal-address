@@ -5,7 +5,7 @@ ChangeLog
 0.8.2 (unreleased)
 ------------------
 
-* No changes yet.
+* Change license from GPLv2+ to BSD 2-Clause license. Closes #13.
 
 
 0.8.1 (2015-06-01)
