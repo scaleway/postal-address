@@ -63,6 +63,33 @@ stable release and its dependencies with a simple `pip` call:
     $ pip install postal-address
 
 
+Development
+-----------
+
+Check out latest development branch:
+
+.. code-block:: bash
+
+    $ git clone git@github.com:scaleway/postal-address.git
+    $ cd ./postal-address
+    $ python ./setup.py develop
+
+Run unit-tests:
+
+.. code-block:: bash
+
+    $ python ./setup.py nosetests
+
+Run `PEP8 <https://pep8.readthedocs.org>`_ and `Pylint
+<http://docs.pylint.org>`_ code style checks:
+
+.. code-block:: bash
+
+    $ pip install pep8 pylint
+    $ pep8 postal-address
+    $ pylint --rcfile=setup.cfg postal-address
+
+
 Stability policy
 ----------------
 
