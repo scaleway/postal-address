@@ -3,27 +3,31 @@ Postal Address
 
 Python module to parse, normalize and render postal addresses.
 
-.. image:: https://img.shields.io/pypi/v/postal-address.svg?style=flat
+Stable release: |release| |license| |dependencies| |popularity|
+
+Development: |build| |quality| |coverage|
+
+.. |release| image:: https://img.shields.io/pypi/v/postal-address.svg?style=flat
     :target: https://pypi.python.org/pypi/postal-address
     :alt: Last release
-.. image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
-    :target: https://travis-ci.org/scaleway/postal-address
-    :alt: Unit-tests status
-.. image:: https://img.shields.io/coveralls/scaleway/postal-address/develop.svg?style=flat
-    :target: https://coveralls.io/r/scaleway/postal-address?branch=develop
-    :alt: Coverage Status
-.. image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
-    :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
-    :alt: Requirements freshness
-.. image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
-    :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
-    :alt: Code Quality
-.. image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
-    :target: https://www.gnu.org/licenses/gpl-2.0.html
+.. |license| image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
+    :target: http://opensource.org/licenses/BSD-2-Clause
     :alt: Software license
-.. image:: https://img.shields.io/pypi/dm/postal-address.svg?style=flat
+.. |popularity| image:: https://img.shields.io/pypi/dm/postal-address.svg?style=flat
     :target: https://pypi.python.org/pypi/postal-address#downloads
     :alt: Popularity
+.. |dependencies| image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
+    :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
+    :alt: Requirements freshness
+.. |build| image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
+    :target: https://travis-ci.org/scaleway/postal-address
+    :alt: Unit-tests status
+.. |coverage| image::  https://coveralls.io/repos/scaleway/postal-address/badge.svg?branch=develop&service=github
+    :target: https://coveralls.io/r/scaleway/postal-address?branch=develop
+    :alt: Coverage Status
+.. |quality| image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
+    :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
+    :alt: Code Quality
 
 
 Motivation
@@ -45,6 +49,45 @@ pamphlet.
 This library is still in its early stages, but is good enough to implement
 the new European Directives on VAT, which requires all e-commerce shops to
 guess the locality of their EU customers depending on their billing address.
+
+
+Install
+-------
+
+This package is `available on PyPi
+<https://pypi.python.org/pypi/postal-address>`_, so you can install the latest
+stable release and its dependencies with a simple `pip` call:
+
+.. code-block:: bash
+
+    $ pip install postal-address
+
+
+Development
+-----------
+
+Check out latest development branch:
+
+.. code-block:: bash
+
+    $ git clone git@github.com:scaleway/postal-address.git
+    $ cd ./postal-address
+    $ python ./setup.py develop
+
+Run unit-tests:
+
+.. code-block:: bash
+
+    $ python ./setup.py nosetests
+
+Run `PEP8 <https://pep8.readthedocs.org>`_ and `Pylint
+<http://docs.pylint.org>`_ code style checks:
+
+.. code-block:: bash
+
+    $ pip install pep8 pylint
+    $ pep8 postal-address
+    $ pylint --rcfile=setup.cfg postal-address
 
 
 Stability policy
@@ -73,61 +116,73 @@ Start from the ``develop`` branch:
 
 .. code-block:: bash
 
-    git clone git@github.com:scaleway/postal-address.git
-    git checkout develop
+    $ git clone git@github.com:scaleway/postal-address.git
+    $ git checkout develop
 
-Update revision to its release number and update change log:
+Revision should already be set to the next version, so we just need to set the
+released date in the changelog:
 
 .. code-block:: bash
 
-    vi ./postal_address/__init__.py
-    vi ./CHANGES.rst
+    $ vi ./CHANGES.rst
 
 Create a release commit, tag it and merge it back to ``master`` branch:
 
 .. code-block:: bash
 
-    git add ./postal_address/__init__.py ./CHANGES.rst
-    git commit -m "Release vXX.XX.XX"
-    git tag "vXX.XX.XX"
-    git push
-    git push --tags
-    git checkout master
-    git pull
-    git merge "vXX.XX.XX"
-    git push
+    $ git add ./postal_address/__init__.py ./CHANGES.rst
+    $ git commit -m "Release vX.Y.Z"
+    $ git tag "vX.Y.Z"
+    $ git push
+    $ git push --tags
+    $ git checkout master
+    $ git pull
+    $ git merge "vX.Y.Z"
+    $ git push
 
-Push packaging to the test cheeseshop:
-
-.. code-block:: bash
-
-    python setup.py register -r testpypi
-    pip install wheel
-    rm -rf ./build ./dist
-    python setup.py sdist bdist_egg bdist_wheel upload -r testpypi
-
-Publish packaging to PyPi:
+Push packaging to the `test cheeseshop
+<https://wiki.python.org/moin/TestPyPI>`_:
 
 .. code-block:: bash
 
-    python setup.py register -r pypi
-    rm -rf ./build ./dist
-    python setup.py sdist bdist_egg bdist_wheel upload -r pypi
+    $ pip install wheel
+    $ python ./setup.py register -r testpypi
+    $ python ./setup.py clean
+    $ rm -rf ./build ./dist
+    $ python ./setup.py sdist bdist_egg bdist_wheel upload -r testpypi
+
+Publish packaging to `PyPi <https://pypi.python.org>`_:
+
+.. code-block:: bash
+
+    $ python ./setup.py register -r pypi
+    $ python ./setup.py clean
+    $ rm -rf ./build ./dist
+    $ python ./setup.py sdist bdist_egg bdist_wheel upload -r pypi
 
 Bump revision back to its development state:
 
 .. code-block:: bash
 
-    git checkout develop
-    vi ./postal_address/__init__.py
-    vi ./CHANGES.rst
-    git add ./postal_address/__init__.py ./CHANGES.rst
-    git commit -m "Post release version bump."
+    $ pip install bumpversion
+    $ git checkout develop
+    $ bumpversion --verbose patch
+    $ git add ./postal_address/__init__.py ./CHANGES.rst
+    $ git commit -m "Post release version bump."
+    $ git push
+
+Now if the next revision is no longer bug-fix only:
+
+.. code-block:: bash
+
+    $ bumpversion --verbose minor
+    $ git add ./postal_address/__init__.py ./CHANGES.rst
+    $ git commit -m "Next release no longer bug-fix only. Bump revision."
+    $ git push
 
 
 License
 -------
 
-This software is licensed under the `GNU General Public License v2 or later
-(GPLv2+)
-<https://github.com/scaleway/postal-address/blob/master/LICENSE>`_.
+This software is licensed under the `BSD 2-Clause License
+<https://github.com/scaleway/postal-address/blob/develop/LICENSE.rst>`_.

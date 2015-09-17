@@ -2,10 +2,18 @@ ChangeLog
 =========
 
 
+0.9.0 (2015-09-17)
+------------------
+
+* Change license from GPLv2+ to BSD 2-Clause license. Closes #13.
+* Add bumpversion configuration.
+* Add custom PEP8 and PyLint configuration.
+
+
 0.8.1 (2015-06-01)
 ------------------
 
-* * Fix bad released version.
+* Fix bad released version.
 
 
 0.8.0 (2015-06-01)
