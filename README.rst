@@ -116,56 +116,69 @@ Start from the ``develop`` branch:
 
 .. code-block:: bash
 
-    git clone git@github.com:scaleway/postal-address.git
-    git checkout develop
+    $ git clone git@github.com:scaleway/postal-address.git
+    $ git checkout develop
 
-Update revision to its release number and update change log:
+Revision should already be set to the next version, so we just need to set the
+released date in the changelog:
 
 .. code-block:: bash
 
-    vi ./postal_address/__init__.py
-    vi ./CHANGES.rst
+    $ vi ./CHANGES.rst
 
 Create a release commit, tag it and merge it back to ``master`` branch:
 
 .. code-block:: bash
 
-    git add ./postal_address/__init__.py ./CHANGES.rst
-    git commit -m "Release vXX.XX.XX"
-    git tag "vXX.XX.XX"
-    git push
-    git push --tags
-    git checkout master
-    git pull
-    git merge "vXX.XX.XX"
-    git push
+    $ git add ./postal_address/__init__.py ./CHANGES.rst
+    $ git commit -m "Release vX.Y.Z"
+    $ git tag "vX.Y.Z"
+    $ git push
+    $ git push --tags
+    $ git checkout master
+    $ git pull
+    $ git merge "vX.Y.Z"
+    $ git push
 
-Push packaging to the test cheeseshop:
-
-.. code-block:: bash
-
-    python setup.py register -r testpypi
-    pip install wheel
-    rm -rf ./build ./dist
-    python setup.py sdist bdist_egg bdist_wheel upload -r testpypi
-
-Publish packaging to PyPi:
+Push packaging to the `test cheeseshop
+<https://wiki.python.org/moin/TestPyPI>`_:
 
 .. code-block:: bash
 
-    python setup.py register -r pypi
-    rm -rf ./build ./dist
-    python setup.py sdist bdist_egg bdist_wheel upload -r pypi
+    $ pip install wheel
+    $ python ./setup.py register -r testpypi
+    $ python ./setup.py clean
+    $ rm -rf ./build ./dist
+    $ python ./setup.py sdist bdist_egg bdist_wheel upload -r testpypi
+
+Publish packaging to `PyPi <https://pypi.python.org>`_:
+
+.. code-block:: bash
+
+    $ python ./setup.py register -r pypi
+    $ python ./setup.py clean
+    $ rm -rf ./build ./dist
+    $ python ./setup.py sdist bdist_egg bdist_wheel upload -r pypi
 
 Bump revision back to its development state:
 
 .. code-block:: bash
 
-    git checkout develop
-    vi ./postal_address/__init__.py
-    vi ./CHANGES.rst
-    git add ./postal_address/__init__.py ./CHANGES.rst
-    git commit -m "Post release version bump."
+    $ pip install bumpversion
+    $ git checkout develop
+    $ bumpversion --verbose patch
+    $ git add ./postal_address/__init__.py ./CHANGES.rst
+    $ git commit -m "Post release version bump."
+    $ git push
+
+Now if the next revision is no longer bug-fix only:
+
+.. code-block:: bash
+
+    $ bumpversion --verbose minor
+    $ git add ./postal_address/__init__.py ./CHANGES.rst
+    $ git commit -m "Next release no longer bug-fix only. Bump revision."
+    $ git push
 
 
 License
