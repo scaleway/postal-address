@@ -7,6 +7,7 @@ ChangeLog
 
 * Change license from GPLv2+ to BSD 2-Clause license. Closes #13.
 * Add bumpversion configuration.
+* Add custom PEP8 and PyLint configuration.
 
 
 0.8.1 (2015-06-01)
