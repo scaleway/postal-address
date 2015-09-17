@@ -51,6 +51,18 @@ the new European Directives on VAT, which requires all e-commerce shops to
 guess the locality of their EU customers depending on their billing address.
 
 
+Install
+-------
+
+This package is `available on PyPi
+<https://pypi.python.org/pypi/postal-address>`_, so you can install the latest
+stable release and its dependencies with a simple `pip` call:
+
+.. code-block:: bash
+
+    $ pip install postal-address
+
+
 Stability policy
 ----------------
 
