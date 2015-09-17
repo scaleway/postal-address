@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.8.2 (unreleased)
+0.9.0 (unreleased)
 ------------------
 
 * Change license from GPLv2+ to BSD 2-Clause license. Closes #13.
