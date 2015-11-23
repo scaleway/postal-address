@@ -22,8 +22,8 @@ Development: |build| |quality| |coverage|
 .. |build| image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
     :target: https://travis-ci.org/scaleway/postal-address
     :alt: Unit-tests status
-.. |coverage| image:: https://codecov.io/github/kdeldycke/postal-address/coverage.svg?branch=develop
-    :target: https://codecov.io/github/kdeldycke/postal-address?branch=develop
+.. |coverage| image:: https://codecov.io/github/scaleway/postal-address/coverage.svg?branch=develop
+    :target: https://codecov.io/github/scaleway/postal-address?branch=develop
     :alt: Coverage Status
 .. |quality| image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
     :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
