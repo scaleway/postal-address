@@ -24,6 +24,7 @@ except NameError:  # pragma: no cover
 from random import choice, randint
 import re
 import string
+import warnings
 
 import faker
 from pycountry import countries, subdivisions
@@ -503,7 +504,12 @@ def random_word(word_lenght=8):
 
     Source:
     http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
+
+    .. deprecated:: 0.10.0
+
+       Use faker package instead.
     """
+    warnings.warn('Use faker package instead.', DeprecationWarning)
     return ''.join([choice(
         'aeiou' if i % 2 else 'bcdfghklmnprstvw') for i in range(word_lenght)])
 
@@ -513,13 +519,24 @@ def random_phrase(word_count=4, min_word_lenght=2, max_word_lenght=10):
 
     Source:
     http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
+
+    .. deprecated:: 0.10.0
+
+       Use faker package instead.
     """
+    warnings.warn('Use faker package instead.', DeprecationWarning)
     return ' '.join([random_word(randint(
         min_word_lenght, max_word_lenght)) for _ in range(word_count)])
 
 
 def random_postal_code():
-    """ Return a parsable random postal code. """
+    """ Return a parsable random postal code.
+
+    .. deprecated:: 0.10.0
+
+       Use faker package instead.
+    """
+    warnings.warn('Use faker package instead.', DeprecationWarning)
     return ''.join([
         choice(string.ascii_uppercase + string.digits + '- ')
         for _ in range(randint(4, 10))])
