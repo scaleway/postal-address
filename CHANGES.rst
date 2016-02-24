@@ -7,6 +7,7 @@ ChangeLog
 
 * Add a new ``territory_children_codes()`` utility to fetch all children of a
   territory.
+* Use ``faker`` module to produce fuzzier random addresses.
 
 
 0.9.1 (2015-11-23)

@@ -25,12 +25,13 @@ from random import choice, randint
 import re
 import string
 
+import faker
 from pycountry import countries, subdivisions
 from slugify import slugify
 
 from .territory import (
     country_from_subdivision, default_subdivision_code,
-    supported_subdivision_codes, territory_parents, normalize_territory_code)
+    territory_children_codes, territory_parents, normalize_territory_code)
 
 
 class InvalidAddress(ValueError):
@@ -524,16 +525,26 @@ def random_postal_code():
         for _ in range(randint(4, 10))])
 
 
-def random_address():
-    """ Return a random, valid address. """
+def random_address(locale=None):
+    """ Return a random, valid address.
+
+    A ``locale`` parameter try to produce a localized-consistent address. Else
+    a random locale is picked-up.
+    """
+    # Exclude temporaryly the chinese locale, while we waiting for a new faker
+    # release. See: https://github.com/joke2k/faker/pull/329
+    while locale in [None, 'cn']:
+        locale = faker.providers.misc.Provider.language_code()
+    fake = faker.Faker(locale=locale)
+    country_code = fake.country_code()
     return Address(
         strict=False,
-        line1='{} {}'.format(
-            randint(1, 999), random_phrase(word_count=2).title()),
-        line2=random_phrase(word_count=2).title(),
-        city_name=random_word().title(),
-        postal_code=random_postal_code(),
-        subdivision_code=choice(list(supported_subdivision_codes())))
+        line1=fake.street_address(),
+        line2=fake.sentence(),
+        postal_code=fake.postcode(),
+        city_name=fake.city(),
+        country_code=country_code,
+        subdivision_code=choice(list(territory_children_codes(country_code))))
 
 
 # Subdivisions utils.

@@ -52,6 +52,7 @@ setup(
     install_requires=[
         'awesome-slugify',
         'pycountry >= 1.9',
+        'fake-factory',
     ],
 
     packages=find_packages(),
