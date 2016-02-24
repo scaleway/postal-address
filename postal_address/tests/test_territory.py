@@ -7,23 +7,35 @@
 # file except in compliance with the License. You may obtain a copy of the
 # License at http://opensource.org/licenses/BSD-2-Clause
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
 
-from operator import attrgetter
 import re
 import unittest
-
-from pycountry import countries, subdivisions
+from operator import attrgetter
 
 from postal_address.address import (
-    Address, subdivision_metadata, subdivision_type_id)
+    Address,
+    subdivision_metadata,
+    subdivision_type_id
+)
 from postal_address.territory import (
-    country_from_subdivision, default_subdivision_code,
-    supported_territory_codes, supported_country_codes,
-    supported_subdivision_codes, country_aliases, territory_children_codes,
-    territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES)
-
+    COUNTRY_ALIASES,
+    SUBDIVISION_ALIASES,
+    country_aliases,
+    country_from_subdivision,
+    default_subdivision_code,
+    supported_country_codes,
+    supported_subdivision_codes,
+    supported_territory_codes,
+    territory_children_codes,
+    territory_parents_codes
+)
+from pycountry import countries, subdivisions
 
 try:
     from itertools import imap

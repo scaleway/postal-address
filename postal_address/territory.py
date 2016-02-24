@@ -22,8 +22,12 @@ u""" Utilities to normalize and reconcile territory codes.
    Reverse index of the SUBDIVISION_ALIASES mapping defined above.
 """
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
 
 from itertools import chain
 from operator import attrgetter

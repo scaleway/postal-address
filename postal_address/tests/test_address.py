@@ -8,15 +8,22 @@
 # file except in compliance with the License. You may obtain a copy of the
 # License at http://opensource.org/licenses/BSD-2-Clause
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
 
 import sys
 import unittest
 
-from pycountry import countries, subdivisions
-
 from postal_address.address import Address, InvalidAddress, random_address
+from postal_address.territory import (
+    supported_country_codes,
+    supported_territory_codes
+)
+from pycountry import countries, subdivisions
 
 
 class TestAddress(unittest.TestCase):

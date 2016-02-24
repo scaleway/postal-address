@@ -14,25 +14,35 @@ Only provides address validation for the moment, but may be used in the future
 for localized rendering (see issue #4).
 """
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
+
+import re
+import string
+import warnings
+from random import choice, randint
+
+import faker
+
+from pycountry import countries, subdivisions
+from slugify import slugify
+
+from .territory import (
+    country_from_subdivision,
+    default_subdivision_code,
+    normalize_territory_code,
+    territory_children_codes,
+    territory_parents
+)
 
 try:
     basestring
 except NameError:  # pragma: no cover
     basestring = (str, bytes)
-from random import choice, randint
-import re
-import string
-import warnings
-
-import faker
-from pycountry import countries, subdivisions
-from slugify import slugify
-
-from .territory import (
-    country_from_subdivision, default_subdivision_code,
-    territory_children_codes, territory_parents, normalize_territory_code)
 
 
 class InvalidAddress(ValueError):

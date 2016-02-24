@@ -10,6 +10,7 @@ ChangeLog
 * Use ``faker`` module to produce fuzzier random addresses.
 * Deprecate ``random_word()``, ``random_phrase()`` and
   ``random_postal_code()`` in favor of ``faker`` module.
+* Add ``isort`` configuration.
 
 
 0.9.1 (2015-11-23)
