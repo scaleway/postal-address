@@ -114,7 +114,7 @@ class TestTerritory(unittest.TestCase):
 
     def test_territory_children_codes(self):
         self.assertEquals(territory_children_codes('GQ'), set([
-            'GQ-C', 'GQ-I',	'GQ-AN', 'GQ-BN', 'GQ-BS', 'GQ-CS', 'GQ-KN',
+            'GQ-C', 'GQ-I', 'GQ-AN', 'GQ-BN', 'GQ-BS', 'GQ-CS', 'GQ-KN',
             'GQ-LI', 'GQ-WN']))
         self.assertEquals(territory_children_codes('GQ-I'), set([
             'GQ-AN', 'GQ-BN', 'GQ-BS']))
