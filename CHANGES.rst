@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-0.10.0 (unreleased)
+1.0.0 (unreleased)
 ------------------
 
 * Add a new ``territory_children_codes()`` utility to fetch all children of a
