@@ -792,7 +792,7 @@ United Kingdom""")
 
     def test_random_address(self):
         """ Test generation, validation and rendering of random addresses. """
-        for _ in range(42):
+        for _ in range(999):
             address = random_address()
             address.validate()
             address.render()
