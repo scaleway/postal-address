@@ -5,7 +5,8 @@ ChangeLog
 0.10.0 (unreleased)
 ------------------
 
-* No changes yet.
+* Add a new ``territory_children_codes()`` utility to fetch all children of a
+  territory.
 
 
 0.9.1 (2015-11-23)

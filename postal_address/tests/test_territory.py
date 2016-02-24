@@ -21,7 +21,7 @@ from postal_address.address import (
 from postal_address.territory import (
     country_from_subdivision, default_subdivision_code,
     supported_territory_codes, supported_country_codes,
-    supported_subdivision_codes, country_aliases,
+    supported_subdivision_codes, country_aliases, territory_children_codes,
     territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES)
 
 
@@ -99,6 +99,16 @@ class TestTerritory(unittest.TestCase):
         self.assertEquals(default_subdivision_code('FR'), None)
         self.assertEquals(default_subdivision_code('GU'), 'US-GU')
         self.assertEquals(default_subdivision_code('SJ'), None)
+
+    def test_territory_children_codes(self):
+        self.assertEquals(territory_children_codes('GQ'), set([
+            'GQ-C', 'GQ-I',	'GQ-AN', 'GQ-BN', 'GQ-BS', 'GQ-CS', 'GQ-KN',
+            'GQ-LI', 'GQ-WN']))
+        self.assertEquals(territory_children_codes('GQ-I'), set([
+            'GQ-AN', 'GQ-BN', 'GQ-BS']))
+        self.assertEquals(territory_children_codes('GQ-AN'), set())
+        self.assertEquals(territory_children_codes(
+            'GQ-AN', include_self=True), set(['GQ-AN']))
 
     def test_territory_parents_codes(self):
         self.assertEquals(
