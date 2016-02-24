@@ -563,15 +563,18 @@ def random_address(locale=None):
     while locale in [None, 'cn']:
         locale = faker.providers.misc.Provider.language_code()
     fake = faker.Faker(locale=locale)
-    country_code = fake.country_code()
-    return Address(
-        strict=False,
-        line1=fake.street_address(),
-        line2=fake.sentence(),
-        postal_code=fake.postcode(),
-        city_name=fake.city(),
-        country_code=country_code,
-        subdivision_code=choice(list(territory_children_codes(country_code))))
+
+    components = {
+        'line1': fake.street_address(),
+        'line2': fake.sentence(),
+        'postal_code': fake.postcode(),
+        'city_name': fake.city(),
+        'country_code': fake.country_code()}
+    subdiv_codes = list(territory_children_codes(components['country_code']))
+    if subdiv_codes:
+        components['subdivision_code'] = choice(subdiv_codes)
+
+    return Address(strict=False, **components)
 
 
 # Subdivisions utils.
