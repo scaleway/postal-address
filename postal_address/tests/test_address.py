@@ -126,6 +126,7 @@ class TestAddressIO(unittest.TestCase):
             'country_code',
             'subdivision_code',
         ]), set(address.keys()))
+        self.assertEquals(len(address), 6)
         self.assertEquals(
             set([None, '10, avenue des Champs Elysées',
                  '75008', 'Paris', 'FR']),
