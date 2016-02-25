@@ -76,6 +76,29 @@ class TestAddressIO(unittest.TestCase):
         with self.assertRaises(TypeError):
             address[Decimal()] = 'Blah blah blah'
 
+    def test_field_deletion(self):
+        address = Address(
+            line1='1 Infinite Loop',
+            postal_code='95014',
+            city_name='Cupertino',
+            subdivision_code='US-CA')
+
+        # Base field deletion.
+        self.assertIsNotNone(address['line1'])
+        self.assertIsNotNone(address.line1)
+        del address['line1']
+        self.assertIsNone(address['line1'])
+        self.assertIsNone(address.line1)
+
+        # Territory metadata field deletion.
+        self.assertIsNotNone(address['state_name'])
+        self.assertIsNotNone(address.state_name)
+        del address['state_name']
+        with self.assertRaises(KeyError):
+            self.assertIsNone(address['state_name'])
+        with self.assertRaises(AttributeError):
+            self.assertIsNone(address.state_name)
+
     def test_unicode_mess(self):
         address = Address(
             line1='ब ♎ 1F: ̹ƶώ㎂🐎🐙💊 ꧲⋉ ⦼ Ė꧵┵',
