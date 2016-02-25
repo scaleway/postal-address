@@ -158,9 +158,14 @@ class Address(object):
         return '{}({})'.format(
             self.__class__.__name__, ', '.join(sorted(fields_repr)))
 
-    def __str__(self):
-        """ Return a simple string representation of the address block. """
+    def __unicode__(self):
+        """ Return a simple unicode string representation of the address block.
+        """
         return self.render()
+
+    def __str__(self):
+        """ Same as __unicode__ but for Python 2 compatibility. """
+        return unicode(self).encode('utf-8')
 
     def __getattr__(self, name):
         """ Expose fields as attributes. """
