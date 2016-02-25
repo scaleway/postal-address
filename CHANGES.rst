@@ -13,6 +13,7 @@ ChangeLog
 * Add ``isort`` configuration.
 * Only allow string-like types to be set on editable address fields.
 * Replace ``awesome-slugify`` dependency by ``boltons``.
+* Activate tests on Python 3.5.
 
 
 0.9.1 (2015-11-23)
