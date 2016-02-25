@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-1.0.0 (unreleased)
+1.0.0 (2016-02-25)
 ------------------
 
 * Add a new ``territory_children_codes()`` utility to fetch all children of a
