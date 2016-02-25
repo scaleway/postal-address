@@ -166,7 +166,7 @@ class Address(object):
 
     def __str__(self):
         """ Same as __unicode__ but for Python 2 compatibility. """
-        return unicode(self).encode('utf-8')
+        return self.render().encode('utf-8')
 
     def __getattr__(self, name):
         """ Expose fields as attributes. """
