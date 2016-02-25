@@ -5,7 +5,8 @@ ChangeLog
 1.1.0 (unreleased)
 ------------------
 
-* No changes yet.
+* Remove deprecated ``random_word()``, ``random_phrase()`` and
+  ``random_postal_code()``.
 
 
 1.0.0 (2016-02-25)
