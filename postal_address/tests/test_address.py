@@ -30,6 +30,19 @@ from pycountry import countries, subdivisions
 
 class TestAddressIO(unittest.TestCase):
 
+    def test_default_values(self):
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
+            city_name='Paris',
+            country_code='FR')
+        self.assertEquals(address.line1, '10, avenue des Champs Elysées')
+        self.assertEquals(address.line2, None)
+        self.assertEquals(address.postal_code, '75008')
+        self.assertEquals(address.city_name, 'Paris')
+        self.assertEquals(address.country_code, 'FR')
+        self.assertEquals(address.subdivision_code, None)
+
     def test_emptiness(self):
         address = Address()
         self.assertTrue(address.empty)
@@ -99,6 +112,35 @@ class TestAddressIO(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.assertIsNone(address.state_name)
 
+    def test_dict_access(self):
+        address = Address(
+            line1='10, avenue des Champs Elysées',
+            postal_code='75008',
+            city_name='Paris',
+            country_code='FR')
+        self.assertSequenceEqual(set([
+            'line1',
+            'line2',
+            'postal_code',
+            'city_name',
+            'country_code',
+            'subdivision_code',
+        ]), set(address.keys()))
+        self.assertEquals(
+            set([None, '10, avenue des Champs Elysées',
+                 '75008', 'Paris', 'FR']),
+            set(address.values()))
+        self.assertEquals({
+            'line1': '10, avenue des Champs Elysées',
+            'line2': None,
+            'postal_code': '75008',
+            'city_name': 'Paris',
+            'country_code': 'FR',
+            'subdivision_code': None,
+        }, dict(address.items()))
+        for key in address.keys():
+            self.assertEquals(getattr(address, key), address[key])
+
     def test_unicode_mess(self):
         address = Address(
             line1='ब ♎ 1F: ̹ƶώ㎂🐎🐙💊 ꧲⋉ ⦼ Ė꧵┵',
@@ -110,19 +152,6 @@ class TestAddressIO(unittest.TestCase):
         self.assertIsNotNone(address.line2)
         self.assertIsNotNone(address.postal_code)
         self.assertIsNotNone(address.city_name)
-
-    def test_default_values(self):
-        address = Address(
-            line1='10, avenue des Champs Elysées',
-            postal_code='75008',
-            city_name='Paris',
-            country_code='FR')
-        self.assertEquals(address.line1, '10, avenue des Champs Elysées')
-        self.assertEquals(address.line2, None)
-        self.assertEquals(address.postal_code, '75008')
-        self.assertEquals(address.city_name, 'Paris')
-        self.assertEquals(address.country_code, 'FR')
-        self.assertEquals(address.subdivision_code, None)
 
     @unittest.skipIf(sys.version_info.major > 2, "Python 2-only test.")
     def test_repr_python2(self):
@@ -169,35 +198,6 @@ class TestAddressIO(unittest.TestCase):
             "subdivision_type_id=None, "
             "subdivision_type_name=None, "
             "valid=True)")
-
-    def test_dict_access(self):
-        address = Address(
-            line1='10, avenue des Champs Elysées',
-            postal_code='75008',
-            city_name='Paris',
-            country_code='FR')
-        self.assertSequenceEqual(set([
-            'line1',
-            'line2',
-            'postal_code',
-            'city_name',
-            'country_code',
-            'subdivision_code',
-        ]), set(address.keys()))
-        self.assertEquals(
-            set([None, '10, avenue des Champs Elysées',
-                 '75008', 'Paris', 'FR']),
-            set(address.values()))
-        self.assertEquals({
-            'line1': '10, avenue des Champs Elysées',
-            'line2': None,
-            'postal_code': '75008',
-            'city_name': 'Paris',
-            'country_code': 'FR',
-            'subdivision_code': None,
-        }, dict(address.items()))
-        for key in address.keys():
-            self.assertEquals(getattr(address, key), address[key])
 
     def test_rendering(self):
         # Test subdivision-less rendering.
