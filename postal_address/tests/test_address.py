@@ -16,8 +16,8 @@ from __future__ import (
 )
 
 import sys
-import unittest
 import textwrap
+import unittest
 from decimal import Decimal
 
 from postal_address.address import Address, InvalidAddress, random_address

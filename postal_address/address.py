@@ -27,9 +27,9 @@ import warnings
 from random import choice, randint
 
 import faker
+from boltons.strutils import slugify
 
 from pycountry import countries, subdivisions
-from boltons.strutils import slugify
 
 from .territory import (
     country_from_subdivision,
