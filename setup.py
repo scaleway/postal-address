@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2016 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #                         Bastien Chatelard <bchatelard@scaleway.com>
 #
@@ -13,8 +13,7 @@ import codecs
 import os
 import re
 
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 MODULE_NAME = 'postal_address'
 
@@ -50,8 +49,9 @@ setup(
     license='BSD',
 
     install_requires=[
-        'awesome-slugify',
         'pycountry >= 1.9',
+        'fake-factory',
+        'boltons',
     ],
 
     packages=find_packages(),
@@ -69,6 +69,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Office/Business',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: Localization',

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2016 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #                         Gilles Dartiguelongue <gdartiguelongue@scaleway.com>
 #
@@ -14,23 +14,34 @@ Only provides address validation for the moment, but may be used in the future
 for localized rendering (see issue #4).
 """
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
 
-try:
-    basestring
-except NameError:  # pragma: no cover
-    basestring = (str, bytes)
-from random import choice, randint
 import re
 import string
+import warnings
+from random import choice, randint
+
+import faker
+from boltons.strutils import slugify
 
 from pycountry import countries, subdivisions
-from slugify import slugify
 
+from . import PY2, PY3
 from .territory import (
-    country_from_subdivision, default_subdivision_code,
-    supported_subdivision_codes, territory_parents, normalize_territory_code)
+    country_from_subdivision,
+    default_subdivision_code,
+    normalize_territory_code,
+    territory_children_codes,
+    territory_parents
+)
+
+if PY3:
+    basestring = (str, bytes)
 
 
 class InvalidAddress(ValueError):
@@ -125,7 +136,8 @@ class Address(object):
         # Initialize base fields values.
         self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
         # Load provided fields.
-        self._fields.update(kwargs)
+        for field_id, field_value in kwargs.items():
+            self[field_id] = field_value
         # Normalize addresses fields.
         self.normalize(strict=strict)
 
@@ -135,7 +147,7 @@ class Address(object):
         Also include internal fields disguised as properties.
         """
         # Repr all plain fields.
-        fields_repr = ['{}={!r}'.format(k, v) for k, v in self._fields.items()]
+        fields_repr = ['{}={!r}'.format(k, v) for k, v in self.items()]
         # Repr all internal properties.
         for internal_id in [
                 'valid', 'empty', 'country_name', 'subdivision_name',
@@ -145,24 +157,31 @@ class Address(object):
         return '{}({})'.format(
             self.__class__.__name__, ', '.join(sorted(fields_repr)))
 
-    def __str__(self):
-        """ Return a simple string representation of the address block. """
+    def __unicode__(self):
+        """ Return a simple unicode string representation of the address block.
+        """
         return self.render()
+
+    if PY2:
+        __str__ = lambda self: self.__unicode__().encode('utf-8')
+    else:
+        __str__ = __unicode__
 
     def __getattr__(self, name):
         """ Expose fields as attributes. """
-        if name in self._fields or name in self.BASE_FIELD_IDS:
-            return self._fields.get(name, None)
+        if name in self._fields:
+            return self._fields[name]
         raise AttributeError
 
     def __setattr__(self, name, value):
         """ Allow update of address fields as attributes. """
         if name in self.BASE_FIELD_IDS:
-            self._fields[name] = value
+            self[name] = value
             return
         super(Address, self).__setattr__(name, value)
 
     # Let an address be accessed like a dict of its fields IDs & values.
+    # This is a proxy to the internal _fields dict.
 
     def __len__(self):
         """ Return the number of fields. """
@@ -175,10 +194,15 @@ class Address(object):
         return self._fields[key]
 
     def __setitem__(self, key, value):
-        """ Set a field's value. """
+        """ Set a field's value.
+
+        Only base fields are allowed to be set explicitely.
+        """
         if not isinstance(key, basestring):
             raise TypeError
-        if key not in self._fields:
+        if not (isinstance(value, basestring) or value is None):
+            raise TypeError
+        if key not in self.BASE_FIELD_IDS:
             raise KeyError
         self._fields[key] = value
 
@@ -289,16 +313,12 @@ class Address(object):
             self.postal_code = self.postal_code.strip('-')
 
         # Normalize spaces.
-        for field_id in self._fields:
-            if isinstance(self._fields[field_id], basestring):
-                self._fields[field_id] = ' '.join(
-                    self._fields[field_id].split())
+        for field_id, field_value in self.items():
+            if isinstance(field_value, basestring):
+                self[field_id] = ' '.join(field_value.split())
 
         # Reset empty and blank strings.
-        empty_fields = []
-        for field_id in self._fields:
-            if not getattr(self, field_id):
-                empty_fields.append(field_id)
+        empty_fields = [f_id for f_id, f_value in self.items() if not f_value]
         for field_id in empty_fields:
             del self[field_id]
 
@@ -432,7 +452,7 @@ class Address(object):
     @property
     def empty(self):
         """ Return True only if all fields are empty. """
-        for value in set(self._fields.values()):
+        for value in set(self.values()):
             if value:
                 return False
         return True
@@ -502,7 +522,12 @@ def random_word(word_lenght=8):
 
     Source:
     http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
+
+    .. deprecated:: 0.10.0
+
+       Use faker package instead.
     """
+    warnings.warn('Use faker package instead.', DeprecationWarning)
     return ''.join([choice(
         'aeiou' if i % 2 else 'bcdfghklmnprstvw') for i in range(word_lenght)])
 
@@ -512,28 +537,52 @@ def random_phrase(word_count=4, min_word_lenght=2, max_word_lenght=10):
 
     Source:
     http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
+
+    .. deprecated:: 0.10.0
+
+       Use faker package instead.
     """
+    warnings.warn('Use faker package instead.', DeprecationWarning)
     return ' '.join([random_word(randint(
         min_word_lenght, max_word_lenght)) for _ in range(word_count)])
 
 
 def random_postal_code():
-    """ Return a parsable random postal code. """
+    """ Return a parsable random postal code.
+
+    .. deprecated:: 0.10.0
+
+       Use faker package instead.
+    """
+    warnings.warn('Use faker package instead.', DeprecationWarning)
     return ''.join([
         choice(string.ascii_uppercase + string.digits + '- ')
         for _ in range(randint(4, 10))])
 
 
-def random_address():
-    """ Return a random, valid address. """
-    return Address(
-        strict=False,
-        line1='{} {}'.format(
-            randint(1, 999), random_phrase(word_count=2).title()),
-        line2=random_phrase(word_count=2).title(),
-        city_name=random_word().title(),
-        postal_code=random_postal_code(),
-        subdivision_code=choice(list(supported_subdivision_codes())))
+def random_address(locale=None):
+    """ Return a random, valid address.
+
+    A ``locale`` parameter try to produce a localized-consistent address. Else
+    a random locale is picked-up.
+    """
+    # Exclude temporaryly the chinese locale, while we waiting for a new faker
+    # release. See: https://github.com/joke2k/faker/pull/329
+    while locale in [None, 'cn']:
+        locale = faker.providers.misc.Provider.language_code()
+    fake = faker.Faker(locale=locale)
+
+    components = {
+        'line1': fake.street_address(),
+        'line2': fake.sentence(),
+        'postal_code': fake.postcode(),
+        'city_name': fake.city(),
+        'country_code': fake.country_code()}
+    subdiv_codes = list(territory_children_codes(components['country_code']))
+    if subdiv_codes:
+        components['subdivision_code'] = choice(subdiv_codes)
+
+    return Address(strict=False, **components)
 
 
 # Subdivisions utils.
@@ -649,7 +698,7 @@ def subdivision_type_id(subdivision):
 
     This method transform and normalize any of these into Python-friendly IDs.
     """
-    type_id = slugify(subdivision.type, to_lower=True).replace('-', '_')
+    type_id = slugify(subdivision.type)
 
     # Any occurence of the 'city' or 'municipality' string in the type
     # overrides its classification to a city.

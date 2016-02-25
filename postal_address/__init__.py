@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2016 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #
 # Licensed under the BSD 2-Clause License (the "License"); you may not use this
@@ -8,7 +8,11 @@
 # License at http://opensource.org/licenses/BSD-2-Clause
 
 
-__version__ = '0.9.1'
+__version__ = '1.0.0'
 
+import sys
+
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 from .address import Address

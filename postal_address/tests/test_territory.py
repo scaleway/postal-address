@@ -1,34 +1,41 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2016 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #
 # Licensed under the BSD 2-Clause License (the "License"); you may not use this
 # file except in compliance with the License. You may obtain a copy of the
 # License at http://opensource.org/licenses/BSD-2-Clause
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
 
-from operator import attrgetter
 import re
 import unittest
-
-from pycountry import countries, subdivisions
+from operator import attrgetter
 
 from postal_address.address import (
-    Address, subdivision_metadata, subdivision_type_id)
+    Address,
+    subdivision_metadata,
+    subdivision_type_id
+)
 from postal_address.territory import (
-    country_from_subdivision, default_subdivision_code,
-    supported_territory_codes, supported_country_codes,
-    supported_subdivision_codes, country_aliases,
-    territory_parents_codes, COUNTRY_ALIASES, SUBDIVISION_ALIASES)
-
-
-try:
-    from itertools import imap
-except ImportError:  # pragma: no cover
-    imap = map
+    COUNTRY_ALIASES,
+    SUBDIVISION_ALIASES,
+    country_aliases,
+    country_from_subdivision,
+    default_subdivision_code,
+    supported_country_codes,
+    supported_subdivision_codes,
+    supported_territory_codes,
+    territory_children_codes,
+    territory_parents_codes
+)
+from pycountry import countries, subdivisions
 
 
 class TestTerritory(unittest.TestCase):
@@ -54,8 +61,8 @@ class TestTerritory(unittest.TestCase):
         # Check that all codes from each classifications we rely on are not
         # overlapping.
         self.assertFalse(
-            set(imap(attrgetter('alpha2'), countries)).intersection(
-                imap(attrgetter('code'), subdivisions)))
+            set(map(attrgetter('alpha2'), countries)).intersection(
+                map(attrgetter('code'), subdivisions)))
 
     def test_territory_exception_definition(self):
         # Check that all codes used in constants to define exceptionnal
@@ -65,20 +72,20 @@ class TestTerritory(unittest.TestCase):
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
             self.assertIn(
-                alias_code, set(imap(attrgetter('alpha2'), countries)).union(
-                    imap(attrgetter('code'), subdivisions)))
+                alias_code, set(map(attrgetter('alpha2'), countries)).union(
+                    map(attrgetter('code'), subdivisions)))
 
         for country_code, alias_code in COUNTRY_ALIASES.items():
             # Aliased country codes are not supposed to be supported by
             # pycountry, as it's the main reason to define an alias in the
             # first place.
             self.assertNotIn(
-                country_code, imap(attrgetter('alpha2'), countries))
+                country_code, map(attrgetter('alpha2'), countries))
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
             self.assertIn(
-                alias_code, set(imap(attrgetter('alpha2'), countries)).union(
-                    imap(attrgetter('code'), subdivisions)))
+                alias_code, set(map(attrgetter('alpha2'), countries)).union(
+                    map(attrgetter('code'), subdivisions)))
 
     def test_country_from_subdivision(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
@@ -89,7 +96,7 @@ class TestTerritory(unittest.TestCase):
             self.assertEquals(
                 country_from_subdivision(subdiv_code), target_code)
         for subdiv_code in set(
-                imap(attrgetter('code'), subdivisions)).difference(
+                map(attrgetter('code'), subdivisions)).difference(
                     SUBDIVISION_ALIASES):
             self.assertEquals(
                 country_from_subdivision(subdiv_code),
@@ -99,6 +106,16 @@ class TestTerritory(unittest.TestCase):
         self.assertEquals(default_subdivision_code('FR'), None)
         self.assertEquals(default_subdivision_code('GU'), 'US-GU')
         self.assertEquals(default_subdivision_code('SJ'), None)
+
+    def test_territory_children_codes(self):
+        self.assertEquals(territory_children_codes('GQ'), set([
+            'GQ-C', 'GQ-I', 'GQ-AN', 'GQ-BN', 'GQ-BS', 'GQ-CS', 'GQ-KN',
+            'GQ-LI', 'GQ-WN']))
+        self.assertEquals(territory_children_codes('GQ-I'), set([
+            'GQ-AN', 'GQ-BN', 'GQ-BS']))
+        self.assertEquals(territory_children_codes('GQ-AN'), set())
+        self.assertEquals(territory_children_codes(
+            'GQ-AN', include_self=True), set(['GQ-AN']))
 
     def test_territory_parents_codes(self):
         self.assertEquals(

@@ -2,6 +2,20 @@ ChangeLog
 =========
 
 
+1.0.0 (2016-02-25)
+------------------
+
+* Add a new ``territory_children_codes()`` utility to fetch all children of a
+  territory.
+* Use ``faker`` module to produce fuzzier random addresses.
+* Deprecate ``random_word()``, ``random_phrase()`` and
+  ``random_postal_code()`` in favor of ``faker`` module.
+* Add ``isort`` configuration.
+* Only allow string-like types to be set on editable address fields.
+* Replace ``awesome-slugify`` dependency by ``boltons``.
+* Activate tests on Python 3.5.
+
+
 0.9.1 (2015-11-23)
 ------------------
 

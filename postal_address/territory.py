@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) 2013-2015 Scaleway and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2016 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #
 # Licensed under the BSD 2-Clause License (the "License"); you may not use this
@@ -22,18 +22,25 @@ u""" Utilities to normalize and reconcile territory codes.
    Reverse index of the SUBDIVISION_ALIASES mapping defined above.
 """
 
-from __future__ import (unicode_literals, print_function, absolute_import,
-                        division)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals
+)
 
 from itertools import chain
 from operator import attrgetter
 
 from pycountry import countries, subdivisions
 
-try:
-    from itertools import imap
-except ImportError:  # pragma: no cover
+from . import PY2
+
+if PY2:
+    from itertools import imap, ifilter
+else:
     imap = map
+    ifilter = filter
 
 
 COUNTRY_ALIASES = {
@@ -181,6 +188,37 @@ def default_subdivision_code(country_code):
     default_subdivisions = default_subdiv.get(country_code)
     if default_subdivisions and len(default_subdivisions) == 1:
         return default_subdivisions.pop()
+
+
+def territory_children_codes(territory_code, include_self=False):
+    """ Return a set of subdivision codes from all sub-levels.
+
+    All returned codes are normalized, including self.
+    """
+    codes = set()
+
+    code = normalize_territory_code(territory_code)
+
+    # We have a country code, look for matching subdivisions in one pass.
+    if code in supported_country_codes():
+        codes.update(imap(
+            attrgetter('code'),
+            ifilter(lambda subdiv: subdiv.country_code == code, subdivisions)))
+
+    # Engage the stupid per-level recursive brute-force search as pycountry
+    # only expose the child-parent relationship upwards.
+    else:
+        direct_children_codes = set(imap(
+            attrgetter('code'),
+            ifilter(lambda subdiv: subdiv.parent_code == code, subdivisions)))
+        for child_code in direct_children_codes:
+            codes.update(
+                territory_children_codes(child_code, include_self=True))
+
+    if include_self:
+        codes.add(code)
+
+    return codes
 
 
 def territory_parents(territory_code, include_country=True):
