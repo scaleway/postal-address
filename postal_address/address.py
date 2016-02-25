@@ -40,7 +40,6 @@ from .territory import (
     territory_parents
 )
 
-
 if PY3:
     basestring = (str, bytes)
 
