@@ -42,7 +42,6 @@ from .territory import (
 try:
     basestring
 except NameError:  # pragma: no cover
-    unicode = str  # pylint: disable=W0622,C0103
     basestring = (str, bytes)
 
 
