@@ -138,7 +138,7 @@ class TestAddressIO(unittest.TestCase):
             'country_code': 'FR',
             'subdivision_code': None,
         }, dict(address.items()))
-        for key in address.keys():
+        for key in address:
             self.assertEquals(getattr(address, key), address[key])
 
     def test_unicode_mess(self):
