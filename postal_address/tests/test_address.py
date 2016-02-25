@@ -153,6 +153,10 @@ class TestAddressIO(unittest.TestCase):
         self.assertIsNotNone(address.postal_code)
         self.assertIsNotNone(address.city_name)
 
+    def test_str(self):
+        address = random_address()
+        self.assertEquals(address.render(), str(address))
+
     @unittest.skipIf(sys.version_info.major > 2, "Python 2-only test.")
     def test_repr_python2(self):
         address = Address(
