@@ -18,6 +18,7 @@ from __future__ import (
 import sys
 import unittest
 import textwrap
+from decimal import Decimal
 
 from postal_address.address import Address, InvalidAddress, random_address
 from postal_address.territory import (
@@ -40,10 +41,52 @@ class TestAddressIO(unittest.TestCase):
         self.assertTrue(address)
         self.assertFalse(not address)
 
-    def test_bad_field(self):
+    def test_unknown_field(self):
+        # Test constructor.
         with self.assertRaises(KeyError):
-            address = Address(
-                bad_field='Blah blah blah')
+            Address(bad_field='Blah blah blah')
+
+        # Test item setter.
+        address = random_address()
+        with self.assertRaises(KeyError):
+            address['bad_field'] = 'Blah blah blah'
+
+    def test_non_string_field_value(self):
+        # Test constructor.
+        with self.assertRaises(TypeError):
+            Address(line1=Decimal())
+
+        # Test attribute setter.
+        address = random_address()
+        with self.assertRaises(TypeError):
+            address.line1 = Decimal()
+
+        # Test item setter.
+        with self.assertRaises(TypeError):
+            address['line1'] = Decimal()
+
+    def test_non_string_field_id(self):
+        address = random_address()
+
+        # Test item getter.
+        with self.assertRaises(TypeError):
+            address[Decimal()]
+
+        # Test item setter.
+        with self.assertRaises(TypeError):
+            address[Decimal()] = 'Blah blah blah'
+
+    def test_unicode_mess(self):
+        address = Address(
+            line1='ब ♎ 1F: ̹ƶώ㎂🐎🐙💊 ꧲⋉ ⦼ Ė꧵┵',
+            line2='⫇⻛⋯ ǖ╶🐎🐙💊ᵞᚘ⎢ ⚗ ⑆  ͋ụ 0 ⇚  � ῐ ',
+            postal_code='3☾Ă⻛🐎🐙💊ȁ�ƈ₟Ǆ✒὘',
+            city_name='Į🐎🐙💊❤Ệ▋',
+            country_code='FR')
+        self.assertIsNotNone(address.line1)
+        self.assertIsNotNone(address.line2)
+        self.assertIsNotNone(address.postal_code)
+        self.assertIsNotNone(address.city_name)
 
     def test_default_values(self):
         address = Address(

@@ -137,7 +137,8 @@ class Address(object):
         # Initialize base fields values.
         self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
         # Load provided fields.
-        self._fields.update(kwargs)
+        for field_id, field_value in kwargs.items():
+            self[field_id] = field_value
         # Normalize addresses fields.
         self.normalize(strict=strict)
 
@@ -147,7 +148,7 @@ class Address(object):
         Also include internal fields disguised as properties.
         """
         # Repr all plain fields.
-        fields_repr = ['{}={!r}'.format(k, v) for k, v in self._fields.items()]
+        fields_repr = ['{}={!r}'.format(k, v) for k, v in self.items()]
         # Repr all internal properties.
         for internal_id in [
                 'valid', 'empty', 'country_name', 'subdivision_name',
@@ -163,18 +164,19 @@ class Address(object):
 
     def __getattr__(self, name):
         """ Expose fields as attributes. """
-        if name in self._fields or name in self.BASE_FIELD_IDS:
-            return self._fields.get(name, None)
+        if name in self._fields:
+            return self._fields[name]
         raise AttributeError
 
     def __setattr__(self, name, value):
         """ Allow update of address fields as attributes. """
         if name in self.BASE_FIELD_IDS:
-            self._fields[name] = value
+            self[name] = value
             return
         super(Address, self).__setattr__(name, value)
 
     # Let an address be accessed like a dict of its fields IDs & values.
+    # This is a proxy to the internal _fields dict.
 
     def __len__(self):
         """ Return the number of fields. """
@@ -187,10 +189,15 @@ class Address(object):
         return self._fields[key]
 
     def __setitem__(self, key, value):
-        """ Set a field's value. """
+        """ Set a field's value.
+
+        Only base fields are allowed to be set explicitely.
+        """
         if not isinstance(key, basestring):
             raise TypeError
-        if key not in self._fields:
+        if not (isinstance(value, basestring) or value is None):
+            raise TypeError
+        if key not in self.BASE_FIELD_IDS:
             raise KeyError
         self._fields[key] = value
 
@@ -301,16 +308,12 @@ class Address(object):
             self.postal_code = self.postal_code.strip('-')
 
         # Normalize spaces.
-        for field_id in self._fields:
-            if isinstance(self._fields[field_id], basestring):
-                self._fields[field_id] = ' '.join(
-                    self._fields[field_id].split())
+        for field_id, field_value in self.items():
+            if isinstance(field_value, basestring):
+                self[field_id] = ' '.join(field_value.split())
 
         # Reset empty and blank strings.
-        empty_fields = []
-        for field_id in self._fields:
-            if not getattr(self, field_id):
-                empty_fields.append(field_id)
+        empty_fields = [f_id for f_id, f_value in self.items() if not f_value]
         for field_id in empty_fields:
             del self[field_id]
 
@@ -444,7 +447,7 @@ class Address(object):
     @property
     def empty(self):
         """ Return True only if all fields are empty. """
-        for value in set(self._fields.values()):
+        for value in set(self.values()):
             if value:
                 return False
         return True
