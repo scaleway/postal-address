@@ -154,14 +154,16 @@ class TestAddressIO(unittest.TestCase):
         self.assertIsNotNone(address.postal_code)
         self.assertIsNotNone(address.city_name)
 
-    def test_string(self):
-        address = random_address()
-        self.assertEquals(address.render(), str(address))
-
     @unittest.skipIf(sys.version_info.major > 2, "Python 2-only test.")
     def test_unicode_python2(self):
         address = random_address()
+        self.assertEquals(address.render().encode('utf-8'), str(address))
         self.assertEquals(address.render(), unicode(address))
+
+    @unittest.skipIf(sys.version_info.major > 3, "Python 3-only test.")
+    def test_unicode_python3(self):
+        address = random_address()
+        self.assertEquals(address.render(), str(address))
 
     @unittest.skipIf(sys.version_info.major > 2, "Python 2-only test.")
     def test_repr_python2(self):
