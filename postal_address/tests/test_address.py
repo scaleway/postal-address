@@ -300,6 +300,9 @@ class TestAddressValidation(unittest.TestCase):
             set(['line1', 'postal_code', 'city_name', 'country_code']))
         self.assertEquals(err.invalid_fields, set())
         self.assertEquals(err.inconsistent_fields, set())
+        self.assertIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertNotIn('inconsistent', str(err))
 
         # Test post-normalization validation of invalid country and subdivision
         # codes.
@@ -317,6 +320,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             err.invalid_fields, set(['country_code', 'subdivision_code']))
         self.assertEquals(err.inconsistent_fields, set())
+        self.assertNotIn('required', str(err))
+        self.assertIn('invalid', str(err))
+        self.assertNotIn('inconsistent', str(err))
 
         # Mix invalid and required fields in post-normalization validation.
         address = Address(
@@ -332,6 +338,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(err.required_fields, set(['country_code']))
         self.assertEquals(err.invalid_fields, set(['subdivision_code']))
         self.assertEquals(err.inconsistent_fields, set())
+        self.assertIn('required', str(err))
+        self.assertIn('invalid', str(err))
+        self.assertNotIn('inconsistent', str(err))
 
         # Test post-normalization validation of inconsistent country and
         # subdivision codes.
@@ -350,6 +359,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             err.inconsistent_fields,
             set([('country_code', 'subdivision_code')]))
+        self.assertNotIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertIn('inconsistent', str(err))
 
     def test_blank_string_normalization(self):
         address = Address(
@@ -378,6 +390,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(err.required_fields, set(['country_code']))
         self.assertEquals(err.invalid_fields, set())
         self.assertEquals(err.inconsistent_fields, set())
+        self.assertIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertNotIn('inconsistent', str(err))
 
         address = Address(
             line1='10, avenue des Champs Elysées',
@@ -393,6 +408,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(err.required_fields, set(['country_code']))
         self.assertEquals(err.invalid_fields, set())
         self.assertEquals(err.inconsistent_fields, set())
+        self.assertIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertNotIn('inconsistent', str(err))
 
         address = Address(
             line1='10, avenue des Champs Elysées',
@@ -409,6 +427,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(err.required_fields, set(['country_code']))
         self.assertEquals(err.invalid_fields, set())
         self.assertEquals(err.inconsistent_fields, set())
+        self.assertIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertNotIn('inconsistent', str(err))
 
     def test_space_normalization(self):
         address = Address(
@@ -486,6 +507,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             err.inconsistent_fields,
             set([('country_code', 'subdivision_code')]))
+        self.assertNotIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertIn('inconsistent', str(err))
 
         with self.assertRaises(InvalidAddress) as expt:
             Address(
@@ -500,6 +524,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             err.inconsistent_fields,
             set([('country_code', 'subdivision_code')]))
+        self.assertNotIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertIn('inconsistent', str(err))
 
     def test_country_subdivision_reconciliation(self):
         # Perfect, already normalized country and subdivision.
@@ -736,6 +763,9 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(err.invalid_fields, set())
         self.assertEquals(
             err.inconsistent_fields, set([('city_name', 'subdivision_code')]))
+        self.assertNotIn('required', str(err))
+        self.assertNotIn('invalid', str(err))
+        self.assertIn('inconsistent', str(err))
 
     def test_non_strict_mode_normalization(self):
         # Test city name override by subdivision code.
