@@ -49,9 +49,9 @@ setup(
     license='BSD',
 
     install_requires=[
-        'awesome-slugify',
         'pycountry >= 1.9',
         'fake-factory',
+        'boltons',
     ],
 
     packages=find_packages(),

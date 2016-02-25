@@ -29,7 +29,7 @@ from random import choice, randint
 import faker
 
 from pycountry import countries, subdivisions
-from slugify import slugify
+from boltons.strutils import slugify
 
 from .territory import (
     country_from_subdivision,
@@ -693,7 +693,7 @@ def subdivision_type_id(subdivision):
 
     This method transform and normalize any of these into Python-friendly IDs.
     """
-    type_id = slugify(subdivision.type, to_lower=True).replace('-', '_')
+    type_id = slugify(subdivision.type)
 
     # Any occurence of the 'city' or 'municipality' string in the type
     # overrides its classification to a city.
