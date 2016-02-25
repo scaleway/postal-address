@@ -37,11 +37,6 @@ from postal_address.territory import (
 )
 from pycountry import countries, subdivisions
 
-try:
-    from itertools import imap
-except ImportError:  # pragma: no cover
-    imap = map
-
 
 class TestTerritory(unittest.TestCase):
     # Test territory utils
@@ -66,8 +61,8 @@ class TestTerritory(unittest.TestCase):
         # Check that all codes from each classifications we rely on are not
         # overlapping.
         self.assertFalse(
-            set(imap(attrgetter('alpha2'), countries)).intersection(
-                imap(attrgetter('code'), subdivisions)))
+            set(map(attrgetter('alpha2'), countries)).intersection(
+                map(attrgetter('code'), subdivisions)))
 
     def test_territory_exception_definition(self):
         # Check that all codes used in constants to define exceptionnal
@@ -77,20 +72,20 @@ class TestTerritory(unittest.TestCase):
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
             self.assertIn(
-                alias_code, set(imap(attrgetter('alpha2'), countries)).union(
-                    imap(attrgetter('code'), subdivisions)))
+                alias_code, set(map(attrgetter('alpha2'), countries)).union(
+                    map(attrgetter('code'), subdivisions)))
 
         for country_code, alias_code in COUNTRY_ALIASES.items():
             # Aliased country codes are not supposed to be supported by
             # pycountry, as it's the main reason to define an alias in the
             # first place.
             self.assertNotIn(
-                country_code, imap(attrgetter('alpha2'), countries))
+                country_code, map(attrgetter('alpha2'), countries))
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
             self.assertIn(
-                alias_code, set(imap(attrgetter('alpha2'), countries)).union(
-                    imap(attrgetter('code'), subdivisions)))
+                alias_code, set(map(attrgetter('alpha2'), countries)).union(
+                    map(attrgetter('code'), subdivisions)))
 
     def test_country_from_subdivision(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
@@ -101,7 +96,7 @@ class TestTerritory(unittest.TestCase):
             self.assertEquals(
                 country_from_subdivision(subdiv_code), target_code)
         for subdiv_code in set(
-                imap(attrgetter('code'), subdivisions)).difference(
+                map(attrgetter('code'), subdivisions)).difference(
                     SUBDIVISION_ALIASES):
             self.assertEquals(
                 country_from_subdivision(subdiv_code),
