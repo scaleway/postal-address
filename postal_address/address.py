@@ -31,6 +31,7 @@ from boltons.strutils import slugify
 
 from pycountry import countries, subdivisions
 
+from . import PY2, PY3
 from .territory import (
     country_from_subdivision,
     default_subdivision_code,
@@ -39,9 +40,8 @@ from .territory import (
     territory_parents
 )
 
-try:
-    basestring
-except NameError:  # pragma: no cover
+
+if PY3:
     basestring = (str, bytes)
 
 
@@ -163,9 +163,10 @@ class Address(object):
         """
         return self.render()
 
-    def __str__(self):
-        """ Same as __unicode__ but for Python 2 compatibility. """
-        return self.render().encode('utf-8')
+    if PY2:
+        __str__ = lambda self: self.__unicode__().encode('utf-8')
+    else:
+        __str__ = __unicode__
 
     def __getattr__(self, name):
         """ Expose fields as attributes. """

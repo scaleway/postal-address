@@ -34,9 +34,11 @@ from operator import attrgetter
 
 from pycountry import countries, subdivisions
 
-try:
+from . import PY2
+
+if PY2:
     from itertools import imap, ifilter
-except ImportError:  # pragma: no cover
+else:
     imap = map
     ifilter = filter
 
