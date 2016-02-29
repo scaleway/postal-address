@@ -7,7 +7,7 @@ ChangeLog
 
 * Remove deprecated ``random_word()``, ``random_phrase()`` and
   ``random_postal_code()``.
-* Activate tests on Python 3.3.
+* Activate tests on Python 3.2 and 3.3.
 
 
 1.0.0 (2016-02-25)
