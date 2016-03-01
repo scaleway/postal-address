@@ -10,6 +10,7 @@ ChangeLog
 * Activate tests on Python 3.3.
 * Allow production of random chinese addresses.
 * Bump ``faker`` requirement to 0.5.4.
+* Activate tests on PyPy and PyPy3.
 
 
 1.0.0 (2016-02-25)
