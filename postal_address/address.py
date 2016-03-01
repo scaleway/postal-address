@@ -521,9 +521,7 @@ def random_address(locale=None):
     A ``locale`` parameter try to produce a localized-consistent address. Else
     a random locale is picked-up.
     """
-    # Exclude temporaryly the chinese locale, while we waiting for a new faker
-    # release. See: https://github.com/joke2k/faker/pull/329
-    while locale in [None, 'cn']:
+    if locale is None:
         locale = faker.providers.misc.Provider.language_code()
     fake = faker.Faker(locale=locale)
 

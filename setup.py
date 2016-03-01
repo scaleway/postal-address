@@ -50,7 +50,7 @@ setup(
 
     install_requires=[
         'pycountry >= 1.9',
-        'fake-factory',
+        'fake-factory >= 0.5.4',
         'boltons',
     ],
 

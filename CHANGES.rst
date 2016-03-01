@@ -8,6 +8,8 @@ ChangeLog
 * Remove deprecated ``random_word()``, ``random_phrase()`` and
   ``random_postal_code()``.
 * Activate tests on Python 3.3.
+* Allow production of random chinese addresses.
+* Bump ``faker`` requirement to 0.5.4.
 
 
 1.0.0 (2016-02-25)
