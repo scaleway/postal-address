@@ -41,7 +41,8 @@ management and normalization. This project aims to solve this problem once for
 all.
 
 Don't get me wrong, this work is a huge undertaking. Postal address parsing,
-normalization and rendering is hard. Much harder than you think. Please read the
+normalization and rendering is hard. Much `harder than you think 
+<https://twitter.com/loriskumo/status/735851511331356672>`_. Please read the
 famous `Falsehoods programmers believe about addresses
 <http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/>`_
 pamphlet.

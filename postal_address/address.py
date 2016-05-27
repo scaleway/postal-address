@@ -21,14 +21,11 @@ from __future__ import (
     unicode_literals
 )
 
+import random
 import re
-import string
-import warnings
-from random import choice, randint
 
 import faker
 from boltons.strutils import slugify
-
 from pycountry import countries, subdivisions
 
 from . import PY2, PY3
@@ -517,58 +514,13 @@ class Address(object):
 
 # Address utils.
 
-def random_word(word_lenght=8):
-    """ Return a readable random string.
-
-    Source:
-    http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
-
-    .. deprecated:: 0.10.0
-
-       Use faker package instead.
-    """
-    warnings.warn('Use faker package instead.', DeprecationWarning)
-    return ''.join([choice(
-        'aeiou' if i % 2 else 'bcdfghklmnprstvw') for i in range(word_lenght)])
-
-
-def random_phrase(word_count=4, min_word_lenght=2, max_word_lenght=10):
-    """ Return a readable random phrase.
-
-    Source:
-    http://code.activestate.com/recipes/526619-friendly-readable-id-strings/#c3
-
-    .. deprecated:: 0.10.0
-
-       Use faker package instead.
-    """
-    warnings.warn('Use faker package instead.', DeprecationWarning)
-    return ' '.join([random_word(randint(
-        min_word_lenght, max_word_lenght)) for _ in range(word_count)])
-
-
-def random_postal_code():
-    """ Return a parsable random postal code.
-
-    .. deprecated:: 0.10.0
-
-       Use faker package instead.
-    """
-    warnings.warn('Use faker package instead.', DeprecationWarning)
-    return ''.join([
-        choice(string.ascii_uppercase + string.digits + '- ')
-        for _ in range(randint(4, 10))])
-
-
 def random_address(locale=None):
     """ Return a random, valid address.
 
     A ``locale`` parameter try to produce a localized-consistent address. Else
     a random locale is picked-up.
     """
-    # Exclude temporaryly the chinese locale, while we waiting for a new faker
-    # release. See: https://github.com/joke2k/faker/pull/329
-    while locale in [None, 'cn']:
+    if locale is None:
         locale = faker.providers.misc.Provider.language_code()
     fake = faker.Faker(locale=locale)
 
@@ -580,7 +532,7 @@ def random_address(locale=None):
         'country_code': fake.country_code()}
     subdiv_codes = list(territory_children_codes(components['country_code']))
     if subdiv_codes:
-        components['subdivision_code'] = choice(subdiv_codes)
+        components['subdivision_code'] = random.choice(subdiv_codes)
 
     return Address(strict=False, **components)
 

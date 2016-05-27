@@ -50,7 +50,7 @@ setup(
 
     install_requires=[
         'pycountry >= 1.9',
-        'fake-factory',
+        'fake-factory >= 0.5.4',
         'boltons',
     ],
 
@@ -60,7 +60,7 @@ setup(
     test_suite=MODULE_NAME + '.tests',
 
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
@@ -68,9 +68,12 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Office/Business',
+        'Topic :: Software Development :: Internationalization',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Software Development :: Localization',
         'Topic :: Text Processing',
