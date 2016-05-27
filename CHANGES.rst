@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-1.1.0 (unreleased)
+1.1.0 (2016-05-27)
 ------------------
 
 * Remove deprecated ``random_word()``, ``random_phrase()`` and
