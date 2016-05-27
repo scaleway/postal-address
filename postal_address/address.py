@@ -26,7 +26,6 @@ import re
 
 import faker
 from boltons.strutils import slugify
-
 from pycountry import countries, subdivisions
 
 from . import PY2, PY3
