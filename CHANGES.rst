@@ -6,6 +6,8 @@ ChangeLog
 ------------------
 
 * Replace dependency on ``fake-factory`` by ``Faker``.
+* Add inactive unittests to highlight un-caught edge-cases in the country/state
+  normalization code on derivation from subdivisions. Refs #16.
 
 
 1.1.0 (2016-05-27)

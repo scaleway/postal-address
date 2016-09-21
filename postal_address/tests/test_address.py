@@ -780,6 +780,30 @@ class TestAddressValidation(unittest.TestCase):
 
         self.assertEquals(address.country_code, 'GB')
 
+    @unittest.skip(
+        "Need to fix edge-case in the subdivision/state/country normalization "
+        "code. See #16.")
+    def test_subdivision_derived_country(self):
+        address = Address(
+            line1='Senate House',
+            line2='Tyndall Avenue',
+            postal_code='BS8 1TH',
+            city_name='Bristol',
+            subdivision_code='GB-ENG')
+
+        self.assertEquals(
+            address.subdivision, subdivisions.get(code='GB-ENG'))
+        self.assertEquals(
+            address.subdivision_code, 'GB-ENG')
+        self.assertEquals(
+            address.subdivision_name, 'England')
+        self.assertEquals(
+            address.subdivision_type_name, 'Country')
+        self.assertEquals(
+            address.subdivision_type_id, 'country')
+
+        self.assertEquals(address.country_code, 'GB')
+
     def test_city_override_by_subdivision(self):
         Address(
             line1='2 King Edward Street',
@@ -888,3 +912,31 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEqual(address.country_code, 'TW')
         self.assertEqual(address.country_name, 'Taiwan')
         self.assertEqual(address.subdivision_code, 'TW-TNN')
+
+    @unittest.skip(
+        "Need to fix edge-case in the subdivision/state/country normalization "
+        "code. See #16.")
+    def test_all_country_codes(self):
+        """ Validate & render random addresses with all supported countries.
+        """
+        for country_code in supported_country_codes():
+            address = random_address()
+            address.country_code = country_code
+            address.subdivision_code = None
+            address.normalize()
+            address.validate()
+            address.render()
+
+    @unittest.skip(
+        "Need to fix edge-case in the subdivision/state/country normalization "
+        "code. See #16.")
+    def test_all_territory_codes(self):
+        """ Validate & render random addresses with all supported territories.
+        """
+        for territory_code in supported_territory_codes():
+            address = random_address()
+            address.country_code = None
+            address.subdivision_code = territory_code
+            address.normalize(strict=False)
+            address.validate()
+            address.render()
