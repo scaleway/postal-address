@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-1.1.1 (unreleased)
+1.1.1 (2016-09-21)
 ------------------
 
 * Replace dependency on ``fake-factory`` by ``Faker``.
