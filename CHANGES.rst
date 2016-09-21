@@ -5,7 +5,7 @@ ChangeLog
 1.1.1 (unreleased)
 ------------------
 
-* No changes yet.
+* Replace dependency on ``fake-factory`` by ``Faker``.
 
 
 1.1.0 (2016-05-27)
