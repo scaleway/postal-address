@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-1.1.2 (unreleased)
+1.1.2 (2016-10-25)
 ------------------
 
 * Keeps ``pycountry`` dependency to the 1.x series.
