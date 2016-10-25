@@ -254,6 +254,9 @@ class Address(object):
         if self.city_name:
             line3_elements.append(self.city_name)
         if hasattr(self, 'state_name'):
+            # XXX It might not be a good idea to deduplicate state and city.
+            # See: https://en.wikipedia.org/wiki
+            # /List_of_U.S._cities_named_after_their_state
             line3_elements.append(self.state_name)
         # Separate city and state by a comma.
         line3_elements = [', '.join(line3_elements)]
