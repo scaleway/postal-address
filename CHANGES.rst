@@ -5,7 +5,8 @@ ChangeLog
 1.2.0 (unreleased)
 ------------------
 
-* No changes yet.
+* Change internal structure of ``InvalidAddress`` exception to print invalid
+  field values in error message.
 
 
 1.1.2 (2016-10-25)
