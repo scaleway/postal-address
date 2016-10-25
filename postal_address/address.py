@@ -101,9 +101,6 @@ class Address(object):
     address is good.
     """
 
-    # All normalized field's IDs and values of the address are stored here.
-    # _fields = {}
-
     # Fields common to any postal address. Those are free-form fields, allowed
     # to be set directly by the user, although their values might be normalized
     # and clean-up automatticaly by the validation method.
@@ -132,7 +129,8 @@ class Address(object):
             raise KeyError(
                 "{!r} fields are not allowed to be set freely.".format(
                     unknown_fields))
-        # Initialize base fields values.
+
+        # Normalized field's IDs and values of the address are stored here.
         self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
         # Load provided fields.
         for field_id, field_value in kwargs.items():
