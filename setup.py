@@ -49,7 +49,7 @@ setup(
     license='BSD',
 
     install_requires=[
-        'pycountry >= 1.9',
+        'pycountry >= 1.9, < 2.0',
         'Faker >= 0.7.3',
         'boltons',
     ],
