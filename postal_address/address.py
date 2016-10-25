@@ -132,9 +132,11 @@ class Address(object):
 
         # Normalized field's IDs and values of the address are stored here.
         self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
+
         # Load provided fields.
         for field_id, field_value in kwargs.items():
             self[field_id] = field_value
+
         # Normalize addresses fields.
         self.normalize(strict=strict)
 
