@@ -8,7 +8,7 @@
 # License at http://opensource.org/licenses/BSD-2-Clause
 
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
 import sys
 
