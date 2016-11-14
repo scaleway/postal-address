@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-1.2.0 (unreleased)
+1.2.0 (2016-11-14)
 ------------------
 
 * Change internal structure of ``InvalidAddress`` exception to print invalid
