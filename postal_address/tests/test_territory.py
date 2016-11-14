@@ -61,7 +61,7 @@ class TestTerritory(unittest.TestCase):
         # Check that all codes from each classifications we rely on are not
         # overlapping.
         self.assertFalse(
-            set(map(attrgetter('alpha2'), countries)).intersection(
+            set(map(attrgetter('alpha_2'), countries)).intersection(
                 map(attrgetter('code'), subdivisions)))
 
     def test_territory_exception_definition(self):
@@ -72,7 +72,7 @@ class TestTerritory(unittest.TestCase):
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
             self.assertIn(
-                alias_code, set(map(attrgetter('alpha2'), countries)).union(
+                alias_code, set(map(attrgetter('alpha_2'), countries)).union(
                     map(attrgetter('code'), subdivisions)))
 
         for country_code, alias_code in COUNTRY_ALIASES.items():
@@ -80,11 +80,11 @@ class TestTerritory(unittest.TestCase):
             # pycountry, as it's the main reason to define an alias in the
             # first place.
             self.assertNotIn(
-                country_code, map(attrgetter('alpha2'), countries))
+                country_code, map(attrgetter('alpha_2'), countries))
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
             self.assertIn(
-                alias_code, set(map(attrgetter('alpha2'), countries)).union(
+                alias_code, set(map(attrgetter('alpha_2'), countries)).union(
                     map(attrgetter('code'), subdivisions)))
 
     def test_country_from_subdivision(self):

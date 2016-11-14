@@ -50,7 +50,7 @@ class InvalidAddress(ValueError):
         """ Exception keep internally a classification of bad fields. """
         super(InvalidAddress, self).__init__()
         self.required_fields = required_fields if required_fields else set()
-        self.invalid_fields = invalid_fields if invalid_fields else set()
+        self.invalid_fields = invalid_fields if invalid_fields else dict()
         self.inconsistent_fields = inconsistent_fields if inconsistent_fields \
             else set()
         self.extra_msg = extra_msg
@@ -64,7 +64,9 @@ class InvalidAddress(ValueError):
                 'is' if len(self.required_fields) == 1 else 'are'))
         if self.invalid_fields:
             reasons.append('{} {} invalid'.format(
-                ', '.join(sorted(self.invalid_fields)),
+                ', '.join(sorted([
+                    '{}={!r}'.format(k, v)
+                    for k, v in self.invalid_fields.items()])),
                 'is' if len(self.invalid_fields) == 1 else 'are'))
         if self.inconsistent_fields:
             for field_id_1, field_id_2 in sorted(self.inconsistent_fields):
@@ -99,9 +101,6 @@ class Address(object):
     address is good.
     """
 
-    # All normalized field's IDs and values of the address are stored here.
-    # _fields = {}
-
     # Fields common to any postal address. Those are free-form fields, allowed
     # to be set directly by the user, although their values might be normalized
     # and clean-up automatticaly by the validation method.
@@ -130,11 +129,14 @@ class Address(object):
             raise KeyError(
                 "{!r} fields are not allowed to be set freely.".format(
                     unknown_fields))
-        # Initialize base fields values.
+
+        # Normalized field's IDs and values of the address are stored here.
         self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
+
         # Load provided fields.
         for field_id, field_value in kwargs.items():
             self[field_id] = field_value
+
         # Normalize addresses fields.
         self.normalize(strict=strict)
 
@@ -252,6 +254,9 @@ class Address(object):
         if self.city_name:
             line3_elements.append(self.city_name)
         if hasattr(self, 'state_name'):
+            # XXX It might not be a good idea to deduplicate state and city.
+            # See: https://en.wikipedia.org/wiki
+            # /List_of_U.S._cities_named_after_their_state
             line3_elements.append(self.state_name)
         # Separate city and state by a comma.
         line3_elements = [', '.join(line3_elements)]
@@ -399,7 +404,7 @@ class Address(object):
         """
         # Keep a classification of bad fields along the validation process.
         required_fields = set()
-        invalid_fields = set()
+        invalid_fields = dict()
         inconsistent_fields = set()
 
         # Check that all required fields are set.
@@ -412,15 +417,15 @@ class Address(object):
         if 'country_code' not in required_fields:
             # Check that the country code exists.
             try:
-                countries.get(alpha2=self.country_code)
+                countries.get(alpha_2=self.country_code)
             except KeyError:
-                invalid_fields.add('country_code')
+                invalid_fields['country_code'] = self.country_code
         if self.subdivision_code and 'subdivision_code' not in required_fields:
             # Check that the country code exists.
             try:
                 subdivisions.get(code=self.subdivision_code)
             except KeyError:
-                invalid_fields.add('subdivision_code')
+                invalid_fields['subdivision_code'] = self.subdivision_code
 
         # Check country consistency against subdivision, only if none of the
         # two fields were previously flagged as required or invalid.
@@ -466,7 +471,7 @@ class Address(object):
     def country(self):
         """ Return country object. """
         if self.country_code:
-            return countries.get(alpha2=self.country_code)
+            return countries.get(alpha_2=self.country_code)
         return None
 
     @property

@@ -41,11 +41,9 @@ management and normalization. This project aims to solve this problem once for
 all.
 
 Don't get me wrong, this work is a huge undertaking. Postal address parsing,
-normalization and rendering is hard. Much `harder than you think 
-<https://twitter.com/loriskumo/status/735851511331356672>`_. Please read the
-famous `Falsehoods programmers believe about addresses
-<http://www.mjt.me.uk/posts/falsehoods-programmers-believe-about-addresses/>`_
-pamphlet.
+normalization and rendering is hard. See the collection of `falsehoods
+programmers believe about postal addresses
+<https://github.com/kdeldycke/awesome-falsehood#postal-addresses>`_.
 
 This library is still in its early stages, but is good enough to implement
 the new European Directives on VAT, which requires all e-commerce shops to
