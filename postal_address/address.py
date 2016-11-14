@@ -417,7 +417,7 @@ class Address(object):
         if 'country_code' not in required_fields:
             # Check that the country code exists.
             try:
-                countries.get(alpha2=self.country_code)
+                countries.get(alpha_2=self.country_code)
             except KeyError:
                 invalid_fields['country_code'] = self.country_code
         if self.subdivision_code and 'subdivision_code' not in required_fields:
@@ -471,7 +471,7 @@ class Address(object):
     def country(self):
         """ Return country object. """
         if self.country_code:
-            return countries.get(alpha2=self.country_code)
+            return countries.get(alpha_2=self.country_code)
         return None
 
     @property

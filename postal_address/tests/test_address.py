@@ -748,7 +748,7 @@ class TestAddressValidation(unittest.TestCase):
             'Metropolitan region')
 
         self.assertEquals(
-            address.country, countries.get(alpha2='FR'))
+            address.country, countries.get(alpha_2='FR'))
         self.assertEquals(
             address.country_code, 'FR')
         self.assertEquals(

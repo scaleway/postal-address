@@ -115,7 +115,7 @@ def supported_country_codes():
         * European Commision country code exceptions
     """
     return set(chain(
-        imap(attrgetter('alpha2'), countries),
+        imap(attrgetter('alpha_2'), countries),
         # Include ISO and EC exceptions.
         COUNTRY_ALIASES.keys()))
 
@@ -234,7 +234,7 @@ def territory_parents(territory_code, include_country=True):
     territory_code = normalize_territory_code(territory_code)
     if territory_code in supported_country_codes():
         if include_country:
-            tree.append(countries.get(alpha2=territory_code))
+            tree.append(countries.get(alpha_2=territory_code))
         return tree
 
     # Else, resolve the territory as if it's a subdivision code.
@@ -261,7 +261,7 @@ def territory_parents_codes(territory_code, include_country=True):
         full_class_name = '{}.{}'.format(
             territory.__module__, territory.__class__.__name__)
         if full_class_name == 'pycountry.db.Country':
-            yield territory.alpha2
+            yield territory.alpha_2
         elif full_class_name == 'pycountry.db.Subdivision':
             yield territory.code
         else:
@@ -286,7 +286,7 @@ def country_aliases(territory_code):
         subdiv = subdivisions.get(code=territory_code)
         parent_code = subdiv.parent_code
         if not parent_code:
-            parent_code = subdiv.country.alpha2
+            parent_code = subdiv.country.alpha_2
         country_codes.update(country_aliases(parent_code))
 
     # Hunt for aliases
