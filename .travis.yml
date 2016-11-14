@@ -8,6 +8,11 @@ python:
   - "3.5"
   - pypy
   - pypy3
+matrix:
+  allow_failures:
+    # PyPy3 seems to have issues since PyCountry was updated to its
+    # Calendar-based versionning.
+    - python: pypy3
 install:
   - pip install -e .
   - pip install codecov

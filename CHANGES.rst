@@ -8,6 +8,7 @@ ChangeLog
 * Change internal structure of ``InvalidAddress`` exception to print invalid
   field values in error message.
 * Update ``pycountry`` to the new calendar-versionned series.
+* Allow unittests failure on PyPy3.
 
 
 1.1.2 (2016-10-25)
