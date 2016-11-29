@@ -9,6 +9,7 @@ ChangeLog
   displayed.
 * Move coverage config to ``setup.cfg``.
 * Add ``test`` and ``develop`` dependencies.
+* Only show latest changes in the long description of the package instead of the full changelog.
 
 
 1.2.0 (2016-11-14)
