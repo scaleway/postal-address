@@ -28,6 +28,8 @@ script:
   - pip install -e .[tests]
   - coverage run ./setup.py test
   - coverage report -m
+  # Check coding style.
+  - pycodestyle
 
 after_script:
   - codecov

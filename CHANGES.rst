@@ -12,6 +12,7 @@ ChangeLog
 * Only show latest changes in the long description of the package instead of
   the full changelog.
 * Replace ``pep8`` package by ``pycodestyle``.
+* Enforce ``pycodestyle`` checks in Travis CI jobs.
 
 
 1.2.0 (2016-11-14)
