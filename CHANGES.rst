@@ -68,7 +68,7 @@ ChangeLog
 `0.9.1 (2015-11-23) <https://github.com/scaleway/postal-address/compare/v0.9.0...v0.9.1>`_
 ------------------------------------------------------------------------------------------
 
-* Switch from coveralls.io to codecov.io.
+* Switch from ``coveralls.io`` to ``codecov.io``.
 
 
 `0.9.0 (2015-09-17) <https://github.com/scaleway/postal-address/compare/v0.8.1...v0.9.0>`_
@@ -89,7 +89,7 @@ ChangeLog
 ------------------------------------------------------------------------------------------
 
 * Normalize all white spaces, not only leadings and trailings.
-* Test that the Address object is able to digest unicode messs.
+* Test that the ``Address`` object is able to digest unicode messs.
 * Normalize postal codes to uppercase alphanumerics with spaces and hyphens.
   Refs #2.
 
@@ -97,7 +97,7 @@ ChangeLog
 `0.7.2 (2015-05-26) <https://github.com/scaleway/postal-address/compare/v0.7.1...v0.7.2>`_
 ------------------------------------------------------------------------------------------
 
-* Fix encoding of README and CHANGES. Closes #12.
+* Fix encoding of ``README`` and ``CHANGES``. Closes #12.
 
 
 `0.7.1 (2015-05-20) <https://github.com/scaleway/postal-address/compare/v0.7.0...v0.7.1>`_
@@ -124,7 +124,7 @@ ChangeLog
 `0.6.0 (2015-04-02) <https://github.com/scaleway/postal-address/compare/v0.5.2...v0.6.0>`_
 ------------------------------------------------------------------------------------------
 
-* Add an option to bypass Address' strict normalization.
+* Add an option to bypass ``Address``' strict normalization.
 
 
 `0.5.2 (2015-03-30) <https://github.com/scaleway/postal-address/compare/v0.5.1...v0.5.2>`_
