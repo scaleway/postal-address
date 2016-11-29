@@ -3,26 +3,29 @@ Postal Address
 
 Python module to parse, normalize and render postal addresses.
 
-Stable release: |release| |license| |dependencies|
+Stable release: |release| |versions| |license| |dependencies|
 
-Development: |build| |quality| |coverage|
+Development: |build| |coverage| |quality|
 
-.. |release| image:: https://img.shields.io/pypi/v/postal-address.svg?style=flat
+.. |release| image:: https://img.shields.io/pypi/v/postal-address.svg
     :target: https://pypi.python.org/pypi/postal-address
     :alt: Last release
-.. |license| image:: https://img.shields.io/pypi/l/postal-address.svg?style=flat
+.. |versions| image:: https://img.shields.io/pypi/pyversions/postal-address.svg
+    :target: https://pypi.python.org/pypi/postal-address
+    :alt: Python versions
+.. |license| image:: https://img.shields.io/pypi/l/postal-address.svg
     :target: http://opensource.org/licenses/BSD-2-Clause
     :alt: Software license
-.. |dependencies| image:: https://img.shields.io/requires/github/scaleway/postal-address/master.svg?style=flat
+.. |dependencies| image:: https://requires.io/github/scaleway/postal-address/requirements.svg?branch=master
     :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
     :alt: Requirements freshness
-.. |build| image:: https://img.shields.io/travis/scaleway/postal-address/develop.svg?style=flat
+.. |build| image:: https://travis-ci.org/scaleway/postal-address.svg?branch=develop
     :target: https://travis-ci.org/scaleway/postal-address
     :alt: Unit-tests status
-.. |coverage| image:: https://codecov.io/github/scaleway/postal-address/coverage.svg?branch=develop
+.. |coverage| image:: https://codecov.io/gh/scaleway/postal-address/branch/develop/graph/badge.svg
     :target: https://codecov.io/github/scaleway/postal-address?branch=develop
     :alt: Coverage Status
-.. |quality| image:: https://img.shields.io/scrutinizer/g/scaleway/postal-address.svg?style=flat
+.. |quality| image:: https://scrutinizer-ci.com/g/scaleway/postal-address/badges/quality-score.png?b=develop
     :target: https://scrutinizer-ci.com/g/scaleway/postal-address/?branch=develop
     :alt: Code Quality
 
