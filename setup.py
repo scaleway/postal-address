@@ -45,7 +45,7 @@ setup(
 
     author='Scaleway',
     author_email='opensource@scaleway.com',
-    url='http://github.com/scaleway/postal-address',
+    url='https://github.com/scaleway/postal-address',
     license='BSD',
 
     install_requires=[
