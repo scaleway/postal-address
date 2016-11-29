@@ -9,6 +9,8 @@ ChangeLog
 
 * Build documentation via Sphinx. Closes #14.
 * Move development and packaging documentation to Sphinx.
+* Restrict ``pycountry`` to ``16.11.8`` release because of bad Czech Republic
+  subdivision definitions.
 * Remove popularity badge: PyPI download counters are broken and no longer
   displayed.
 * Move coverage config to ``setup.cfg``.
