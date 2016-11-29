@@ -42,6 +42,7 @@ EXTRA_DEPENDENCIES = {
     'develop': [
         'bumpversion',
         'isort',
+        'readme_renderer',
         'setuptools >= 24.2.1'
         'wheel'],
 }

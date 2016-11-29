@@ -14,6 +14,7 @@ ChangeLog
 * Replace ``pep8`` package by ``pycodestyle``.
 * Enforce ``pycodestyle`` checks in Travis CI jobs.
 * Test production of packages in Travis CI jobs.
+* Always check for package metadata in Travis CI jobs.
 
 
 1.2.0 (2016-11-14)
