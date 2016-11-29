@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-`1.2.1 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.2.0...develop>`_
+`1.3.0 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.2.0...develop>`_
 -------------------------------------------------------------------------------------------
 
 * Remove popularity badge: PyPI download counters are broken and no longer
