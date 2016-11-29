@@ -1,6 +1,7 @@
-# After changing this file, check it on: http://lint.travis-ci.org
+# After changing this file, check it on: http://lint.travis-ci.org/
 language: python
 sudo: false
+
 python:
   - "2.7"
   - "3.3"
@@ -8,16 +9,25 @@ python:
   - "3.5"
   - pypy
   - pypy3
+
 matrix:
   allow_failures:
     # PyPy3 seems to have issues since PyCountry was updated to its
     # Calendar-based versionning.
     - python: pypy3
-install:
-  - pip install -e .
+
+before_install:
+  # Check default Python version installed.
+  - python --version
+
+before_script:
   - pip install codecov
+
 script:
-  - coverage run setup.py test
+  # Launch unittests.
+  - pip install -e .[tests]
+  - coverage run ./setup.py test
   - coverage report -m
+
 after_script:
-  codecov
+  - codecov
