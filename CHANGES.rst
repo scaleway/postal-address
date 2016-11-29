@@ -15,6 +15,7 @@ ChangeLog
 * Enforce ``pycodestyle`` checks in Travis CI jobs.
 * Test production of packages in Travis CI jobs.
 * Always check for package metadata in Travis CI jobs.
+* Make wheels generated under Python 2 environnment available for Python 3 too.
 
 
 `1.2.0 (2016-11-14) <https://github.com/scaleway/postal-address/compare/v1.1.2...v1.2.0>`_
