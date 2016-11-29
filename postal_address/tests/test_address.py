@@ -20,12 +20,13 @@ import textwrap
 import unittest
 from decimal import Decimal
 
+from pycountry import countries, subdivisions
+
 from postal_address.address import Address, InvalidAddress, random_address
 from postal_address.territory import (
     supported_country_codes,
     supported_territory_codes
 )
-from pycountry import countries, subdivisions
 
 
 class TestAddressIO(unittest.TestCase):

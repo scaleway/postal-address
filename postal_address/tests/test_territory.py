@@ -18,6 +18,8 @@ import re
 import unittest
 from operator import attrgetter
 
+from pycountry import countries, subdivisions
+
 from postal_address.address import (
     Address,
     subdivision_metadata,
@@ -35,7 +37,6 @@ from postal_address.territory import (
     territory_children_codes,
     territory_parents_codes
 )
-from pycountry import countries, subdivisions
 
 
 class TestTerritory(unittest.TestCase):
