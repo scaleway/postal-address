@@ -161,10 +161,12 @@ class Address(object):
         """
         return self.render()
 
-    if PY2:
-        __str__ = lambda self: self.__unicode__().encode('utf-8')
-    else:
-        __str__ = __unicode__
+    def __str__(self):
+        """ Same as __unicode__ but with Python 2 compatibility. """
+        string = self.__unicode__()
+        if PY2:
+            string = string.encode('utf-8')
+        return string
 
     def __getattr__(self, name):
         """ Expose fields as attributes. """
