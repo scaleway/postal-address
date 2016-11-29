@@ -5,7 +5,8 @@ ChangeLog
 1.2.1 (unreleased)
 ------------------
 
-* No changes yet.
+* Remove popularity badge: PyPI download counters are broken and no longer
+  displayed.
 
 
 1.2.0 (2016-11-14)
