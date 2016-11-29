@@ -2,8 +2,8 @@ ChangeLog
 =========
 
 
-1.2.1 (unreleased)
-------------------
+`1.2.1 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.2.0...develop>`_
+-------------------------------------------------------------------------------------------
 
 * Remove popularity badge: PyPI download counters are broken and no longer
   displayed.
@@ -17,8 +17,8 @@ ChangeLog
 * Always check for package metadata in Travis CI jobs.
 
 
-1.2.0 (2016-11-14)
-------------------
+`1.2.0 (2016-11-14) <https://github.com/scaleway/postal-address/compare/v1.1.2...v1.2.0>`_
+------------------------------------------------------------------------------------------
 
 * Change internal structure of ``InvalidAddress`` exception to print invalid
   field values in error message.
@@ -26,22 +26,22 @@ ChangeLog
 * Allow unittests failure on PyPy3.
 
 
-1.1.2 (2016-10-25)
-------------------
+`1.1.2 (2016-10-25) <https://github.com/scaleway/postal-address/compare/v1.1.1...v1.1.2>`_
+------------------------------------------------------------------------------------------
 
 * Keeps ``pycountry`` dependency to the 1.x series.
 
 
-1.1.1 (2016-09-21)
-------------------
+`1.1.1 (2016-09-21) <https://github.com/scaleway/postal-address/compare/v1.1.0...v1.1.1>`_
+------------------------------------------------------------------------------------------
 
 * Replace dependency on ``fake-factory`` by ``Faker``.
 * Add inactive unittests to highlight un-caught edge-cases in the country/state
   normalization code on derivation from subdivisions. Refs #16.
 
 
-1.1.0 (2016-05-27)
-------------------
+`1.1.0 (2016-05-27) <https://github.com/scaleway/postal-address/compare/v1.0.0...v1.1.0>`_
+------------------------------------------------------------------------------------------
 
 * Remove deprecated ``random_word()``, ``random_phrase()`` and
   ``random_postal_code()``.
@@ -51,8 +51,8 @@ ChangeLog
 * Activate tests on PyPy and PyPy3.
 
 
-1.0.0 (2016-02-25)
-------------------
+`1.0.0 (2016-02-25) <https://github.com/scaleway/postal-address/compare/v0.9.1...v1.0.0>`_
+------------------------------------------------------------------------------------------
 
 * Add a new ``territory_children_codes()`` utility to fetch all children of a
   territory.
@@ -65,28 +65,28 @@ ChangeLog
 * Activate tests on Python 3.5.
 
 
-0.9.1 (2015-11-23)
-------------------
+`0.9.1 (2015-11-23) <https://github.com/scaleway/postal-address/compare/v0.9.0...v0.9.1>`_
+------------------------------------------------------------------------------------------
 
 * Switch from coveralls.io to codecov.io.
 
 
-0.9.0 (2015-09-17)
-------------------
+`0.9.0 (2015-09-17) <https://github.com/scaleway/postal-address/compare/v0.8.1...v0.9.0>`_
+------------------------------------------------------------------------------------------
 
 * Change license from GPLv2+ to BSD 2-Clause license. Closes #13.
 * Add bumpversion configuration.
 * Add custom PEP8 and PyLint configuration.
 
 
-0.8.1 (2015-06-01)
-------------------
+`0.8.1 (2015-06-01) <https://github.com/scaleway/postal-address/compare/v0.8.0...v0.8.1>`_
+------------------------------------------------------------------------------------------
 
 * Fix bad released version.
 
 
-0.8.0 (2015-06-01)
-------------------
+`0.8.0 (2015-06-01) <https://github.com/scaleway/postal-address/compare/v0.7.2...v0.8.0>`_
+------------------------------------------------------------------------------------------
 
 * Normalize all white spaces, not only leadings and trailings.
 * Test that the Address object is able to digest unicode messs.
@@ -94,20 +94,20 @@ ChangeLog
   Refs #2.
 
 
-0.7.2 (2015-05-26)
-------------------
+`0.7.2 (2015-05-26) <https://github.com/scaleway/postal-address/compare/v0.7.1...v0.7.2>`_
+------------------------------------------------------------------------------------------
 
 * Fix encoding of README and CHANGES. Closes #12.
 
 
-0.7.1 (2015-05-20)
-------------------
+`0.7.1 (2015-05-20) <https://github.com/scaleway/postal-address/compare/v0.7.0...v0.7.1>`_
+------------------------------------------------------------------------------------------
 
 * Add utility method to generate random addresses for test mockups.
 
 
-0.7.0 (2015-04-14)
-------------------
+`0.7.0 (2015-04-14) <https://github.com/scaleway/postal-address/compare/v0.6.1...v0.7.0>`_
+------------------------------------------------------------------------------------------
 
 * Include internal fields disguised as properties when ``repr``-ing the
   ``Address`` object.
@@ -115,34 +115,34 @@ ChangeLog
   default value.
 
 
-0.6.1 (2015-04-07)
-------------------
+`0.6.1 (2015-04-07) <https://github.com/scaleway/postal-address/compare/v0.6.0...v0.6.1>`_
+------------------------------------------------------------------------------------------
 
 * Update all Online Labs references to Scaleway.
 
 
-0.6.0 (2015-04-02)
-------------------
+`0.6.0 (2015-04-02) <https://github.com/scaleway/postal-address/compare/v0.5.2...v0.6.0>`_
+------------------------------------------------------------------------------------------
 
 * Add an option to bypass Address' strict normalization.
 
 
-0.5.2 (2015-03-30)
-------------------
+`0.5.2 (2015-03-30) <https://github.com/scaleway/postal-address/compare/v0.5.1...v0.5.2>`_
+------------------------------------------------------------------------------------------
 
 * Always sort fields in error messages to improve reproducibility when
   unit testing.
 * Deduplicate inconsistent field entries in custom address exception.
 
 
-0.5.1 (2015-03-30)
-------------------
+`0.5.1 (2015-03-30) <https://github.com/scaleway/postal-address/compare/v0.5.0...v0.5.1>`_
+------------------------------------------------------------------------------------------
 
 * Fix bad released version.
 
 
-0.5.0 (2015-03-30)
-------------------
+`0.5.0 (2015-03-30) <https://github.com/scaleway/postal-address/compare/v0.4.3...v0.5.0>`_
+------------------------------------------------------------------------------------------
 
 * Increase capabilities of alias resolution by ``country_aliases()`` method,
   which in turns increase address normalization efficiency.
@@ -154,28 +154,28 @@ ChangeLog
   and ``supported_subdivision_codes()``.
 
 
-0.4.3 (2015-03-26)
-------------------
+`0.4.3 (2015-03-26) <https://github.com/scaleway/postal-address/compare/v0.4.2...v0.4.3>`_
+------------------------------------------------------------------------------------------
 
 * Fix rendering of subdivision-less addresses.
 
 
-0.4.2 (2015-03-26)
-------------------
+`0.4.2 (2015-03-26) <https://github.com/scaleway/postal-address/compare/v0.4.1...v0.4.2>`_
+------------------------------------------------------------------------------------------
 
 * Fix ``country_code`` to ``subdivision_code`` validation if the latter is not
   set.
 
 
-0.4.1 (2015-03-26)
-------------------
+`0.4.1 (2015-03-26) <https://github.com/scaleway/postal-address/compare/v0.4.0...v0.4.1>`_
+------------------------------------------------------------------------------------------
 
 * Base our custom ``InvalidAddress`` exception on ``ValueError`` to increase
   backward compatibility.
 
 
-0.4.0 (2015-03-25)
-------------------
+`0.4.0 (2015-03-25) <https://github.com/scaleway/postal-address/compare/v0.3.3...v0.4.0>`_
+------------------------------------------------------------------------------------------
 
 * Show subdivision as-is in rendered address if not already printed by state,
   country or city.
@@ -185,27 +185,27 @@ ChangeLog
   fields in one go. Closes #7.
 
 
-0.3.3 (2015-03-25)
-------------------
+`0.3.3 (2015-03-25) <https://github.com/scaleway/postal-address/compare/v0.3.2...v0.3.3>`_
+------------------------------------------------------------------------------------------
 
 * Fix bad released version.
 
 
-0.3.2 (2015-03-25)
-------------------
+`0.3.2 (2015-03-25) <https://github.com/scaleway/postal-address/compare/v0.3.1...v0.3.2>`_
+------------------------------------------------------------------------------------------
 
 * Add backward compatibility to the ``0.2`` series following territory utils
   split out of the ``address`` module. See #8 and #9.
 
 
-0.3.1 (2015-03-05)
-------------------
+`0.3.1 (2015-03-05) <https://github.com/scaleway/postal-address/compare/v0.3.0...v0.3.1>`_
+------------------------------------------------------------------------------------------
 
 * Fix rendering of state in address.
 
 
-0.3.0 (2015-03-04)
-------------------
+`0.3.0 (2015-03-04) <https://github.com/scaleway/postal-address/compare/v0.2.1...v0.3.0>`_
+------------------------------------------------------------------------------------------
 
 * Remove backward compatibility with the ``0.1`` series.
 * Allow direct import of classes from module root.
@@ -216,32 +216,32 @@ ChangeLog
   to None. Only a call to ``validate`` method check data consistency.
 
 
-0.2.1 (2014-12-22)
-------------------
+`0.2.1 (2014-12-22) <https://github.com/scaleway/postal-address/compare/v0.2.0...v0.2.1>`_
+------------------------------------------------------------------------------------------
 
 * Push a new release to fix cached desynced packages on cheeseshops and clones.
 
 
-0.2.0 (2014-12-18)
-------------------
+`0.2.0 (2014-12-18) <https://github.com/scaleway/postal-address/compare/v0.1.1...v0.2.0>`_
+------------------------------------------------------------------------------------------
 
 * Package the whole module for proper distribution.
 
 
-0.1.1 (2014-12-16)
-------------------
+`0.1.1 (2014-12-16) <https://github.com/scaleway/postal-address/compare/v0.1.0...v0.1.1>`_
+------------------------------------------------------------------------------------------
 
 * Restore partial backward compatibility with address module from the ``0.1``
   series.
 
 
-0.1.0 (2014-12-15)
-------------------
+`0.1.0 (2014-12-15) <https://github.com/scaleway/postal-address/compare/v0.0.0...v0.1.0>`_
+------------------------------------------------------------------------------------------
 
 * First public release.
 
 
-0.0.0 (2013-12-06)
-------------------
+`0.0.0 (2013-12-06) <https://github.com/scaleway/postal-address/commit/de00e1>`_
+--------------------------------------------------------------------------------
 
 * First commit.
