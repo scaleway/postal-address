@@ -37,7 +37,7 @@ EXTRA_DEPENDENCIES = {
     'tests': [
         'coverage',
         'nose',
-        'pep8',
+        'pycodestyle >= 2.1.0',
         'pylint'],
     'develop': [
         'bumpversion',
