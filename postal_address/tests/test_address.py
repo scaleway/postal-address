@@ -649,7 +649,7 @@ class TestAddressValidation(unittest.TestCase):
         address1 = Address(
             line1='Kaya Grandi 67',
             postal_code='XXX No postal code on Bonaire',
-            #city_name='Kralendijk',
+            # city_name='Kralendijk',
             city_name='Bonaire',
             country_code='BQ',
             subdivision_code='BQ-BO')
