@@ -7,12 +7,11 @@
 # file except in compliance with the License. You may obtain a copy of the
 # License at http://opensource.org/licenses/BSD-2-Clause
 
+import sys
 
 __version__ = '1.3.0'
-
-import sys
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
-from .address import Address
+from .address import Address  # noqa  # isort:skip
