@@ -2,10 +2,8 @@ ChangeLog
 =========
 
 
-`1.3.0 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.2.0...develop>`_
--------------------------------------------------------------------------------------------
-
-.. note:: This version is not yet released and is under active development.
+`1.3.0 (2016-11-29) <https://github.com/scaleway/postal-address/compare/v1.2.0...v1.3.0>`_
+------------------------------------------------------------------------------------------
 
 * Build documentation via Sphinx. Closes #14.
 * Move development and packaging documentation to Sphinx.
