@@ -8,6 +8,7 @@ ChangeLog
 * Remove popularity badge: PyPI download counters are broken and no longer
   displayed.
 * Move coverage config to ``setup.cfg``.
+* Add ``test`` and ``develop`` dependencies.
 
 
 1.2.0 (2016-11-14)
