@@ -528,7 +528,7 @@ def random_address(locale=None):
     a random locale is picked-up.
     """
     if locale is None:
-        locale = faker.providers.misc.Provider.language_code()
+        locale = random.choice(list(faker.config.AVAILABLE_LOCALES))
     fake = faker.Faker(locale=locale)
 
     components = {

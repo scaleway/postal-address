@@ -7,6 +7,8 @@ ChangeLog
 
 .. note:: This version is not yet released and is under active development.
 
+* Fix selection of random locale in ``random_address()``.
+* Bump dependency to ``Faker >= 0.7.4``.
 * Fix rendering of changelog link in RST.
 
 
