@@ -2,10 +2,16 @@ ChangeLog
 =========
 
 
-`1.3.1 (2016-12-20) <https://github.com/scaleway/postal-address/compare/v1.3.0...v1.3.1>`_
-------------------------------------------------------------------------------------------
+`1.3.2 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.3.1...develop>`_
+-------------------------------------------------------------------------------------------
 
 .. note:: This version is not yet released and is under active development.
+
+* No changes yet.
+
+
+`1.3.1 (2016-12-20) <https://github.com/scaleway/postal-address/compare/v1.3.0...v1.3.1>`_
+------------------------------------------------------------------------------------------
 
 * Fix selection of random locale in ``random_address()``.
 * Bump dependency to ``Faker >= 0.7.4``.
