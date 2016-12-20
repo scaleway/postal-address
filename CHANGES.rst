@@ -9,6 +9,7 @@ ChangeLog
 
 * Fix selection of random locale in ``random_address()``.
 * Bump dependency to ``Faker >= 0.7.4``.
+* Exclude production of invalid random addresses in ``no_NO`` locale.
 * Fix rendering of changelog link in RST.
 
 
