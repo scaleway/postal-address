@@ -7,7 +7,8 @@ ChangeLog
 
 .. note:: This version is not yet released and is under active development.
 
-* No changes yet.
+* Re-allow production of random addresses in ``no_NO`` and ``fa_IR`` locales.
+* Bump dependency to ``Faker >= 0.7.7``.
 
 
 `1.3.2 (2016-12-20) <https://github.com/scaleway/postal-address/compare/v1.3.1...v1.3.2>`_
