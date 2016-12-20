@@ -529,7 +529,9 @@ def random_address(locale=None):
     """
     # XXX Exclude 'no_NO' locale as it can't produce valid postal codes yet.
     # See: https://github.com/joke2k/faker/pull/436
-    while locale in [None, 'no_NO']:
+    # XXX Same for 'fa_IR' locale whose city name generator is broken.
+    # See: https://github.com/joke2k/faker/pull/437
+    while locale in [None, 'no_NO', 'fa_IR']:
         locale = random.choice(list(faker.config.AVAILABLE_LOCALES))
     fake = faker.Faker(locale=locale)
 
