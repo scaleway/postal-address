@@ -541,6 +541,7 @@ def random_address(locale=None):
         'postal_code': fake.postcode(),
         'city_name': fake.city(),
         'country_code': fake.country_code()}
+
     subdiv_codes = list(territory_children_codes(components['country_code']))
     if subdiv_codes:
         components['subdivision_code'] = random.choice(subdiv_codes)
