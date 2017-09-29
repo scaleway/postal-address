@@ -9,7 +9,7 @@ ChangeLog
 
 * Restrict ``Faker`` to ``0.8.3`` as the next release seems to mess up
   production of territory subdivisions. See #19 and #22.
-* Add cache on supported_*_codes() functions.
+* Add cache on ``supported_*_codes()`` functions.
 
 
 `1.3.3 (2016-12-20) <https://github.com/scaleway/postal-address/compare/v1.3.2...v1.3.3>`_
