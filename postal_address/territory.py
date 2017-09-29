@@ -32,6 +32,7 @@ from __future__ import (
 from itertools import chain
 from operator import attrgetter
 
+from boltons.cacheutils import cached, LRI
 from pycountry import countries, subdivisions
 
 from . import PY2
@@ -101,12 +102,14 @@ for mapping in [COUNTRY_ALIASES, SUBDIVISION_ALIASES]:
         REVERSE_MAPPING.setdefault(target_code, set()).add(alias_code)
 
 
+@cached(LRI())
 def supported_territory_codes():
     """ Return a set of recognized territory codes.
     """
     return supported_country_codes().union(supported_subdivision_codes())
 
 
+@cached(LRI())
 def supported_country_codes():
     """ Return a set of recognized country codes.
 
@@ -120,6 +123,7 @@ def supported_country_codes():
         COUNTRY_ALIASES.keys()))
 
 
+@cached(LRI())
 def supported_subdivision_codes():
     """ Return a set of recognized subdivision codes.
 
