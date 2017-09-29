@@ -27,7 +27,9 @@ PACKAGE_NAME = MODULE_NAME.replace('_', '-')
 
 DEPENDENCIES = [
     'boltons',
-    'Faker >= 0.7.7, < 0.8.4',   # 0.8.4 is breaking test, debug needed
+    # XXX Faker 0.8.4 seems to mess up production of territory subdivisions.
+    # See #19 and #22.
+    'Faker >= 0.7.7, < 0.8.4',
     # TODO: subdivision definitions are broken for Czech Republic starting with
     # PyCountry 16.11.27. See:
     # https://bitbucket.org/flyingcircus/pycountry/issues/13389
