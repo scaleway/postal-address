@@ -7,7 +7,8 @@ ChangeLog
 
 .. note:: This version is not yet released and is under active development.
 
-* Pin dependency Faker.
+* Restrict ``Faker`` to ``0.8.3`` as the next release seems to mess up
+  production of territory subdivisions. See #19 and #22.
 * Add cache on supported_*_codes() functions.
 
 
