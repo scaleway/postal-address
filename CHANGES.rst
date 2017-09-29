@@ -8,6 +8,7 @@ ChangeLog
 .. note:: This version is not yet released and is under active development.
 
 * Pin dependency Faker.
+* Add cache on supported_*_codes() functions.
 
 
 `1.3.3 (2016-12-20) <https://github.com/scaleway/postal-address/compare/v1.3.2...v1.3.3>`_
