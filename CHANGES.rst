@@ -2,10 +2,8 @@ ChangeLog
 =========
 
 
-`1.3.4 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.3.3...develop>`_
--------------------------------------------------------------------------------------------
-
-.. note:: This version is not yet released and is under active development.
+`1.3.4 (2017-09-29) <https://github.com/scaleway/postal-address/compare/v1.3.3...v1.3.4>`_
+------------------------------------------------------------------------------------------
 
 * Restrict ``Faker`` to ``0.8.3`` as the next release seems to mess up
   production of territory subdivisions. See #19 and #22.
