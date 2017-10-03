@@ -8,6 +8,7 @@ ChangeLog
 .. note:: This version is not yet released and is under active development.
 
 * Exclude production of invalid random addresses in ``ar_PS`` locale. See #20.
+* Bump dependency to ``Faker >= 0.8.4``.
 
 
 `1.3.4 (2017-09-29) <https://github.com/scaleway/postal-address/compare/v1.3.3...v1.3.4>`_
