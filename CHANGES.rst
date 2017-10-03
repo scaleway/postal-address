@@ -2,6 +2,14 @@ ChangeLog
 =========
 
 
+`1.3.6 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.3.5...develop>`_
+-------------------------------------------------------------------------------------------
+
+.. note:: This version is not yet released and is under active development.
+
+* No changes yet.
+
+
 `1.3.5 (2017-10-03) <https://github.com/scaleway/postal-address/compare/v1.3.4...v1.3.5>`_
 ------------------------------------------------------------------------------------------
 
