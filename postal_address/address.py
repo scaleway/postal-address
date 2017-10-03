@@ -527,7 +527,10 @@ def random_address(locale=None):
     A ``locale`` parameter try to produce a localized-consistent address. Else
     a random locale is picked-up.
     """
-    if locale is None:
+    # XXX Exclude 'ar_PS' that doesn't work currently (it's defined in Faker
+    # but not in pycountry).
+    # See: https://github.com/scaleway/postal-address/issues/20
+    while locale in [None, 'ar_PS']:
         locale = random.choice(list(faker.config.AVAILABLE_LOCALES))
     fake = faker.Faker(locale=locale)
 

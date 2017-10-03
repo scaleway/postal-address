@@ -7,7 +7,7 @@ ChangeLog
 
 .. note:: This version is not yet released and is under active development.
 
-* No changes yet.
+* Exclude production of random addresses in ar_PS locale (not working properly).
 
 
 `1.3.4 (2017-09-29) <https://github.com/scaleway/postal-address/compare/v1.3.3...v1.3.4>`_
