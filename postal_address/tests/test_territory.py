@@ -121,10 +121,10 @@ class TestTerritory(unittest.TestCase):
     def test_territory_parents_codes(self):
         self.assertEquals(
             list(territory_parents_codes('FR-59')),
-            ['FR-59', 'FR-O', 'FR'])
+            ['FR-59', 'FR-HDF', 'FR'])
         self.assertEquals(
             list(territory_parents_codes('FR-59', include_country=False)),
-            ['FR-59', 'FR-O'])
+            ['FR-59', 'FR-HDF'])
         self.assertEquals(
             list(territory_parents_codes('FR')),
             ['FR'])
@@ -247,3 +247,8 @@ class TestTerritory(unittest.TestCase):
                     self.assertTrue(hasattr(simple_address, metadata_id))
                 else:
                     self.assertFalse(hasattr(simple_address, metadata_id))
+
+    def test_subdivision_parent_code(self):
+        # See https://bitbucket.org/flyingcircus/pycountry/issues/13389
+        self.assertEqual("GB-ENG", subdivisions.get(code='GB-STS').parent_code)
+        self.assertEqual("CZ-20", subdivisions.get(code='CZ-205').parent_code)

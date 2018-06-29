@@ -268,6 +268,7 @@ class TestAddressIO(unittest.TestCase):
         self.assertEquals(address.render(), textwrap.dedent("""\
             Dummy address
             F-12345 - Dummy city
+            La Réunion
             Réunion"""))
         address = Address(
             line1='Dummy address',
@@ -731,7 +732,7 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             address.metropolitan_department, subdivisions.get(code='FR-59'))
         self.assertEquals(
-            address.metropolitan_department_code, 'FR-59')
+            address.metropolitan_department_slug, 'FR-59')
         self.assertEquals(
             address.metropolitan_department_name, 'Nord')
         self.assertEquals(
@@ -739,11 +740,11 @@ class TestAddressValidation(unittest.TestCase):
             'Metropolitan department')
 
         self.assertEquals(
-            address.metropolitan_region, subdivisions.get(code='FR-O'))
+            address.metropolitan_region, subdivisions.get(code='FR-HDF'))
         self.assertEquals(
-            address.metropolitan_region_code, 'FR-O')
+            address.metropolitan_region_slug, 'FR-HDF')
         self.assertEquals(
-            address.metropolitan_region_name, 'Nord - Pas-de-Calais')
+            address.metropolitan_region_name, 'Hauts-de-France')
         self.assertEquals(
             address.metropolitan_region_type_name,
             'Metropolitan region')
@@ -775,7 +776,7 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             address.city, subdivisions.get(code='GB-LND'))
         self.assertEquals(
-            address.city_code, 'GB-LND')
+            address.city_slug, 'GB-LND')
         self.assertEquals(
             address.city_name, 'London, City of')
         self.assertEquals(
@@ -783,9 +784,6 @@ class TestAddressValidation(unittest.TestCase):
 
         self.assertEquals(address.country_code, 'GB')
 
-    @unittest.skip(
-        "Need to fix edge-case in the subdivision/state/country normalization "
-        "code. See #16.")
     def test_subdivision_derived_country(self):
         address = Address(
             line1='Senate House',
@@ -916,9 +914,6 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEqual(address.country_name, 'Taiwan')
         self.assertEqual(address.subdivision_code, 'TW-TNN')
 
-    @unittest.skip(
-        "Need to fix edge-case in the subdivision/state/country normalization "
-        "code. See #16.")
     def test_all_country_codes(self):
         """ Validate & render random addresses with all supported countries.
         """
@@ -930,9 +925,6 @@ class TestAddressValidation(unittest.TestCase):
             address.validate()
             address.render()
 
-    @unittest.skip(
-        "Need to fix edge-case in the subdivision/state/country normalization "
-        "code. See #16.")
     def test_all_territory_codes(self):
         """ Validate & render random addresses with all supported territories.
         """

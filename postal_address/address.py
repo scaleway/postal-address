@@ -319,7 +319,11 @@ class Address(object):
         # Normalize spaces.
         for field_id, field_value in self.items():
             if isinstance(field_value, basestring):
-                self[field_id] = ' '.join(field_value.split())
+                try:
+                    self[field_id] = ' '.join(field_value.split())
+                except KeyError:
+                    # Invalid field_id, usually all the 'subdivision_metadata'
+                    pass
 
         # Reset empty and blank strings.
         empty_fields = [f_id for f_id, f_value in self.items() if not f_value]
@@ -350,7 +354,7 @@ class Address(object):
             if self.subdivision_code:
                 self.country_code = None
 
-        # Automaticcaly populate address fields with metadata extracted from
+        # Automatically populate address fields with metadata extracted from
         # all subdivision parents.
         if self.subdivision_code:
             parent_metadata = {
@@ -679,7 +683,9 @@ def subdivision_metadata(subdivision):
     subdiv_type_id = subdivision_type_id(subdivision)
     metadata = {
         '{}'.format(subdiv_type_id): subdivision,
-        '{}_code'.format(subdiv_type_id): subdivision.code,
+        # Rename code to slug to avoid overriding 'country_code' in some cases
+        # See https://github.com/scaleway/postal-address/issues/16
+        '{}_slug'.format(subdiv_type_id): subdivision.code,
         '{}_name'.format(subdiv_type_id): subdivision.name,
         '{}_type_name'.format(subdiv_type_id): subdivision.type}
 
