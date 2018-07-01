@@ -740,7 +740,7 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             address.metropolitan_department, subdivisions.get(code='FR-59'))
         self.assertEquals(
-            address.metropolitan_department_slug, 'FR-59')
+            address.metropolitan_department_area_code, 'FR-59')
         self.assertEquals(
             address.metropolitan_department_name, 'Nord')
         self.assertEquals(
@@ -750,7 +750,7 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             address.metropolitan_region, subdivisions.get(code='FR-HDF'))
         self.assertEquals(
-            address.metropolitan_region_slug, 'FR-HDF')
+            address.metropolitan_region_area_code, 'FR-HDF')
         self.assertEquals(
             address.metropolitan_region_name, 'Hauts-de-France')
         self.assertEquals(
@@ -784,7 +784,7 @@ class TestAddressValidation(unittest.TestCase):
         self.assertEquals(
             address.city, subdivisions.get(code='GB-LND'))
         self.assertEquals(
-            address.city_slug, 'GB-LND')
+            address.city_area_code, 'GB-LND')
         self.assertEquals(
             address.city_name, 'London, City of')
         self.assertEquals(

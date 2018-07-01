@@ -715,9 +715,9 @@ def subdivision_metadata(subdivision):
     subdiv_type_id = subdivision_type_id(subdivision)
     metadata = {
         '{}'.format(subdiv_type_id): subdivision,
-        # Rename code to slug to avoid overriding 'country_code' in some cases
+        # Rename 'code' to 'area_code' to avoid overriding 'country_code'
         # See https://github.com/scaleway/postal-address/issues/16
-        '{}_slug'.format(subdiv_type_id): subdivision.code,
+        '{}_area_code'.format(subdiv_type_id): subdivision.code,
         '{}_name'.format(subdiv_type_id): subdivision.name,
         '{}_type_name'.format(subdiv_type_id): subdivision.type}
 
