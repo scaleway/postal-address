@@ -10,6 +10,7 @@
 *.egg
 *.egg-info
 dist
+.eggs
 eggs
 parts
 bin
@@ -57,3 +58,9 @@ Icon
 # Files that might appear on external disk
 .Spotlight-V100
 .Trashes
+
+# PyCharm
+.idea
+
+# pyenv
+.python-version
