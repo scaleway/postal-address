@@ -31,9 +31,11 @@ from postal_address.territory import (
     country_aliases,
     country_from_subdivision,
     default_subdivision_code,
+    normalize_territory_code,
     supported_country_codes,
     supported_subdivision_codes,
     supported_territory_codes,
+    territory_attachment,
     territory_children_codes,
     territory_parents_codes
 )
@@ -252,3 +254,37 @@ class TestTerritory(unittest.TestCase):
         # See https://bitbucket.org/flyingcircus/pycountry/issues/13389
         self.assertEqual("GB-ENG", subdivisions.get(code='GB-STS').parent_code)
         self.assertEqual("CZ-20", subdivisions.get(code='CZ-205').parent_code)
+
+    def test_foreign_territory_mapping(self):
+        self.assertEqual("FR", territory_attachment("GP"))
+        self.assertEqual("NL", territory_attachment("BQ"))
+
+    def test_normalize_territory_code(self):
+        self.assertEqual("GR", normalize_territory_code("EL"))
+        self.assertEqual("FR", normalize_territory_code("FX"))
+        self.assertEqual("TW", normalize_territory_code("CN-71"))
+        # Sub-territories will not change by default
+        self.assertEqual("BQ", normalize_territory_code("BQ"))
+        self.assertEqual("GP", normalize_territory_code("FR-GP"))
+        # TODO: Is it normal to not retrieve alpha2 ?
+        # self.assertEqual("BQ", normalize_territory_code("NL-BQ1"))
+        self.assertEqual("BQ-BO", normalize_territory_code("NL-BQ1"))
+
+    def test_normalize_territory_code_with_foreign_territory(self):
+        resolved = normalize_territory_code("BQ",
+                                            resole_foreign_territory=True)
+        self.assertEqual("NL", resolved)
+
+        resolved = normalize_territory_code("VI",
+                                            resole_foreign_territory=True)
+        self.assertEqual("US", resolved)
+
+        resolved = normalize_territory_code("FR-GP",
+                                            resole_foreign_territory=True)
+        self.assertEqual("FR", resolved)
+
+        resolved = normalize_territory_code("NL-BQ1",
+                                            resole_foreign_territory=True)
+        # TODO: Is it normal to not retrieve alpha2 ?
+        # self.assertEqual("NL", resolved)
+        self.assertEqual("BQ-BO", resolved)

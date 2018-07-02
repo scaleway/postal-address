@@ -9,13 +9,27 @@
 
 u""" Utilities to normalize and reconcile territory codes.
 
+.. data:: FOREIGN_TERRITORIES_MAPPING
+
+    Reference *valid* country_codes as keys that are foreign territories of
+    another country. The latter is the dictionary value.
+
 .. data:: COUNTRY_ALIASES
+
+    Bind *invalid* country_code in the ISO-3166 meaning with their *valid*
+    iso counterpart.
+
+    Warning: This can return a SUBDIVISION aliases, not only ISO-3166 alpha2
+    values.
 
 .. data:: SUBDIVISION_ALIASES
 
    Map subdivision ISO 3166-2 codes to their officially assigned ISO 3166-1
    alpha-2 country codes. Source: https://en.wikipedia.org/wiki
    /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
+
+    Warning: This can return a SUBDIVISION aliases, not only ISO-3166 alpha2
+    values.
 
 .. data:: REVERSE_MAPPING
 
@@ -43,6 +57,44 @@ else:
     imap = map
     ifilter = filter
 
+
+FOREIGN_TERRITORIES_MAPPING = {
+    'CC': 'AU',  # Cocos Island,                      Australian territory
+    'HM': 'AU',  # Heard Island and McDonald Islands, Australian territory
+    'JE': 'BR',  # Jersey,                            Brazilian territory
+    'HK': 'CN',  # Hong Kong,                         Chinese territory
+    'MO': 'CN',  # Macao,                             Chinese territory
+    'FO': 'DK',  # Faroe Islands,                     Danish territory
+    'AX': 'FI',  # Åland,                             Finnish territory
+    'AQ': 'FR',  # Antarctica,                        French territory
+    'BL': 'FR',  # Saint Barthelemy,                  French territory
+    'CP': 'FR',  # Clipperton Island,                 French territory
+    'GF': 'FR',  # French Guiana,                     French territory
+    'GP': 'FR',  # Guadeloupe,                        French territory
+    'GY': 'FR',  # Guyana,                            French territory
+    'MF': 'FR',  # Saint Martin,                      French territory
+    'MQ': 'FR',  # Martinique,                        French territory
+    'NC': 'FR',  # New Caledonia,                     French territory
+    'PF': 'FR',  # French Polynesia,                  French territory
+    'PM': 'FR',  # Saint Pierre and Miquelon,         French territory
+    'RE': 'FR',  # Reunion,                           French territory
+    'TF': 'FR',  # French Southern Territories,       French territory
+    'WF': 'FR',  # Wallis and Futuna,                 French territory
+    'YT': 'FR',  # Mayotte,                           French territory
+    'GI': 'GB',  # Gibraltar,                         British territory
+    'IM': 'GB',  # Isle of Man,                       British territory
+    'PN': 'GB',  # Pitcairn,                          British territory
+    'SH': 'GB',  # Saint Helena,                      British territory
+    'VG': 'GB',  # British Virgin Islands,            British territory
+    'BQ': 'NL',  # Bonaire,                           Dutch territory
+    'SX': 'NL',  # Sint Maarten,                      Dutch territory
+    'BV': 'NO',  # Bouvet Island,                     Norwegian territory
+    'SJ': 'NO',  # Svalbard and Jan Mayen,            Norwegian territory
+    'AS': 'US',  # American Samoa,                    American territory
+    'GU': 'US',  # Guam,                              American territory
+    'MP': 'US',  # Northern Mariana Islands,          American territory
+    'VI': 'US',  # US Virgin Islands,                 American territory
+}
 
 COUNTRY_ALIASES = {
     # Source:
@@ -133,8 +185,15 @@ def supported_subdivision_codes():
     return set(imap(attrgetter('code'), subdivisions))
 
 
-def normalize_territory_code(territory_code, resolve_aliases=True):
-    """ Normalize any string into a territory code. """
+def normalize_territory_code(territory_code, resolve_aliases=True,
+                             resole_foreign_territory=False):
+    """Normalize any string into a territory code.
+
+    :param territory_code: The input string to normalize.
+    :param resolve_aliases: Trigger alias computation.
+    :param resole_foreign_territory: Trigger foreign country computation.
+    :return: The resolved territory code.
+    """
     territory_code = territory_code.strip().upper()
     if territory_code not in supported_territory_codes():
         raise ValueError(
@@ -143,7 +202,20 @@ def normalize_territory_code(territory_code, resolve_aliases=True):
         territory_code = COUNTRY_ALIASES.get(territory_code, territory_code)
         territory_code = SUBDIVISION_ALIASES.get(
             territory_code, territory_code)
+    if resole_foreign_territory:
+        territory_code = territory_attachment(territory_code)
     return territory_code
+
+
+def territory_attachment(country_code):
+    """Returns the ISO-3166 alpha2 country_code of the country of which the
+    given country is part of.
+
+    :param country_code: The foreign territory to lookup.
+    :return: The main country of this foreign territory,
+    the input country_code if None.
+    """
+    return FOREIGN_TERRITORIES_MAPPING.get(country_code, country_code)
 
 
 def country_from_subdivision(subdivision_code):
