@@ -27,7 +27,7 @@ from postal_address.address import (
 )
 from postal_address.territory import (
     COUNTRY_ALIASES,
-    SUBDIVISION_ALIASES,
+    SUBDIVISION_COUNTRIES,
     country_aliases,
     country_from_subdivision,
     default_subdivision_code,
@@ -37,9 +37,11 @@ from postal_address.territory import (
     supported_territory_codes,
     territory_attachment,
     territory_children_codes,
-    territory_parents_codes
-)
+    territory_parents_codes,
+    FOREIGN_TERRITORIES_MAPPING, FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY)
 
+PYCOUNTRY_CC = set(map(attrgetter('alpha_2'), countries))
+PYCOUNTRY_SUB = set(map(attrgetter('code'), subdivisions))
 
 class TestTerritory(unittest.TestCase):
     # Test territory utils
@@ -63,44 +65,44 @@ class TestTerritory(unittest.TestCase):
     def test_territory_code_overlap(self):
         # Check that all codes from each classifications we rely on are not
         # overlapping.
-        self.assertFalse(
-            set(map(attrgetter('alpha_2'), countries)).intersection(
-                map(attrgetter('code'), subdivisions)))
+        self.assertFalse(PYCOUNTRY_CC.intersection(PYCOUNTRY_SUB))
+
+    def test_foreign_territory_definition(self):
+        for foreign, country in FOREIGN_TERRITORIES_MAPPING.items():
+            self.assertIn(foreign, PYCOUNTRY_CC)
+            self.assertIn(country, PYCOUNTRY_CC)
 
     def test_territory_exception_definition(self):
-        # Check that all codes used in constants to define exceptionnal
+        # Check that all codes used in constants to define exceptional
         # treatment are valid and recognized.
-        for subdiv_code, alias_code in SUBDIVISION_ALIASES.items():
+        for subdiv_code, alias_code in SUBDIVISION_COUNTRIES.items():
             self.assertIn(subdiv_code, supported_subdivision_codes())
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
-            self.assertIn(
-                alias_code, set(map(attrgetter('alpha_2'), countries)).union(
-                    map(attrgetter('code'), subdivisions)))
+            self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
 
         for country_code, alias_code in COUNTRY_ALIASES.items():
             # Aliased country codes are not supposed to be supported by
             # pycountry, as it's the main reason to define an alias in the
             # first place.
-            self.assertNotIn(
-                country_code, map(attrgetter('alpha_2'), countries))
+            self.assertNotIn(country_code, PYCOUNTRY_CC)
             # Target alias is supposed to be a valid subdivision or country
             # recognized by pycountry right away.
-            self.assertIn(
-                alias_code, set(map(attrgetter('alpha_2'), countries)).union(
-                    map(attrgetter('code'), subdivisions)))
+            self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
+
+        for country_code, alias_code in FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.items():
+            self.assertNotIn(country_code, PYCOUNTRY_CC)
+            self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
 
     def test_country_from_subdivision(self):
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
-        for subdiv_code in SUBDIVISION_ALIASES.keys():
-            target_code = SUBDIVISION_ALIASES[subdiv_code]
+        for subdiv_code in SUBDIVISION_COUNTRIES.keys():
+            target_code = SUBDIVISION_COUNTRIES[subdiv_code]
             if len(target_code) != 2:
                 target_code = subdivisions.get(code=target_code).country_code
             self.assertEquals(
                 country_from_subdivision(subdiv_code), target_code)
-        for subdiv_code in set(
-                map(attrgetter('code'), subdivisions)).difference(
-                    SUBDIVISION_ALIASES):
+        for subdiv_code in PYCOUNTRY_SUB.difference(SUBDIVISION_COUNTRIES):
             self.assertEquals(
                 country_from_subdivision(subdiv_code),
                 subdivisions.get(code=subdiv_code).country_code)
@@ -111,14 +113,14 @@ class TestTerritory(unittest.TestCase):
         self.assertEquals(default_subdivision_code('SJ'), None)
 
     def test_territory_children_codes(self):
-        self.assertEquals(territory_children_codes('GQ'), set([
-            'GQ-C', 'GQ-I', 'GQ-AN', 'GQ-BN', 'GQ-BS', 'GQ-CS', 'GQ-KN',
-            'GQ-LI', 'GQ-WN']))
-        self.assertEquals(territory_children_codes('GQ-I'), set([
-            'GQ-AN', 'GQ-BN', 'GQ-BS']))
+        self.assertEquals(territory_children_codes('GQ'),
+                          {'GQ-C', 'GQ-I', 'GQ-AN', 'GQ-BN', 'GQ-BS', 'GQ-CS',
+                           'GQ-KN', 'GQ-LI', 'GQ-WN'})
+        self.assertEquals(territory_children_codes('GQ-I'),
+                          {'GQ-AN', 'GQ-BN', 'GQ-BS'})
         self.assertEquals(territory_children_codes('GQ-AN'), set())
         self.assertEquals(territory_children_codes(
-            'GQ-AN', include_self=True), set(['GQ-AN']))
+            'GQ-AN', include_self=True), {'GQ-AN'})
 
     def test_territory_parents_codes(self):
         self.assertEquals(
@@ -142,7 +144,7 @@ class TestTerritory(unittest.TestCase):
 
         # Check country alias to a subdivision.
         self.assertEquals(
-            list(territory_parents_codes('TA')),
+            list(territory_parents_codes('SH-TA')),
             ['SH-TA', 'SH'])
 
         # Check subdivision alias to a country.
@@ -168,32 +170,36 @@ class TestTerritory(unittest.TestCase):
         #     ['NO-22', 'SJ'])
 
     def test_country_aliases(self):
-        self.assertEquals(country_aliases('UM-67'), set(['US', 'UM']))
-        self.assertEquals(country_aliases('UM'), set(['US', 'UM']))
-        self.assertEquals(country_aliases('US'), set(['US']))
+        self.assertEquals(country_aliases('UM-67'), {'US', 'UM'})
+        self.assertEquals(country_aliases('UM'), {'US', 'UM'})
+        self.assertEquals(country_aliases('US'), {'US'})
 
-        self.assertEquals(country_aliases('BQ-BO'), set(['NL', 'BQ']))
-        # self.assertEquals(country_aliases('NL-BQ2'), set(['NL', 'BQ']))
+        self.assertEquals(country_aliases('BQ-BO'), {'NL', 'BQ'})
+        self.assertEquals(country_aliases('NL-BQ2'), {'NL', 'BQ'})
 
-        # self.assertEquals(country_aliases('NO-21'), set(['SJ', 'NO']))
+        self.assertEquals(country_aliases('NO-21'), {'SJ', 'NO'})
 
-        # self.assertEquals(country_aliases('DG'), set(['DG', 'IO']))
-        self.assertEquals(country_aliases('IO'), set(['DG', 'IO']))
+        self.assertEquals(country_aliases('DG'), {'DG', 'IO', 'GB'})
+        self.assertEquals(country_aliases('IO'), {'IO', 'GB'})
 
-        self.assertEquals(country_aliases('FR'), set(['FR', 'FX']))
+        self.assertEquals(country_aliases('FR'), {'FR'})
 
-        self.assertEquals(country_aliases('FR-CP'), set(['FR', 'CP', 'FX']))
-        # self.assertEquals(country_aliases('CP'), set(['FR', 'CP', 'FX']))
+        # CP is not an official ISO-3166 country code
+        # self.assertEquals(country_aliases('FR-CP'), {'FR', 'CP'})
+        # self.assertEquals(country_aliases('CP'), {'FR', 'CP'})
 
-        # self.assertEquals(country_aliases('FR-RE'), set(['FR', 'FX', 'RE']))
-        self.assertEquals(country_aliases('RE'), set(['FR', 'FX', 'RE']))
+        self.assertEquals(country_aliases('FR-RE'), {'FR', 'RE'})
+        self.assertEquals(country_aliases('RE'), {'FR', 'RE'})
 
-        self.assertEquals(country_aliases('GB'), set(['UK', 'GB']))
-        # self.assertEquals(country_aliases('UK'), set(['UK', 'GB']))
+        self.assertEquals(country_aliases('GB'), {'GB'})
+        self.assertEquals(country_aliases('UK'), {'UK', 'GB'})
 
-        self.assertEquals(country_aliases('IM'), set(['IM']))
+        self.assertEquals(country_aliases('GR'), {'GR'})
+        self.assertEquals(country_aliases('EL'), {'EL', 'GR'})
 
-        self.assertEquals(country_aliases('MC'), set(['MC']))
+        self.assertEquals(country_aliases('IM'), {'IM', 'GB'})
+
+        self.assertEquals(country_aliases('MC'), {'MC'})
 
     def test_subdivision_type_id_conversion(self):
         # Conversion of subdivision types into IDs must be python friendly

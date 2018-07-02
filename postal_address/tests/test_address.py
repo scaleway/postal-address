@@ -25,8 +25,8 @@ from pycountry import countries, subdivisions
 from postal_address.address import Address, InvalidAddress, random_address
 from postal_address.territory import (
     supported_country_codes,
-    supported_territory_codes
-)
+    supported_territory_codes,
+    supported_subdivision_codes)
 
 
 class TestAddressIO(unittest.TestCase):
@@ -251,7 +251,7 @@ class TestAddressIO(unittest.TestCase):
             line1='Dummy address',
             postal_code='F-12345',
             city_name='Dummy city',
-            country_code='CP')
+            country_code='CP')  # This is not an official country_code
         self.assertEquals(address.render(), textwrap.dedent("""\
             Dummy address
             F-12345 - Dummy city
@@ -274,7 +274,7 @@ class TestAddressIO(unittest.TestCase):
             line1='Dummy address',
             postal_code='F-12345',
             city_name='Dummy city',
-            country_code='IC')
+            country_code='IC')  # This is not an official country_code
         self.assertEquals(address.render(), textwrap.dedent("""\
             Dummy address
             F-12345 - Dummy city
@@ -611,7 +611,15 @@ class TestAddressValidation(unittest.TestCase):
             line1='Barack 31',
             postal_code='XXX No postal code on this atoll',
             city_name='Clipperton Island',
-            country_code='CP')
+            country_code='CP') # This is actually a non existing country code
+        self.assertEqual(address.country_code, 'FR')
+        self.assertEqual(address.subdivision_code, 'FR-CP')
+
+        address = Address(
+            line1='Barack 31',
+            postal_code='XXX No postal code on this atoll',
+            city_name='Clipperton Island',
+            subdivision_code='FR-CP')
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-CP')
 
@@ -928,10 +936,18 @@ class TestAddressValidation(unittest.TestCase):
     def test_all_territory_codes(self):
         """ Validate & render random addresses with all supported territories.
         """
-        for territory_code in supported_territory_codes():
+        for territory_code in supported_subdivision_codes():
             address = random_address()
             address.country_code = None
             address.subdivision_code = territory_code
+            address.normalize(strict=False)
+            address.validate()
+            address.render()
+
+        for territory_code in supported_country_codes():
+            address = random_address()
+            address.country_code = territory_code
+            address.subdivision_code = None
             address.normalize(strict=False)
             address.validate()
             address.render()

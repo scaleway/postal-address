@@ -18,22 +18,33 @@ u""" Utilities to normalize and reconcile territory codes.
 
     Bind *invalid* country_code in the ISO-3166 meaning with their *valid*
     iso counterpart.
+    This enables us to handle so special cases of commonly used country codes
+    that are not part of the ISO-3166 definitions.
 
-    Warning: This can return a SUBDIVISION aliases, not only ISO-3166 alpha2
-    values.
-
-.. data:: SUBDIVISION_ALIASES
+.. data:: SUBDIVISION_COUNTRIES
 
    Map subdivision ISO 3166-2 codes to their officially assigned ISO 3166-1
    alpha-2 country codes. Source: https://en.wikipedia.org/wiki
    /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
 
-    Warning: This can return a SUBDIVISION aliases, not only ISO-3166 alpha2
-    values.
+.. data:: SUBDIVISION_ALIASES
+
+    Map some subdivision aliases representing the same territory, but defined
+    under different countries.
+
+.. data:: FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY
+
+    Bind *invalid* country_code in the ISO-3166 (mostly subdivisions)
+    representing territories to *valid* iso country codes representing
+    the main country of this territory.
+
+.. data:: COUNTRY_ALIAS_TO_SUBDIVISION
+
+    Bind *invalid* country_code to their real subdivision code.
 
 .. data:: REVERSE_MAPPING
 
-   Reverse index of the SUBDIVISION_ALIASES mapping defined above.
+   Reverse index of the SUBDIVISION_COUNTRIES mapping defined above.
 """
 
 from __future__ import (
@@ -68,7 +79,6 @@ FOREIGN_TERRITORIES_MAPPING = {
     'AX': 'FI',  # Åland,                             Finnish territory
     'AQ': 'FR',  # Antarctica,                        French territory
     'BL': 'FR',  # Saint Barthelemy,                  French territory
-    'CP': 'FR',  # Clipperton Island,                 French territory
     'GF': 'FR',  # French Guiana,                     French territory
     'GP': 'FR',  # Guadeloupe,                        French territory
     'GY': 'FR',  # Guyana,                            French territory
@@ -83,6 +93,7 @@ FOREIGN_TERRITORIES_MAPPING = {
     'YT': 'FR',  # Mayotte,                           French territory
     'GI': 'GB',  # Gibraltar,                         British territory
     'IM': 'GB',  # Isle of Man,                       British territory
+    'IO': 'GB',  # British Indian Ocean Territory,    British territory
     'PN': 'GB',  # Pitcairn,                          British territory
     'SH': 'GB',  # Saint Helena,                      British territory
     'VG': 'GB',  # British Virgin Islands,            British territory
@@ -97,23 +108,11 @@ FOREIGN_TERRITORIES_MAPPING = {
 }
 
 COUNTRY_ALIASES = {
-    # Source:
-    # https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Exceptional_reservations
-    'AC': 'SH-AC',  # Ascension Island
-    'CP': 'FR-CP',  # Clipperton Island
-    'DG': 'IO',     # Diego Garcia
-    # 'EA': ['ES-ML', 'ES-CE'],  # Ceuta and Melilla
-    'FX': 'FR',     # France, Metropolitan
-    'IC': 'ES-CN',  # Canary Islands
-    'TA': 'SH-TA',  # Tristan da Cunha
-    # European Commision country code exceptions.
-    # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
-    'UK': 'GB',  # United Kingdom
-    'EL': 'GR',  # Greece
+    'UK': 'GB',  # United Kingdom is known as 'GB' in ISO-3166
+    'EL': 'GR',  # 'EL' is the european version of Greece,
 }
 
-
-SUBDIVISION_ALIASES = {
+SUBDIVISION_COUNTRIES = {
     'CN-71': 'TW',  # Taiwan
     'CN-91': 'HK',  # Hong Kong
     'CN-92': 'MO',  # Macao
@@ -131,9 +130,6 @@ SUBDIVISION_ALIASES = {
     'FR-WF': 'WF',  # Wallis and Futuna
     'FR-YT': 'YT',  # Mayotte
     'NL-AW': 'AW',  # Aruba
-    'NL-BQ1': 'BQ-BO',  # Bonaire
-    'NL-BQ2': 'BQ-SA',  # Saba
-    'NL-BQ3': 'BQ-SE',  # Sint Eustatius
     'NL-CW': 'CW',  # Curaçao
     'NL-SX': 'SX',  # Sint Maarten
     'NO-21': 'SJ',  # Svalbard
@@ -146,13 +142,42 @@ SUBDIVISION_ALIASES = {
     'US-VI': 'VI',  # Virgin Islands, U.S.
 }
 
+SUBDIVISION_ALIASES = {
+    'NL-BQ1': 'BQ-BO',  # Bonaire
+    'NL-BQ2': 'BQ-SA',  # Saba
+    'NL-BQ3': 'BQ-SE',  # Sint Eustatius
+}
+
+FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY = {
+    # Source:
+    # https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Exceptional_reservations
+    'DG': 'IO',  # Diego Garcia is part of the British Indian Ocean Territory
+    'FX': 'FR',  # France, Metropolitan
+    # European Commision country code exceptions.
+    # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
+    'EA': 'ES',  # 'EA' is the union of Ceuta and Melilla, Spanish territory
+}
+
+COUNTRY_ALIAS_TO_SUBDIVISION = {
+    'AC': 'SH-AC',  # Ascension Island
+    'CP': 'FR-CP',  # Clipperton Island
+    'IC': 'ES-CN',  # Canary Islands
+    'TA': 'SH-TA',  # Tristan da Cunha
+}
+
 
 # Build the reverse index of aliases defined above.
 REVERSE_MAPPING = {}
-for mapping in [COUNTRY_ALIASES, SUBDIVISION_ALIASES]:
-    for alias_code, target_code in mapping.items():
+for reverse_mapping in [SUBDIVISION_COUNTRIES]:
+    for alias_code, target_code in reverse_mapping.items():
         REVERSE_MAPPING.setdefault(target_code, set()).add(alias_code)
 
+for straight_mapping in [FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY,
+                         COUNTRY_ALIASES,
+                         SUBDIVISION_ALIASES,
+                         FOREIGN_TERRITORIES_MAPPING]:
+    for alias_code, target_code in straight_mapping.items():
+        REVERSE_MAPPING.setdefault(alias_code, set()).add(target_code)
 
 @cached(LRI())
 def supported_territory_codes():
@@ -172,7 +197,8 @@ def supported_country_codes():
     return set(chain(
         imap(attrgetter('alpha_2'), countries),
         # Include ISO and EC exceptions.
-        COUNTRY_ALIASES.keys()))
+        COUNTRY_ALIASES.keys(), FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.keys(),
+        COUNTRY_ALIAS_TO_SUBDIVISION.keys()))
 
 
 @cached(LRI())
@@ -198,9 +224,17 @@ def normalize_territory_code(territory_code, resolve_aliases=True,
     if territory_code not in supported_territory_codes():
         raise ValueError(
             'Unrecognized {!r} territory code.'.format(territory_code))
+
+    # We resolve country aliases and subdivision aliases
+    # nevertheless since their keys does not exists in pycountry!
+    territory_code = FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.get(territory_code,
+                                                              territory_code)
+    territory_code = COUNTRY_ALIASES.get(territory_code,
+                                         territory_code)
     if resolve_aliases:
-        territory_code = COUNTRY_ALIASES.get(territory_code, territory_code)
         territory_code = SUBDIVISION_ALIASES.get(
+            territory_code, territory_code)
+        territory_code = SUBDIVISION_COUNTRIES.get(
             territory_code, territory_code)
     if resole_foreign_territory:
         territory_code = territory_attachment(territory_code)
@@ -228,7 +262,7 @@ def country_from_subdivision(subdivision_code):
     the later instead of the parent ISO 3166-2 top entry.
     """
     # Resolve subdivision alias.
-    code = SUBDIVISION_ALIASES.get(subdivision_code, subdivision_code)
+    code = SUBDIVISION_COUNTRIES.get(subdivision_code, subdivision_code)
 
     # We have a country code, return it right away.
     if code in supported_country_codes():
@@ -250,18 +284,17 @@ def default_subdivision_code(country_code):
     """
     # Build the reverse index of the subdivision/country alias mapping.
     default_subdiv = {}
-    for subdiv_code, alias_code in SUBDIVISION_ALIASES.items():
+    for subdiv_code, alias_code in SUBDIVISION_COUNTRIES.items():
         # Skip non-country
         if len(alias_code) == 2:
             default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
 
     # Include countries directly mapping to a subdivision.
-    for alias_code, subdiv_code in COUNTRY_ALIASES.items():
-        # Skip non-subdiv
-        if len(subdiv_code) > 3:
+    for alias_code, subdiv_code in COUNTRY_ALIAS_TO_SUBDIVISION.items():
             default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
 
     default_subdivisions = default_subdiv.get(country_code)
+
     if default_subdivisions and len(default_subdivisions) == 1:
         return default_subdivisions.pop()
 
@@ -364,6 +397,9 @@ def country_aliases(territory_code):
         if not parent_code:
             parent_code = subdiv.country.alpha_2
         country_codes.update(country_aliases(parent_code))
+        # Adding subdivision's country alias
+        if territory_code in SUBDIVISION_COUNTRIES:
+            country_codes.update({SUBDIVISION_COUNTRIES.get(territory_code)})
 
     # Hunt for aliases
     for mapped_code in REVERSE_MAPPING.get(territory_code, []):
