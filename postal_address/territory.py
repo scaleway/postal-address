@@ -27,12 +27,15 @@ u""" Utilities to normalize and reconcile territory codes.
    alpha-2 country codes. Source: https://en.wikipedia.org/wiki
    /ISO_3166-2#Subdivisions_included_in_ISO_3166-1
 
+   In order to be able to build a parenting tree, this mapping should redirect
+   to the subdivision's closer country_code.
+
 .. data:: SUBDIVISION_ALIASES
 
     Map some subdivision aliases representing the same territory, but defined
     under different countries.
 
-.. data:: FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY
+.. data:: RESERVED_COUNTRY_CODES
 
     Bind *invalid* country_code in the ISO-3166 (mostly subdivisions)
     representing territories to *valid* iso country codes representing
@@ -107,6 +110,8 @@ FOREIGN_TERRITORIES_MAPPING = {
 }
 
 COUNTRY_ALIASES = {
+    # European Commission country code exceptions.
+    # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
     'UK': 'GB',  # United Kingdom is known as 'GB' in ISO-3166
     'EL': 'GR',  # 'EL' is the european version of Greece,
 }
@@ -147,12 +152,12 @@ SUBDIVISION_ALIASES = {
     'NL-BQ3': 'BQ-SE',  # Sint Eustatius
 }
 
-FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY = {
+RESERVED_COUNTRY_CODES = {
     # Source:
     # https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Exceptional_reservations
     'DG': 'IO',  # Diego Garcia is part of the British Indian Ocean Territory
     'FX': 'FR',  # France, Metropolitan
-    # European Commision country code exceptions.
+    # European Commission country code exceptions.
     # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
     'EA': 'ES',  # 'EA' is the union of Ceuta and Melilla, Spanish territory
 }
@@ -175,7 +180,7 @@ def generate_mapping():
         for alias_code, target_code in reverse_mapping.items():
             mapping.setdefault(target_code, set()).add(alias_code)
 
-    for straight_mapping in [FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY,
+    for straight_mapping in [RESERVED_COUNTRY_CODES,
                              COUNTRY_ALIASES,
                              SUBDIVISION_ALIASES,
                              FOREIGN_TERRITORIES_MAPPING]:
@@ -206,7 +211,7 @@ def supported_country_codes():
         imap(attrgetter('alpha_2'), countries),
         # Include ISO and EC exceptions.
         COUNTRY_ALIASES.keys(),
-        FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.keys(),
+        RESERVED_COUNTRY_CODES.keys(),
         COUNTRY_ALIAS_TO_SUBDIVISION.keys()))
 
 
@@ -221,12 +226,12 @@ def supported_subdivision_codes():
 
 
 def normalize_territory_code(territory_code, resolve_aliases=True,
-                             resole_foreign_territory=False):
+                             resolve_top_country=False):
     """Normalize any string into a territory code.
 
     :param territory_code: The input string to normalize.
     :param resolve_aliases: Trigger alias computation.
-    :param resole_foreign_territory: Trigger foreign country computation.
+    :param resolve_top_country: Trigger foreign country computation.
     :return: The resolved territory code.
     """
     territory_code = territory_code.strip().upper()
@@ -236,8 +241,8 @@ def normalize_territory_code(territory_code, resolve_aliases=True,
 
     # We resolve country aliases and subdivision aliases
     # nevertheless since their keys does not exists in pycountry!
-    territory_code = FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.get(territory_code,
-                                                              territory_code)
+    territory_code = RESERVED_COUNTRY_CODES.get(territory_code,
+                                                territory_code)
     territory_code = COUNTRY_ALIASES.get(territory_code,
                                          territory_code)
     if resolve_aliases:
@@ -245,7 +250,7 @@ def normalize_territory_code(territory_code, resolve_aliases=True,
             territory_code, territory_code)
         territory_code = SUBDIVISION_COUNTRIES.get(
             territory_code, territory_code)
-    if resole_foreign_territory:
+    if resolve_top_country:
         territory_code = territory_attachment(territory_code)
     return territory_code
 
@@ -352,6 +357,9 @@ def territory_parents(territory_code, include_country=True):
     """
     tree = []
 
+    # Retrieving subdivision from alias to get full paternity
+    territory_code = COUNTRY_ALIAS_TO_SUBDIVISION.get(territory_code,
+                                                      territory_code)
     # If the provided territory code is a country, return it right away.
     territory_code = normalize_territory_code(territory_code)
     if territory_code in supported_country_codes():

@@ -28,9 +28,6 @@ PACKAGE_NAME = MODULE_NAME.replace('_', '-')
 DEPENDENCIES = [
     'boltons',
     'Faker >= 0.8.4',
-    # TODO: subdivision definitions are broken for Czech Republic starting with
-    # PyCountry 16.11.27. See:
-    # https://bitbucket.org/flyingcircus/pycountry/issues/13389
     'pycountry >= 18.5.26',
 ]
 

@@ -38,7 +38,7 @@ from postal_address.territory import (
     territory_attachment,
     territory_children_codes,
     territory_parents_codes,
-    FOREIGN_TERRITORIES_MAPPING, FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY)
+    FOREIGN_TERRITORIES_MAPPING, RESERVED_COUNTRY_CODES)
 
 PYCOUNTRY_CC = set(map(attrgetter('alpha_2'), countries))
 PYCOUNTRY_SUB = set(map(attrgetter('code'), subdivisions))
@@ -91,8 +91,7 @@ class TestTerritory(unittest.TestCase):
             # recognized by pycountry right away.
             self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
 
-        for country_code, alias_code in FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY \
-                .items():
+        for country_code, alias_code in RESERVED_COUNTRY_CODES.items():
             self.assertNotIn(country_code, PYCOUNTRY_CC)
             self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
 
@@ -147,6 +146,9 @@ class TestTerritory(unittest.TestCase):
         # Check country alias to a subdivision.
         self.assertEquals(
             list(territory_parents_codes('SH-TA')),
+            ['SH-TA', 'SH'])
+        self.assertEquals(
+            list(territory_parents_codes('TA')),
             ['SH-TA', 'SH'])
 
         # Check subdivision alias to a country.
@@ -274,25 +276,23 @@ class TestTerritory(unittest.TestCase):
         # Sub-territories will not change by default
         self.assertEqual("BQ", normalize_territory_code("BQ"))
         self.assertEqual("GP", normalize_territory_code("FR-GP"))
-        # TODO: Is it normal to not retrieve alpha2 ?
-        # self.assertEqual("BQ", normalize_territory_code("NL-BQ1"))
+
         self.assertEqual("BQ-BO", normalize_territory_code("NL-BQ1"))
 
     def test_normalize_territory_code_with_foreign_territory(self):
         resolved = normalize_territory_code("BQ",
-                                            resole_foreign_territory=True)
+                                            resolve_top_country=True)
         self.assertEqual("NL", resolved)
 
         resolved = normalize_territory_code("VI",
-                                            resole_foreign_territory=True)
+                                            resolve_top_country=True)
         self.assertEqual("US", resolved)
 
         resolved = normalize_territory_code("FR-GP",
-                                            resole_foreign_territory=True)
+                                            resolve_top_country=True)
         self.assertEqual("FR", resolved)
 
         resolved = normalize_territory_code("NL-BQ1",
-                                            resole_foreign_territory=True)
-        # TODO: Is it normal to not retrieve alpha2 ?
-        # self.assertEqual("NL", resolved)
+                                            resolve_top_country=True)
+
         self.assertEqual("BQ-BO", resolved)
