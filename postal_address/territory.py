@@ -68,7 +68,6 @@ else:
     imap = map
     ifilter = filter
 
-
 FOREIGN_TERRITORIES_MAPPING = {
     'CC': 'AU',  # Cocos Island,                      Australian territory
     'HM': 'AU',  # Heard Island and McDonald Islands, Australian territory
@@ -166,18 +165,27 @@ COUNTRY_ALIAS_TO_SUBDIVISION = {
 }
 
 
-# Build the reverse index of aliases defined above.
-REVERSE_MAPPING = {}
-for reverse_mapping in [SUBDIVISION_COUNTRIES]:
-    for alias_code, target_code in reverse_mapping.items():
-        REVERSE_MAPPING.setdefault(target_code, set()).add(alias_code)
+def generate_mapping():
+    """Build the reverse index of aliases defined above.
 
-for straight_mapping in [FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY,
-                         COUNTRY_ALIASES,
-                         SUBDIVISION_ALIASES,
-                         FOREIGN_TERRITORIES_MAPPING]:
-    for alias_code, target_code in straight_mapping.items():
-        REVERSE_MAPPING.setdefault(alias_code, set()).add(target_code)
+    :return: A dictionary containing aliases mapping.
+    """
+    mapping = {}
+    for reverse_mapping in [SUBDIVISION_COUNTRIES]:
+        for alias_code, target_code in reverse_mapping.items():
+            mapping.setdefault(target_code, set()).add(alias_code)
+
+    for straight_mapping in [FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY,
+                             COUNTRY_ALIASES,
+                             SUBDIVISION_ALIASES,
+                             FOREIGN_TERRITORIES_MAPPING]:
+        for alias_code, target_code in straight_mapping.items():
+            mapping.setdefault(alias_code, set()).add(target_code)
+    return mapping
+
+
+REVERSE_MAPPING = generate_mapping()
+
 
 @cached(LRI())
 def supported_territory_codes():
@@ -197,7 +205,8 @@ def supported_country_codes():
     return set(chain(
         imap(attrgetter('alpha_2'), countries),
         # Include ISO and EC exceptions.
-        COUNTRY_ALIASES.keys(), FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.keys(),
+        COUNTRY_ALIASES.keys(),
+        FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.keys(),
         COUNTRY_ALIAS_TO_SUBDIVISION.keys()))
 
 
@@ -277,10 +286,13 @@ def country_from_subdivision(subdivision_code):
 
 
 def default_subdivision_code(country_code):
-    """ Return the default subdivision code of a country.
+    """Return the default subdivision code of a country.
 
     The result can be guessed only if there is a 1:1 mapping between a country
     code and a subdivision code.
+
+    :param country_code: Country code to find subdivision for.
+    :return: The subdivision key if found, None otherwise.
     """
     # Build the reverse index of the subdivision/country alias mapping.
     default_subdiv = {}
@@ -291,12 +303,13 @@ def default_subdivision_code(country_code):
 
     # Include countries directly mapping to a subdivision.
     for alias_code, subdiv_code in COUNTRY_ALIAS_TO_SUBDIVISION.items():
-            default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
+        default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
 
     default_subdivisions = default_subdiv.get(country_code)
 
     if default_subdivisions and len(default_subdivisions) == 1:
         return default_subdivisions.pop()
+    return None
 
 
 def territory_children_codes(territory_code, include_self=False):
@@ -374,7 +387,7 @@ def territory_parents_codes(territory_code, include_country=True):
         elif full_class_name == 'pycountry.db.Subdivision':
             yield territory.code
         else:
-            raise "Unrecognized {!r} territory.".format(territory)
+            raise ValueError("Unrecognized {!r} territory.".format(territory))
 
 
 def country_aliases(territory_code):

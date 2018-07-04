@@ -43,6 +43,7 @@ from postal_address.territory import (
 PYCOUNTRY_CC = set(map(attrgetter('alpha_2'), countries))
 PYCOUNTRY_SUB = set(map(attrgetter('code'), subdivisions))
 
+
 class TestTerritory(unittest.TestCase):
     # Test territory utils
 
@@ -90,7 +91,8 @@ class TestTerritory(unittest.TestCase):
             # recognized by pycountry right away.
             self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
 
-        for country_code, alias_code in FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY.items():
+        for country_code, alias_code in FOREIGN_TERRITORIES_ALIAS_TO_COUNTRY \
+                .items():
             self.assertNotIn(country_code, PYCOUNTRY_CC)
             self.assertIn(alias_code, PYCOUNTRY_CC.union(PYCOUNTRY_SUB))
 
@@ -210,20 +212,20 @@ class TestTerritory(unittest.TestCase):
 
     def test_subdivision_type_id_city_classification(self):
         city_like_subdivisions = [
-            'TM-S',    # Aşgabat, Turkmenistan, City
+            'TM-S',  # Aşgabat, Turkmenistan, City
             'TW-CYI',  # Chiay City, Taiwan, Municipality
             'TW-TPE',  # Taipei City, Taiwan, Special Municipality
-            'ES-ML',   # Melilla, Spain, Autonomous city
+            'ES-ML',  # Melilla, Spain, Autonomous city
             'GB-LND',  # City of London, United Kingdom, City corporation
-            'KP-01',   # P’yŏngyang, North Korea, Capital city
-            'KP-13',   # Nasŏn (Najin-Sŏnbong), North Korea, Special city
-            'KR-11',   # Seoul Teugbyeolsi, South Korea, Capital Metropolitan
-                       # City
-            'HU-HV',   # Hódmezővásárhely, Hungary, City with county rights
+            'KP-01',  # P’yŏngyang, North Korea, Capital city
+            'KP-13',  # Nasŏn (Najin-Sŏnbong), North Korea, Special city
+            'KR-11',  # Seoul Teugbyeolsi, South Korea, Capital Metropolitan
+            # City
+            'HU-HV',  # Hódmezővásárhely, Hungary, City with county rights
             'LV-RIX',  # Rīga, Latvia, Republican City
-            'ME-15',   # Plužine, Montenegro, Municipality
+            'ME-15',  # Plužine, Montenegro, Municipality
             'NL-BQ1',  # Bonaire, Netherlands, Special municipality
-            'KH-12',   # Phnom Penh, Cambodia, Autonomous municipality
+            'KH-12',  # Phnom Penh, Cambodia, Autonomous municipality
         ]
         for subdiv_code in city_like_subdivisions:
             self.assertEquals(

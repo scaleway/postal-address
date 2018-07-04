@@ -611,7 +611,7 @@ class TestAddressValidation(unittest.TestCase):
             line1='Barack 31',
             postal_code='XXX No postal code on this atoll',
             city_name='Clipperton Island',
-            country_code='CP') # This is actually a non existing country code
+            country_code='CP')  # This is actually a non existing country code
         self.assertEqual(address.country_code, 'FR')
         self.assertEqual(address.subdivision_code, 'FR-CP')
 
