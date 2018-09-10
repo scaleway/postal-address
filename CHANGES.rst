@@ -10,6 +10,7 @@ ChangeLog
 * Unfreeze pycountry version and bump to ``pycountry >= 18.5.26``.
 * Refactor country aliases with better categories.
 * Some subdivisions names were updated, such as ``FR-O`` to ``FR-HDF``.
+* Drop support for Python 3.3.
 
 
 `1.3.5 (2017-10-03) <https://github.com/scaleway/postal-address/compare/v1.3.4...v1.3.5>`_
