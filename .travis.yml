@@ -12,9 +12,6 @@ python:
 
 matrix:
   allow_failures:
-    # PyPy3 seems to have issues since PyCountry was updated to its
-    # Calendar-based versionning.
-    - python: pypy3
     # Allow failure while we wait for Travis to propose a dedicated
     # Python 3.7 build target.
     - python: "3.7"
