@@ -319,7 +319,11 @@ class Address(object):
         # Normalize spaces.
         for field_id, field_value in self.items():
             if isinstance(field_value, basestring):
-                self[field_id] = ' '.join(field_value.split())
+                try:
+                    self[field_id] = ' '.join(field_value.split())
+                except KeyError:
+                    # Invalid field_id, usually all the 'subdivision_metadata'
+                    pass
 
         # Reset empty and blank strings.
         empty_fields = [f_id for f_id, f_value in self.items() if not f_value]
@@ -350,7 +354,7 @@ class Address(object):
             if self.subdivision_code:
                 self.country_code = None
 
-        # Automaticcaly populate address fields with metadata extracted from
+        # Automatically populate address fields with metadata extracted from
         # all subdivision parents.
         if self.subdivision_code:
             parent_metadata = {
@@ -374,7 +378,7 @@ class Address(object):
 
                         # Build the list of substitute values that are
                         # equivalent to our new normalized target.
-                        alias_values = set([new_value])
+                        alias_values = {new_value}
                         if field_id == 'country_code':
                             # Allow normalization if the current country code
                             # is the direct parent of a subdivision which also
@@ -386,9 +390,8 @@ class Address(object):
                         # substitute to our new normalized value.
                         if current_value not in alias_values:
                             raise InvalidAddress(
-                                inconsistent_fields=set([
-                                    tuple(sorted((
-                                        field_id, 'subdivision_code')))]),
+                                inconsistent_fields={tuple(sorted((
+                                    field_id, 'subdivision_code')))},
                                 extra_msg="{} subdivision is trying to replace"
                                 " {}={!r} field by {}={!r}".format(
                                     self.subdivision_code,
@@ -404,45 +407,78 @@ class Address(object):
         raise an exception at the end, for the whole address object. Our custom
         exception will provide a detailed status of bad fields.
         """
-        # Keep a classification of bad fields along the validation process.
-        required_fields = set()
-        invalid_fields = dict()
-        inconsistent_fields = set()
 
-        # Check that all required fields are set.
+        required_fields = self.check_required_fields()
+        invalid_fields = self.check_invalid_fields(required_fields)
+        inconsistent_fields = self.check_inconsistent_fields(required_fields,
+                                                             invalid_fields)
+
+        # Raise our custom exception if any value is wrong.
+        if required_fields or invalid_fields or inconsistent_fields:
+            raise InvalidAddress(
+                required_fields, invalid_fields, inconsistent_fields)
+
+    def check_required_fields(self):
+        """Check that all required fields are set.
+
+        :return: The set of unset thus required fields.
+        """
+        required_fields = set()
         for field_id in self.REQUIRED_FIELDS:
             if not getattr(self, field_id):
                 required_fields.add(field_id)
+        return required_fields
 
-        # Check all fields for invalidity, only if not previously flagged as
-        # required.
+    def check_invalid_fields(self, required_fields):
+        """Check all fields for invalidity, only if not previously flagged as
+        required.
+
+        :param required_fields:
+        :return:
+        """
+        invalid_fields = dict()
         if 'country_code' not in required_fields:
             # Check that the country code exists.
             try:
                 countries.get(alpha_2=self.country_code)
             except KeyError:
                 invalid_fields['country_code'] = self.country_code
+
         if self.subdivision_code and 'subdivision_code' not in required_fields:
             # Check that the country code exists.
             try:
                 subdivisions.get(code=self.subdivision_code)
             except KeyError:
                 invalid_fields['subdivision_code'] = self.subdivision_code
+        return invalid_fields
 
-        # Check country consistency against subdivision, only if none of the
-        # two fields were previously flagged as required or invalid.
-        if self.subdivision_code and not set(
-                ['country_code', 'subdivision_code']).intersection(
-                    required_fields.union(invalid_fields)) and \
-                country_from_subdivision(
-                    self.subdivision_code) != self.country_code:
-            inconsistent_fields.add(
-                tuple(sorted(('country_code', 'subdivision_code'))))
+    def check_inconsistent_fields(self, required_fields, invalid_fields):
+        """Check country consistency against subdivision, only if none of the
+         two fields were previously flagged as required or invalid.
 
-        # Raise our custom exception at last.
-        if required_fields or invalid_fields or inconsistent_fields:
-            raise InvalidAddress(
-                required_fields, invalid_fields, inconsistent_fields)
+        :param required_fields: The set of missing required fields.
+        :param invalid_fields: The set of invalid fields.
+        :return:
+        """
+        inconsistent_fields = set()
+        any_wrong_field = required_fields.union(invalid_fields)
+        consistency_fields = {'country_code', 'subdivision_code'}
+        inconsistency = consistency_fields.intersection(any_wrong_field)
+        if not inconsistency and not self.valid_subdivision_country():
+            inconsistent_fields.add(tuple(sorted(consistency_fields)))
+        return inconsistent_fields
+
+    def valid_subdivision_country(self):
+        """Validates that the country attached to the subdivision is
+        the same as the Address country_code.
+
+        :return: True if the subdivision country is the same as the country,
+        False otherwise.
+        """
+        if not self.subdivision_code:
+            return True
+        inferred_country = country_from_subdivision(self.subdivision_code)
+        return inferred_country == self.country_code
 
     @property
     def valid(self):
@@ -679,7 +715,9 @@ def subdivision_metadata(subdivision):
     subdiv_type_id = subdivision_type_id(subdivision)
     metadata = {
         '{}'.format(subdiv_type_id): subdivision,
-        '{}_code'.format(subdiv_type_id): subdivision.code,
+        # Rename 'code' to 'area_code' to avoid overriding 'country_code'
+        # See https://github.com/scaleway/postal-address/issues/16
+        '{}_area_code'.format(subdiv_type_id): subdivision.code,
         '{}_name'.format(subdiv_type_id): subdivision.name,
         '{}_type_name'.format(subdiv_type_id): subdivision.type}
 
