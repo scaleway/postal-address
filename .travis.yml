@@ -7,7 +7,6 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.7"
   - pypy
   - pypy3
 
@@ -16,6 +15,9 @@ matrix:
     # PyPy3 seems to have issues since PyCountry was updated to its
     # Calendar-based versionning.
     - python: pypy3
+    # Allow failure while we wait for Travis to propose a dedicated
+    # Python 3.7 build target.
+    - "3.7"
 
 before_install:
   # Check default Python version installed.
