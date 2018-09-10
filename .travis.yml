@@ -17,7 +17,7 @@ matrix:
     - python: pypy3
     # Allow failure while we wait for Travis to propose a dedicated
     # Python 3.7 build target.
-    - "3.7"
+    - python: "3.7"
 
 before_install:
   # Check default Python version installed.
