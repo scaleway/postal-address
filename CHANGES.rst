@@ -2,10 +2,8 @@ ChangeLog
 =========
 
 
-`1.4.0 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.3.5...develop>`_
+`1.4.0 (2018-09-11) <https://github.com/scaleway/postal-address/compare/v1.3.5...v1.4.0>`_
 -------------------------------------------------------------------------------------------
-
-.. note:: This version is not yet released and is under active development.
 
 * Unfreeze pycountry version and bump to ``pycountry >= 18.5.26``.
 * Refactor country aliases with better categories.
