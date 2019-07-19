@@ -28,7 +28,9 @@ PACKAGE_NAME = MODULE_NAME.replace('_', '-')
 DEPENDENCIES = [
     'boltons',
     'Faker >= 0.8.4',
-    'pycountry >= 18.5.26',
+    # Freezing pycountry version because of a subdivision issue
+    # Cf. https://bitbucket.org/flyingcircus/pycountry/issues/13423
+    'pycountry == 18.5.26',
 ]
 
 EXTRA_DEPENDENCIES = {
