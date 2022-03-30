@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-#
-# Copyright (c) 2013-2018 Scaleway and Contributors. All Rights Reserved.
+# Copyright (c) 2013-2022 Scaleway and Contributors. All Rights Reserved.
 #                         Kevin Deldycke <kdeldycke@scaleway.com>
 #
 # Licensed under the BSD 2-Clause License (the "License"); you may not use this
 # file except in compliance with the License. You may obtain a copy of the
 # License at http://opensource.org/licenses/BSD-2-Clause
-
-u""" Utilities to normalize and reconcile territory codes.
+"""Utilities to normalize and reconcile territory codes.
 
 .. data:: FOREIGN_TERRITORIES_MAPPING
 
@@ -49,124 +46,107 @@ u""" Utilities to normalize and reconcile territory codes.
 
    Reverse index of the SUBDIVISION_COUNTRIES mapping defined above.
 """
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals
-)
-
-from itertools import chain
 from operator import attrgetter
 
-from boltons.cacheutils import cached, LRI
+from boltons.cacheutils import LRI, cached
 from pycountry import countries, subdivisions
 
-from . import PY2
-
-if PY2:
-    from itertools import imap, ifilter
-else:
-    imap = map
-    ifilter = filter
-
 FOREIGN_TERRITORIES_MAPPING = {
-    'CC': 'AU',  # Cocos Island,                      Australian territory
-    'HM': 'AU',  # Heard Island and McDonald Islands, Australian territory
-    'JE': 'BR',  # Jersey,                            Brazilian territory
-    'HK': 'CN',  # Hong Kong,                         Chinese territory
-    'MO': 'CN',  # Macao,                             Chinese territory
-    'FO': 'DK',  # Faroe Islands,                     Danish territory
-    'AX': 'FI',  # Åland,                             Finnish territory
-    'AQ': 'FR',  # Antarctica,                        French territory
-    'BL': 'FR',  # Saint Barthelemy,                  French territory
-    'GF': 'FR',  # French Guiana,                     French territory
-    'GP': 'FR',  # Guadeloupe,                        French territory
-    'GY': 'FR',  # Guyana,                            French territory
-    'MF': 'FR',  # Saint Martin,                      French territory
-    'MQ': 'FR',  # Martinique,                        French territory
-    'NC': 'FR',  # New Caledonia,                     French territory
-    'PF': 'FR',  # French Polynesia,                  French territory
-    'PM': 'FR',  # Saint Pierre and Miquelon,         French territory
-    'RE': 'FR',  # Reunion,                           French territory
-    'TF': 'FR',  # French Southern Territories,       French territory
-    'WF': 'FR',  # Wallis and Futuna,                 French territory
-    'YT': 'FR',  # Mayotte,                           French territory
-    'GI': 'GB',  # Gibraltar,                         British territory
-    'IM': 'GB',  # Isle of Man,                       British territory
-    'IO': 'GB',  # British Indian Ocean Territory,    British territory
-    'PN': 'GB',  # Pitcairn,                          British territory
-    'SH': 'GB',  # Saint Helena,                      British territory
-    'VG': 'GB',  # British Virgin Islands,            British territory
-    'BQ': 'NL',  # Bonaire,                           Dutch territory
-    'SX': 'NL',  # Sint Maarten,                      Dutch territory
-    'BV': 'NO',  # Bouvet Island,                     Norwegian territory
-    'SJ': 'NO',  # Svalbard and Jan Mayen,            Norwegian territory
-    'AS': 'US',  # American Samoa,                    American territory
-    'GU': 'US',  # Guam,                              American territory
-    'MP': 'US',  # Northern Mariana Islands,          American territory
-    'VI': 'US',  # US Virgin Islands,                 American territory
+    "CC": "AU",  # Cocos Island,                      Australian territory
+    "HM": "AU",  # Heard Island and McDonald Islands, Australian territory
+    "JE": "BR",  # Jersey,                            Brazilian territory
+    "HK": "CN",  # Hong Kong,                         Chinese territory
+    "MO": "CN",  # Macao,                             Chinese territory
+    "FO": "DK",  # Faroe Islands,                     Danish territory
+    "AX": "FI",  # Åland,                             Finnish territory
+    "AQ": "FR",  # Antarctica,                        French territory
+    "BL": "FR",  # Saint Barthelemy,                  French territory
+    "GF": "FR",  # French Guiana,                     French territory
+    "GP": "FR",  # Guadeloupe,                        French territory
+    "GY": "FR",  # Guyana,                            French territory
+    "MF": "FR",  # Saint Martin,                      French territory
+    "MQ": "FR",  # Martinique,                        French territory
+    "NC": "FR",  # New Caledonia,                     French territory
+    "PF": "FR",  # French Polynesia,                  French territory
+    "PM": "FR",  # Saint Pierre and Miquelon,         French territory
+    "RE": "FR",  # Reunion,                           French territory
+    "TF": "FR",  # French Southern Territories,       French territory
+    "WF": "FR",  # Wallis and Futuna,                 French territory
+    "YT": "FR",  # Mayotte,                           French territory
+    "GI": "GB",  # Gibraltar,                         British territory
+    "IM": "GB",  # Isle of Man,                       British territory
+    "IO": "GB",  # British Indian Ocean Territory,    British territory
+    "PN": "GB",  # Pitcairn,                          British territory
+    "SH": "GB",  # Saint Helena,                      British territory
+    "VG": "GB",  # British Virgin Islands,            British territory
+    "BQ": "NL",  # Bonaire,                           Dutch territory
+    "SX": "NL",  # Sint Maarten,                      Dutch territory
+    "BV": "NO",  # Bouvet Island,                     Norwegian territory
+    "SJ": "NO",  # Svalbard and Jan Mayen,            Norwegian territory
+    "AS": "US",  # American Samoa,                    American territory
+    "GU": "US",  # Guam,                              American territory
+    "MP": "US",  # Northern Mariana Islands,          American territory
+    "VI": "US",  # US Virgin Islands,                 American territory
 }
 
 COUNTRY_ALIASES = {
     # European Commission country code exceptions.
     # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
-    'UK': 'GB',  # United Kingdom is known as 'GB' in ISO-3166
-    'EL': 'GR',  # 'EL' is the european version of Greece,
+    "UK": "GB",  # United Kingdom is known as 'GB' in ISO-3166
+    "EL": "GR",  # 'EL' is the european version of Greece,
 }
 
 SUBDIVISION_COUNTRIES = {
-    'CN-71': 'TW',  # Taiwan
-    'CN-91': 'HK',  # Hong Kong
-    'CN-92': 'MO',  # Macao
-    'FI-01': 'AX',  # Åland
-    'FR-BL': 'BL',  # Saint Barthélemy
-    'FR-GF': 'GF',  # French Guiana
-    'FR-GP': 'GP',  # Guadeloupe
-    'FR-MF': 'MF',  # Saint Martin
-    'FR-MQ': 'MQ',  # Martinique
-    'FR-NC': 'NC',  # New Caledonia
-    'FR-PF': 'PF',  # French Polynesia
-    'FR-PM': 'PM',  # Saint Pierre and Miquelon
-    'FR-RE': 'RE',  # Réunion
-    'FR-TF': 'TF',  # French Southern Territories
-    'FR-WF': 'WF',  # Wallis and Futuna
-    'FR-YT': 'YT',  # Mayotte
-    'NL-AW': 'AW',  # Aruba
-    'NL-CW': 'CW',  # Curaçao
-    'NL-SX': 'SX',  # Sint Maarten
-    'NO-21': 'SJ',  # Svalbard
-    'NO-22': 'SJ',  # Jan Mayen
-    'US-AS': 'AS',  # American Samoa
-    'US-GU': 'GU',  # Guam
-    'US-MP': 'MP',  # Northern Mariana Islands
-    'US-PR': 'PR',  # Puerto Rico
-    'US-UM': 'UM',  # United States Minor Outlying Islands
-    'US-VI': 'VI',  # Virgin Islands, U.S.
+    "CN-TW": "TW",  # Taiwan
+    "CN-HK": "HK",  # Hong Kong
+    "CN-MO": "MO",  # Macao
+    "FI-01": "AX",  # Åland
+    "FR-BL": "BL",  # Saint Barthélemy
+    "FR-GF": "GF",  # French Guiana
+    "FR-GP": "GP",  # Guadeloupe
+    "FR-MF": "MF",  # Saint Martin
+    "FR-MQ": "MQ",  # Martinique
+    "FR-NC": "NC",  # New Caledonia
+    "FR-PF": "PF",  # French Polynesia
+    "FR-PM": "PM",  # Saint Pierre and Miquelon
+    "FR-RE": "RE",  # Réunion
+    "FR-TF": "TF",  # French Southern Territories
+    "FR-WF": "WF",  # Wallis and Futuna
+    "FR-YT": "YT",  # Mayotte
+    "NL-AW": "AW",  # Aruba
+    "NL-CW": "CW",  # Curaçao
+    "NL-SX": "SX",  # Sint Maarten
+    "NO-21": "SJ",  # Svalbard
+    "NO-22": "SJ",  # Jan Mayen
+    "US-AS": "AS",  # American Samoa
+    "US-GU": "GU",  # Guam
+    "US-MP": "MP",  # Northern Mariana Islands
+    "US-PR": "PR",  # Puerto Rico
+    "US-UM": "UM",  # United States Minor Outlying Islands
+    "US-VI": "VI",  # Virgin Islands, U.S.
 }
 
 SUBDIVISION_ALIASES = {
-    'NL-BQ1': 'BQ-BO',  # Bonaire
-    'NL-BQ2': 'BQ-SA',  # Saba
-    'NL-BQ3': 'BQ-SE',  # Sint Eustatius
+    "NL-BQ1": "BQ-BO",  # Bonaire
+    "NL-BQ2": "BQ-SA",  # Saba
+    "NL-BQ3": "BQ-SE",  # Sint Eustatius
 }
 
 RESERVED_COUNTRY_CODES = {
     # Source:
     # https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Exceptional_reservations
-    'DG': 'IO',  # Diego Garcia is part of the British Indian Ocean Territory
-    'FX': 'FR',  # France, Metropolitan
+    "DG": "IO",  # Diego Garcia is part of the British Indian Ocean Territory
+    "FX": "FR",  # France, Metropolitan
     # European Commission country code exceptions.
     # Source: http://publications.europa.eu/code/pdf/370000en.htm#pays
-    'EA': 'ES',  # 'EA' is the union of Ceuta and Melilla, Spanish territory
+    "EA": "ES",  # 'EA' is the union of Ceuta and Melilla, Spanish territory
 }
 
 COUNTRY_ALIAS_TO_SUBDIVISION = {
-    'AC': 'SH-AC',  # Ascension Island
-    'CP': 'FR-CP',  # Clipperton Island
-    'IC': 'ES-CN',  # Canary Islands
-    'TA': 'SH-TA',  # Tristan da Cunha
+    "AC": "SH-AC",  # Ascension Island
+    "CP": "FR-CP",  # Clipperton Island
+    "IC": "ES-CN",  # Canary Islands
+    "TA": "SH-TA",  # Tristan da Cunha
 }
 
 
@@ -180,10 +160,12 @@ def generate_mapping():
         for alias_code, target_code in reverse_mapping.items():
             mapping.setdefault(target_code, set()).add(alias_code)
 
-    for straight_mapping in [RESERVED_COUNTRY_CODES,
-                             COUNTRY_ALIASES,
-                             SUBDIVISION_ALIASES,
-                             FOREIGN_TERRITORIES_MAPPING]:
+    for straight_mapping in [
+        RESERVED_COUNTRY_CODES,
+        COUNTRY_ALIASES,
+        SUBDIVISION_ALIASES,
+        FOREIGN_TERRITORIES_MAPPING,
+    ]:
         for alias_code, target_code in straight_mapping.items():
             mapping.setdefault(alias_code, set()).add(target_code)
     return mapping
@@ -194,39 +176,41 @@ REVERSE_MAPPING = generate_mapping()
 
 @cached(LRI())
 def supported_territory_codes():
-    """ Return a set of recognized territory codes.
-    """
+    """Return a set of recognized territory codes."""
     return supported_country_codes().union(supported_subdivision_codes())
 
 
 @cached(LRI())
 def supported_country_codes():
-    """ Return a set of recognized country codes.
+    """Return a set of recognized country codes.
 
     Are supported:
         * ISO 3166-1 alpha-2 country codes and exceptional reservations
         * European Commision country code exceptions
     """
-    return set(chain(
-        imap(attrgetter('alpha_2'), countries),
-        # Include ISO and EC exceptions.
-        COUNTRY_ALIASES.keys(),
-        RESERVED_COUNTRY_CODES.keys(),
-        COUNTRY_ALIAS_TO_SUBDIVISION.keys()))
+    return {country.alpha_2 for country in countries} | set(
+        {
+            # Include ISO and EC exceptions.
+            **COUNTRY_ALIASES,
+            **RESERVED_COUNTRY_CODES,
+            **COUNTRY_ALIAS_TO_SUBDIVISION,
+        }
+    )
 
 
 @cached(LRI())
 def supported_subdivision_codes():
-    """ Return a set of recognized subdivision codes.
+    """Return a set of recognized subdivision codes.
 
     Are supported:
         * ISO 3166-2 subdivision codes
     """
-    return set(imap(attrgetter('code'), subdivisions))
+    return {sub.code for sub in subdivisions}
 
 
-def normalize_territory_code(territory_code, resolve_aliases=True,
-                             resolve_top_country=False):
+def normalize_territory_code(
+    territory_code, resolve_aliases=True, resolve_top_country=False
+):
     """Normalize any string into a territory code.
 
     :param territory_code: The input string to normalize.
@@ -236,28 +220,22 @@ def normalize_territory_code(territory_code, resolve_aliases=True,
     """
     territory_code = territory_code.strip().upper()
     if territory_code not in supported_territory_codes():
-        raise ValueError(
-            'Unrecognized {!r} territory code.'.format(territory_code))
+        raise ValueError(f"Unrecognized territory code: {territory_code!r}")
 
-    # We resolve country aliases and subdivision aliases
-    # nevertheless since their keys does not exists in pycountry!
-    territory_code = RESERVED_COUNTRY_CODES.get(territory_code,
-                                                territory_code)
-    territory_code = COUNTRY_ALIASES.get(territory_code,
-                                         territory_code)
+    # We resolve country aliases and subdivision aliases nevertheless since
+    # their keys do not exist in pycountry!
+    territory_code = RESERVED_COUNTRY_CODES.get(territory_code, territory_code)
+    territory_code = COUNTRY_ALIASES.get(territory_code, territory_code)
     if resolve_aliases:
-        territory_code = SUBDIVISION_ALIASES.get(
-            territory_code, territory_code)
-        territory_code = SUBDIVISION_COUNTRIES.get(
-            territory_code, territory_code)
+        territory_code = SUBDIVISION_ALIASES.get(territory_code, territory_code)
+        territory_code = SUBDIVISION_COUNTRIES.get(territory_code, territory_code)
     if resolve_top_country:
         territory_code = territory_attachment(territory_code)
     return territory_code
 
 
 def territory_attachment(country_code):
-    """Returns the ISO-3166 alpha2 country_code of the country of which the
-    given country is part of.
+    """Return the ISO-3166 alpha2 country_code of the country.
 
     :param country_code: The foreign territory to lookup.
     :return: The main country of this foreign territory,
@@ -267,7 +245,7 @@ def territory_attachment(country_code):
 
 
 def country_from_subdivision(subdivision_code):
-    """ Return the normalized country code from a subdivision code.
+    """Return the normalized country code from a subdivision code.
 
     If no country is found, or the subdivision code is incorrect, ``None`` is
     returned.
@@ -282,10 +260,8 @@ def country_from_subdivision(subdivision_code):
     if code in supported_country_codes():
         return code
 
-    # Try to extract country code from subdivision.
-    try:
-        subdiv = subdivisions.get(code=code)
-    except KeyError:
+    subdiv = subdivisions.get(code=subdivision_code)
+    if subdiv is None:
         return None
     return subdiv.country_code
 
@@ -306,7 +282,6 @@ def default_subdivision_code(country_code):
         if len(alias_code) == 2:
             default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
 
-    # Include countries directly mapping to a subdivision.
     for alias_code, subdiv_code in COUNTRY_ALIAS_TO_SUBDIVISION.items():
         default_subdiv.setdefault(alias_code, set()).add(subdiv_code)
 
@@ -318,7 +293,7 @@ def default_subdivision_code(country_code):
 
 
 def territory_children_codes(territory_code, include_self=False):
-    """ Return a set of subdivision codes from all sub-levels.
+    """Return a set of subdivision codes from all sub-levels.
 
     All returned codes are normalized, including self.
     """
@@ -328,19 +303,24 @@ def territory_children_codes(territory_code, include_self=False):
 
     # We have a country code, look for matching subdivisions in one pass.
     if code in supported_country_codes():
-        codes.update(imap(
-            attrgetter('code'),
-            ifilter(lambda subdiv: subdiv.country_code == code, subdivisions)))
+        codes.update(
+            map(
+                attrgetter("code"),
+                filter(lambda subdiv: subdiv.country_code == code, subdivisions),
+            )
+        )
 
     # Engage the stupid per-level recursive brute-force search as pycountry
     # only expose the child-parent relationship upwards.
     else:
-        direct_children_codes = set(imap(
-            attrgetter('code'),
-            ifilter(lambda subdiv: subdiv.parent_code == code, subdivisions)))
+        direct_children_codes = set(
+            map(
+                attrgetter("code"),
+                filter(lambda subdiv: subdiv.parent_code == code, subdivisions),
+            )
+        )
         for child_code in direct_children_codes:
-            codes.update(
-                territory_children_codes(child_code, include_self=True))
+            codes.update(territory_children_codes(child_code, include_self=True))
 
     if include_self:
         codes.add(code)
@@ -349,7 +329,7 @@ def territory_children_codes(territory_code, include_self=False):
 
 
 def territory_parents(territory_code, include_country=True):
-    """ Return the whole hierarchy of territories, up to the country.
+    """Return the whole hierarchy of territories, up to the country.
 
     Values returned by the generator are either subdivisions or country
     objects, starting from the provided territory and up its way to the top
@@ -358,8 +338,7 @@ def territory_parents(territory_code, include_country=True):
     tree = []
 
     # Retrieving subdivision from alias to get full paternity
-    territory_code = COUNTRY_ALIAS_TO_SUBDIVISION.get(territory_code,
-                                                      territory_code)
+    territory_code = COUNTRY_ALIAS_TO_SUBDIVISION.get(territory_code, territory_code)
     # If the provided territory code is a country, return it right away.
     territory_code = normalize_territory_code(territory_code)
     if territory_code in supported_country_codes():
@@ -384,22 +363,19 @@ def territory_parents(territory_code, include_country=True):
 
 
 def territory_parents_codes(territory_code, include_country=True):
-    """ Like territory_parents but return normalized codes instead of objects.
-    """
-    for territory in territory_parents(
-            territory_code, include_country=include_country):
-        full_class_name = '{}.{}'.format(
-            territory.__module__, territory.__class__.__name__)
-        if full_class_name == 'pycountry.db.Country':
+    """Like territory_parents but return normalized codes instead of objects."""
+    for territory in territory_parents(territory_code, include_country=include_country):
+        full_class_name = f"{territory.__module__}.{territory.__class__.__name__}"
+        if full_class_name == "pycountry.db.Country":
             yield territory.alpha_2
-        elif full_class_name == 'pycountry.db.Subdivision':
+        elif full_class_name == "pycountry.db.Subdivision":
             yield territory.code
         else:
-            raise ValueError("Unrecognized {!r} territory.".format(territory))
+            raise ValueError(f"Unrecognized territory: {territory!r}")
 
 
 def country_aliases(territory_code):
-    """ List valid country code aliases of a territory.
+    """List valid country code aliases of a territory.
 
     Mainly used to check if a non-normalized country code can safely be
     replaced by its normalized form.
