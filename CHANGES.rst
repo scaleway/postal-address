@@ -2,12 +2,15 @@ ChangeLog
 =========
 
 
-`1.4.2 (unreleased) <https://github.com/scaleway/postal-address/compare/v1.4.0...develop>`_
--------------------------------------------------------------------------------------------
+`Unreleased <https://github.com/scaleway/postal-address/compare/v1.4.1...master>`_
+----------------------------------------------------------------------------------
 
-.. note:: This version is not yet released and is under active development.
-
-* Not yet
+* Migrate to Poetry for project management
+* Use pytest-styled tests everywhere
+* Format code with black and clean up the code
+* Unpin pycountry and fix tests
+* Drop support for Python 3.5 and under.
+* Migrate CI to github workflows
 
 `1.4.1 (2019-07-19) <https://github.com/scaleway/postal-address/compare/v1.4.0...v1.4.1>`_
 -------------------------------------------------------------------------------------------
