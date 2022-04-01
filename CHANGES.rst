@@ -2,7 +2,7 @@ ChangeLog
 =========
 
 
-`Unreleased <https://github.com/scaleway/postal-address/compare/v1.4.1...master>`_
+`22.4.1 <https://github.com/scaleway/postal-address/compare/v1.4.1...22.4.1>`_
 ----------------------------------------------------------------------------------
 
 * Migrate to Poetry for project management

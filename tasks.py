@@ -62,13 +62,13 @@ def get_current_version(ctx):
 
 
 @invoke.task
-def bump_version(ctx, bump, dry_run=False):
+def bump_version(ctx, dry_run=False):
     """Bump the project's version."""
     current_version = get_current_version(ctx)
     current_version_tuple = tuple(current_version.split("."))
 
     today = date.today()
-    new_version_tuple = (str(today.year), str(today.month), str(today.day))
+    new_version_tuple = (str(today.year)[2:], str(today.month), str(today.day))
 
     if current_version_tuple[:3] == new_version_tuple:
         if len(current_version_tuple) == 3:
