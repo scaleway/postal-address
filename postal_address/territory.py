@@ -306,7 +306,9 @@ def territory_children_codes(territory_code, include_self=False):
     # Engage the stupid per-level recursive brute-force search as pycountry
     # only expose the child-parent relationship upwards.
     else:
-        direct_children_codes = {subdiv.code for subdiv in subdivisions if subdiv.parent_code == code}
+        direct_children_codes = {
+            subdiv.code for subdiv in subdivisions if subdiv.parent_code == code
+        }
         for child_code in direct_children_codes:
             codes.update(territory_children_codes(child_code, include_self=True))
 

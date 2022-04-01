@@ -7,4 +7,4 @@
 
 from .address import Address, InvalidAddress
 
-__all__ = [Address, InvalidAddress]
+__all__ = ["Address", "InvalidAddress"]
