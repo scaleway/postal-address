@@ -46,8 +46,6 @@
 
    Reverse index of the SUBDIVISION_COUNTRIES mapping defined above.
 """
-from operator import attrgetter
-
 from boltons.cacheutils import LRI, cached
 from pycountry import countries, subdivisions
 
@@ -303,22 +301,12 @@ def territory_children_codes(territory_code, include_self=False):
 
     # We have a country code, look for matching subdivisions in one pass.
     if code in supported_country_codes():
-        codes.update(
-            map(
-                attrgetter("code"),
-                filter(lambda subdiv: subdiv.country_code == code, subdivisions),
-            )
-        )
+        codes |= {subdiv.code for subdiv in subdivisions if subdiv.country_code == code}
 
     # Engage the stupid per-level recursive brute-force search as pycountry
     # only expose the child-parent relationship upwards.
     else:
-        direct_children_codes = set(
-            map(
-                attrgetter("code"),
-                filter(lambda subdiv: subdiv.parent_code == code, subdivisions),
-            )
-        )
+        direct_children_codes = {subdiv.code for subdiv in subdivisions if subdiv.parent_code == code}
         for child_code in direct_children_codes:
             codes.update(territory_children_codes(child_code, include_self=True))
 
