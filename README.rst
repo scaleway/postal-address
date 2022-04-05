@@ -16,12 +16,6 @@ Development: |build| |docs| |coverage| |quality|
 .. |license| image:: https://img.shields.io/pypi/l/postal-address.svg
     :target: http://opensource.org/licenses/BSD-2-Clause
     :alt: Software license
-.. |dependencies| image:: https://requires.io/github/scaleway/postal-address/requirements.svg?branch=master
-    :target: https://requires.io/github/scaleway/postal-address/requirements/?branch=master
-    :alt: Requirements freshness
-.. |build| image:: https://travis-ci.org/scaleway/postal-address.svg?branch=master
-    :target: https://travis-ci.org/scaleway/postal-address
-    :alt: Unit-tests status
 .. |docs| image:: https://readthedocs.org/projects/postal-address/badge/?version=master
     :target: http://postal-address.readthedocs.io/en/develop/
     :alt: Documentation Status

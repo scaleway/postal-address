@@ -5,6 +5,7 @@ description = "Parse, normalize and render postal addresses."
 authors = ["Scaleway <opensource@scaleway.com>"]
 repository = "https://github.com/Scaleway/postal-address"
 license = "BSD-2"
+readme = "README.rst"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
