@@ -34,32 +34,32 @@ PYCOUNTRY_SUB = {subdiv.code for subdiv in subdivisions}
 class TestTerritory:
     # Test territory utils
 
-    def test_supported_territory_codes(self):
+    def test_supported_territory_codes(self) -> None:
         assert "FR" in supported_territory_codes()
         assert "FR-59" in supported_territory_codes()
         assert "FRE" not in supported_territory_codes()
 
-    def test_supported_country_codes(self):
+    def test_supported_country_codes(self) -> None:
         assert "FR" in supported_country_codes()
         assert "FX" in supported_country_codes()
         assert "UK" in supported_country_codes()
         assert "FR-59" not in supported_country_codes()
 
-    def test_supported_subdivision_codes(self):
+    def test_supported_subdivision_codes(self) -> None:
         assert "FR-59" in supported_subdivision_codes()
         assert "FR" not in supported_subdivision_codes()
         assert "UK" not in supported_subdivision_codes()
 
-    def test_territory_code_overlap(self):
+    def test_territory_code_overlap(self) -> None:
         # Check that no codes from classifications we rely on are overlapping
-        assert not PYCOUNTRY_CC.intersection(PYCOUNTRY_SUB)
+        assert not PYCOUNTRY_CC & PYCOUNTRY_SUB
 
-    def test_foreign_territory_definition(self):
+    def test_foreign_territory_definition(self) -> None:
         for foreign, country in FOREIGN_TERRITORIES_MAPPING.items():
             assert foreign in PYCOUNTRY_CC
             assert country in PYCOUNTRY_CC
 
-    def test_territory_exception_definition(self):
+    def test_territory_exception_definition(self) -> None:
         # Check that all codes used in constants to define exceptional
         # treatment are valid and recognized.
         for subdiv_code, alias_code in SUBDIVISION_COUNTRIES.items():
@@ -81,7 +81,7 @@ class TestTerritory:
             assert country_code not in PYCOUNTRY_CC
             assert alias_code in PYCOUNTRY_CC.union(PYCOUNTRY_SUB)
 
-    def test_country_from_subdivision(self):
+    def test_country_from_subdivision(self) -> None:
         # Test reconciliation of ISO 3166-2 and ISO 3166-1 country codes.
         for subdiv_code in SUBDIVISION_COUNTRIES.keys():
             target_code = SUBDIVISION_COUNTRIES[subdiv_code]
@@ -94,12 +94,12 @@ class TestTerritory:
                 == subdivisions.get(code=subdiv_code).country_code
             )
 
-    def test_default_subdivision_code(self):
+    def test_default_subdivision_code(self) -> None:
         assert default_subdivision_code("FR") is None
         assert default_subdivision_code("GU") == "US-GU"
         assert default_subdivision_code("SJ") is None
 
-    def test_territory_children_codes(self):
+    def test_territory_children_codes(self) -> None:
         assert territory_children_codes("GQ") == {
             "GQ-C",
             "GQ-I",
@@ -116,7 +116,7 @@ class TestTerritory:
         assert territory_children_codes("GQ-AN") == set()
         assert territory_children_codes("GQ-AN", include_self=True) == {"GQ-AN"}
 
-    def test_territory_parents_codes(self):
+    def test_territory_parents_codes(self) -> None:
         assert list(territory_parents_codes("FR-59")) == ["FR-59", "FR-HDF", "FR"]
         assert list(territory_parents_codes("FR-59", include_country=False)) == [
             "FR-59",
@@ -125,7 +125,7 @@ class TestTerritory:
         assert list(territory_parents_codes("FR")) == ["FR"]
         assert list(territory_parents_codes("FR", include_country=False)) == []
 
-    def test_alias_normalization(self):
+    def test_alias_normalization(self) -> None:
         # Check country alias to a country.
         assert list(territory_parents_codes("DG")) == ["IO"]
 
@@ -145,7 +145,7 @@ class TestTerritory:
         # subdivision.
         # assert list(territory_parents_codes('NO-22')) == ['NO-22', 'SJ']
 
-    def test_country_aliases(self):
+    def test_country_aliases(self) -> None:
         assert country_aliases("UM-67") == {"US", "UM"}
         assert country_aliases("UM") == {"US", "UM"}
         assert country_aliases("US") == {"US"}
@@ -177,13 +177,13 @@ class TestTerritory:
 
         assert country_aliases("MC") == {"MC"}
 
-    def test_subdivision_type_id_conversion(self):
+    def test_subdivision_type_id_conversion(self) -> None:
         # Conversion of subdivision types into IDs must be python friendly
         attribute_regexp = re.compile("[a-z][a-z0-9_]*$")
         for subdiv in subdivisions:
             assert attribute_regexp.match(subdivision_type_id(subdiv))
 
-    def test_subdivision_type_id_city_classification(self):
+    def test_subdivision_type_id_city_classification(self) -> None:
         city_like_subdivisions = [
             "TM-S",  # Aşgabat, Turkmenistan, City
             "TW-CYI",  # Chiay City, Taiwan, Municipality
@@ -203,7 +203,7 @@ class TestTerritory:
         for subdiv_code in city_like_subdivisions:
             assert subdivision_type_id(subdivisions.get(code=subdiv_code)) == "city"
 
-    def test_subdivision_type_id_collision(self):
+    def test_subdivision_type_id_collision(self) -> None:
         # The subdivision metadata IDs we derived from subdivision types should
         # not collide with Address class internals.
         simple_address = Address(
@@ -229,14 +229,14 @@ class TestTerritory:
                 else:
                     assert not hasattr(simple_address, metadata_id)
 
-    def test_subdivision_parent_code(self):
+    def test_subdivision_parent_code(self) -> None:
         assert subdivisions.get(code="CZ-205").parent_code == "CZ-20"
 
-    def test_foreign_territory_mapping(self):
+    def test_foreign_territory_mapping(self) -> None:
         assert territory_attachment("GP") == "FR"
         assert territory_attachment("BQ") == "NL"
 
-    def test_normalize_territory_code(self):
+    def test_normalize_territory_code(self) -> None:
         assert normalize_territory_code("EL") == "GR"
         assert normalize_territory_code("FX") == "FR"
         assert normalize_territory_code("CN-TW") == "TW"
@@ -246,7 +246,7 @@ class TestTerritory:
 
         assert normalize_territory_code("NL-BQ1") == "BQ-BO"
 
-    def test_normalize_territory_code_with_foreign_territory(self):
+    def test_normalize_territory_code_with_foreign_territory(self) -> None:
         resolved = normalize_territory_code("BQ", resolve_top_country=True)
         assert resolved == "NL"
 
