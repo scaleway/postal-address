@@ -3,9 +3,9 @@ Postal Address
 
 Python module to parse, normalize and render postal addresses.
 
-Stable release: |release| |versions| |license| |dependencies|
+Stable release: |release| |versions| |license|
 
-Development: |build| |docs| |coverage| |quality|
+Development: |docs| |coverage| |quality|
 
 .. |release| image:: https://img.shields.io/pypi/v/postal-address.svg
     :target: https://pypi.python.org/pypi/postal-address
