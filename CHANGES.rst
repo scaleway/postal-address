@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+`22.4.6 <https://github.com/scaleway/postal-address/compare/22.4.1...22.4.6>`_
+----------------------------------------------------------------------------------
+
+* Annotate code
+* Be more permissive on dependencies versions
 
 `22.4.1 <https://github.com/scaleway/postal-address/compare/v1.4.1...22.4.1>`_
 ----------------------------------------------------------------------------------
