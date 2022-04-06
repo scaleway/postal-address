@@ -14,8 +14,20 @@ for localized rendering (see issue #4).
 import contextlib
 import random
 import re
+from typing import (
+    Any,
+    Dict,
+    ItemsView,
+    Iterator,
+    KeysView,
+    Optional,
+    Set,
+    Tuple,
+    ValuesView,
+)
 
 import faker
+import pycountry
 from boltons.strutils import slugify
 from pycountry import countries, subdivisions
 
@@ -33,10 +45,10 @@ class InvalidAddress(ValueError):
 
     def __init__(
         self,
-        required_fields=None,
-        invalid_fields=None,
-        inconsistent_fields=None,
-        extra_msg=None,
+        required_fields: Optional[Set[str]] = None,
+        invalid_fields: Optional[Dict[str, str]] = None,
+        inconsistent_fields: Optional[Set[Tuple[str, ...]]] = None,
+        extra_msg: Optional[str] = None,
     ):
         """Exception keep internally a classification of bad fields."""
         super(InvalidAddress, self).__init__()
@@ -45,7 +57,7 @@ class InvalidAddress(ValueError):
         self.inconsistent_fields = inconsistent_fields if inconsistent_fields else set()
         self.extra_msg = extra_msg
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable error."""
         reasons = []
         if self.required_fields:
@@ -114,29 +126,42 @@ class Address:
     REQUIRED_FIELDS = frozenset(["line1", "postal_code", "city_name", "country_code"])
     assert REQUIRED_FIELDS.issubset(BASE_FIELD_IDS)
 
-    def __init__(self, strict=True, **kwargs):
+    def __init__(
+        self,
+        strict: bool = True,
+        line1: Optional[str] = None,
+        line2: Optional[str] = None,
+        postal_code: Optional[str] = None,
+        city_name: Optional[str] = None,
+        country_code: Optional[str] = None,
+        subdivision_code: Optional[str] = None,
+        **kwargs: Any,
+    ):
         """Set address' individual fields and normalize them.
 
         By default, normalization is ``strict``.
         """
         # Only common fields are allowed to be set directly.
-        unknown_fields = set(kwargs).difference(self.BASE_FIELD_IDS)
+        unknown_fields = set(kwargs) - self.BASE_FIELD_IDS
         if unknown_fields:
             raise KeyError(
                 "{unknown_fields!r} fields are not allowed to be set freely."
             )
 
-        # Normalized field's IDs and values of the address are stored here.
-        self._fields = dict.fromkeys(self.BASE_FIELD_IDS)
+        # Load fields.
+        self._fields: Dict[str, Any] = {}
 
-        # Load provided fields.
-        for field_id, field_value in kwargs.items():
-            self[field_id] = field_value
+        self.line1 = line1
+        self.line2 = line2
+        self.postal_code = postal_code
+        self.city_name = city_name
+        self.country_code = country_code
+        self.subdivision_code = subdivision_code
 
         # Normalize addresses fields.
         self.normalize(strict=strict)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Print all fields available from the address.
 
         Also include internal fields disguised as properties.
@@ -155,17 +180,16 @@ class Address:
             fields_repr.append(f"{internal_id}={getattr(self, internal_id)!r}")
         return f"{self.__class__.__name__}({', '.join(sorted(fields_repr))})"
 
-    def __str__(self):
-        """Same as __unicode__ but with Python 2 compatibility."""
+    def __str__(self) -> str:
         return self.render()
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         """Expose fields as attributes."""
         if name in self._fields:
             return self._fields[name]
         raise AttributeError
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: Any) -> None:
         """Allow update of address fields as attributes."""
         if name in self.BASE_FIELD_IDS:
             self[name] = value
@@ -175,17 +199,17 @@ class Address:
     # Let an address be accessed like a dict of its fields IDs & values.
     # This is a proxy to the internal _fields dict.
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return the number of fields."""
         return len(self._fields)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         """Return the value of a field."""
         if not isinstance(key, str):
             raise TypeError
         return self._fields[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         """Set a field's value.
 
         Only base fields are allowed to be set explicitely.
@@ -198,30 +222,30 @@ class Address:
             raise KeyError
         self._fields[key] = value
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         """Remove a field."""
         if key in self.BASE_FIELD_IDS:
             self._fields[key] = None
         else:
             del self._fields[key]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         """Iterate over field IDs."""
         yield from self._fields
 
-    def keys(self):
+    def keys(self) -> KeysView[str]:
         """Return a list of field IDs."""
         return self._fields.keys()
 
-    def values(self):
+    def values(self) -> ValuesView[Any]:
         """Return a list of field values."""
         return self._fields.values()
 
-    def items(self):
+    def items(self) -> ItemsView[str, Any]:
         """Return a list of field IDs & values."""
         return self._fields.items()
 
-    def render(self, separator="\n"):
+    def render(self, separator: str = "\n") -> str:
         """Render a human-friendly address block.
 
         The block is composed of:
@@ -280,7 +304,7 @@ class Address:
         # Render the address block with the provided separator.
         return separator.join(lines)
 
-    def normalize(self, strict=True):
+    def normalize(self, strict: bool = True) -> None:
         """Normalize address fields.
 
         If values are unrecognized or invalid, they will be set to None.
@@ -394,7 +418,7 @@ class Address:
 
             self._fields.update(parent_metadata)
 
-    def validate(self):
+    def validate(self) -> None:
         """Check fields consistency and requirements in one go.
 
         Properly check that fields are consistent between themselves, and only
@@ -411,7 +435,7 @@ class Address:
         if required_fields or invalid_fields or inconsistent_fields:
             raise InvalidAddress(required_fields, invalid_fields, inconsistent_fields)
 
-    def check_required_fields(self):
+    def check_required_fields(self) -> Set[str]:
         """Check that all required fields are set.
 
         :return: The set of unset thus required fields.
@@ -422,13 +446,13 @@ class Address:
                 required_fields.add(field_id)
         return required_fields
 
-    def check_invalid_fields(self, required_fields):
+    def check_invalid_fields(self, required_fields: Set[str]) -> Dict[str, str]:
         """Check all fields for invalidity, only if not previously flagged as required.
 
         :param required_fields:
         """
-        invalid_fields = {}
-        if "country_code" not in required_fields:
+        invalid_fields: Dict[str, str] = {}
+        if "country_code" not in required_fields and self.country_code:
             country = countries.get(alpha_2=self.country_code)
             if country is None:
                 invalid_fields["country_code"] = self.country_code
@@ -439,7 +463,9 @@ class Address:
                 invalid_fields["subdivision_code"] = self.subdivision_code
         return invalid_fields
 
-    def check_inconsistent_fields(self, required_fields, invalid_fields):
+    def check_inconsistent_fields(
+        self, required_fields: Set[str], invalid_fields: Dict[str, str]
+    ) -> Set[Tuple[str, ...]]:
         """Check country consistency.
 
         Check country consistency against subdivision, only if none of the two
@@ -452,12 +478,12 @@ class Address:
         inconsistent_fields = set()
         any_wrong_field = required_fields.union(invalid_fields)
         consistency_fields = {"country_code", "subdivision_code"}
-        inconsistency = consistency_fields.intersection(any_wrong_field)
+        inconsistency = consistency_fields & any_wrong_field
         if not inconsistency and not self.valid_subdivision_country():
             inconsistent_fields.add(tuple(sorted(consistency_fields)))
         return inconsistent_fields
 
-    def valid_subdivision_country(self):
+    def valid_subdivision_country(self) -> bool:
         """Validate subdivision's country.
 
         Validate that the country attached to the subdivision is
@@ -472,7 +498,7 @@ class Address:
         return inferred_country == self.country_code
 
     @property
-    def valid(self):
+    def valid(self) -> bool:
         """Return a boolean indicating if the address is valid."""
         try:
             self.validate()
@@ -481,23 +507,23 @@ class Address:
         return True
 
     @property
-    def empty(self):
+    def empty(self) -> bool:
         """Return True only if all fields are empty."""
         return all(not value for value in set(self.values()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """Consider the instance to be True if not empty."""
         return not self.empty
 
     @property
-    def country(self):
+    def country(self) -> Optional[pycountry.db.Database]:
         """Return country object."""
         if self.country_code:
             return countries.get(alpha_2=self.country_code)
         return None
 
     @property
-    def country_name(self):
+    def country_name(self) -> Optional[str]:
         """Return country's name.
 
         Common name always takes precedence over the default name, as the
@@ -511,28 +537,28 @@ class Address:
         return None
 
     @property
-    def subdivision(self):
+    def subdivision(self) -> Optional[pycountry.Subdivision]:
         """Return subdivision object."""
         if self.subdivision_code:
             return subdivisions.get(code=self.subdivision_code)
         return None
 
     @property
-    def subdivision_name(self):
+    def subdivision_name(self) -> Optional[str]:
         """Return subdivision's name."""
         if self.subdivision:
             return self.subdivision.name
         return None
 
     @property
-    def subdivision_type_name(self):
+    def subdivision_type_name(self) -> Optional[str]:
         """Return subdivision's type human-readable name."""
         if self.subdivision:
             return self.subdivision.type
         return None
 
     @property
-    def subdivision_type_id(self):
+    def subdivision_type_id(self) -> Optional[str]:
         """Return subdivision's type as a Python-friendly ID string."""
         if self.subdivision:
             return subdivision_type_id(self.subdivision)
@@ -542,7 +568,7 @@ class Address:
 # Address utils.
 
 
-def random_address(locale=None):
+def random_address(locale: Optional[str] = None) -> Address:
     """Return a random, valid address.
 
     A ``locale`` parameter try to produce a localized-consistent address. Else
@@ -573,7 +599,7 @@ def random_address(locale=None):
 # Subdivisions utils.
 
 
-def subdivision_type_id(subdivision):
+def subdivision_type_id(subdivision: pycountry.Subdivision) -> str:
     r"""Normalize subdivision type name into a Python-friendly ID.
 
     Here is the list of all subdivision types defined by ``pycountry`` v1.8::
@@ -694,7 +720,7 @@ def subdivision_type_id(subdivision):
     return type_id
 
 
-def subdivision_metadata(subdivision):
+def subdivision_metadata(subdivision: pycountry.Subdivision) -> Dict[str, str]:
     """Return a serialize dict of subdivision metadata.
 
     Metadata IDs are derived from subdivision type.

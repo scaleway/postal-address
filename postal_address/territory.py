@@ -46,6 +46,9 @@
 
    Reverse index of the SUBDIVISION_COUNTRIES mapping defined above.
 """
+from typing import Dict, Iterator, List, Optional, Set, Union
+
+import pycountry
 from boltons.cacheutils import LRI, cached
 from pycountry import countries, subdivisions
 
@@ -148,12 +151,12 @@ COUNTRY_ALIAS_TO_SUBDIVISION = {
 }
 
 
-def generate_mapping():
+def generate_mapping() -> Dict[str, Set[str]]:
     """Build the reverse index of aliases defined above.
 
     :return: A dictionary containing aliases mapping.
     """
-    mapping = {}
+    mapping: Dict[str, Set[str]] = {}
     for reverse_mapping in [SUBDIVISION_COUNTRIES]:
         for alias_code, target_code in reverse_mapping.items():
             mapping.setdefault(target_code, set()).add(alias_code)
@@ -173,13 +176,13 @@ REVERSE_MAPPING = generate_mapping()
 
 
 @cached(LRI())
-def supported_territory_codes():
+def supported_territory_codes() -> Set[str]:
     """Return a set of recognized territory codes."""
     return supported_country_codes().union(supported_subdivision_codes())
 
 
 @cached(LRI())
-def supported_country_codes():
+def supported_country_codes() -> Set[str]:
     """Return a set of recognized country codes.
 
     Are supported:
@@ -197,7 +200,7 @@ def supported_country_codes():
 
 
 @cached(LRI())
-def supported_subdivision_codes():
+def supported_subdivision_codes() -> Set[str]:
     """Return a set of recognized subdivision codes.
 
     Are supported:
@@ -207,8 +210,8 @@ def supported_subdivision_codes():
 
 
 def normalize_territory_code(
-    territory_code, resolve_aliases=True, resolve_top_country=False
-):
+    territory_code: str, resolve_aliases: bool = True, resolve_top_country: bool = False
+) -> str:
     """Normalize any string into a territory code.
 
     :param territory_code: The input string to normalize.
@@ -232,7 +235,7 @@ def normalize_territory_code(
     return territory_code
 
 
-def territory_attachment(country_code):
+def territory_attachment(country_code: str) -> str:
     """Return the ISO-3166 alpha2 country_code of the country.
 
     :param country_code: The foreign territory to lookup.
@@ -242,7 +245,7 @@ def territory_attachment(country_code):
     return FOREIGN_TERRITORIES_MAPPING.get(country_code, country_code)
 
 
-def country_from_subdivision(subdivision_code):
+def country_from_subdivision(subdivision_code: str) -> Optional[str]:
     """Return the normalized country code from a subdivision code.
 
     If no country is found, or the subdivision code is incorrect, ``None`` is
@@ -264,7 +267,7 @@ def country_from_subdivision(subdivision_code):
     return subdiv.country_code
 
 
-def default_subdivision_code(country_code):
+def default_subdivision_code(country_code: str) -> Optional[pycountry.Subdivision]:
     """Return the default subdivision code of a country.
 
     The result can be guessed only if there is a 1:1 mapping between a country
@@ -274,7 +277,7 @@ def default_subdivision_code(country_code):
     :return: The subdivision key if found, None otherwise.
     """
     # Build the reverse index of the subdivision/country alias mapping.
-    default_subdiv = {}
+    default_subdiv: Dict[str, Set[str]] = {}
     for subdiv_code, alias_code in SUBDIVISION_COUNTRIES.items():
         # Skip non-country
         if len(alias_code) == 2:
@@ -290,7 +293,9 @@ def default_subdivision_code(country_code):
     return None
 
 
-def territory_children_codes(territory_code, include_self=False):
+def territory_children_codes(
+    territory_code: str, include_self: bool = False
+) -> Set[str]:
     """Return a set of subdivision codes from all sub-levels.
 
     All returned codes are normalized, including self.
@@ -318,7 +323,9 @@ def territory_children_codes(territory_code, include_self=False):
     return codes
 
 
-def territory_parents(territory_code, include_country=True):
+def territory_parents(
+    territory_code: str, include_country: bool = True
+) -> List[Union[pycountry.db.Database, pycountry.Subdivision]]:
     """Return the whole hierarchy of territories, up to the country.
 
     Values returned by the generator are either subdivisions or country
@@ -352,7 +359,9 @@ def territory_parents(territory_code, include_country=True):
     return tree
 
 
-def territory_parents_codes(territory_code, include_country=True):
+def territory_parents_codes(
+    territory_code: str, include_country: bool = True
+) -> Iterator[str]:
     """Like territory_parents but return normalized codes instead of objects."""
     for territory in territory_parents(territory_code, include_country=include_country):
         full_class_name = f"{territory.__module__}.{territory.__class__.__name__}"
@@ -364,7 +373,7 @@ def territory_parents_codes(territory_code, include_country=True):
             raise ValueError(f"Unrecognized territory: {territory!r}")
 
 
-def country_aliases(territory_code):
+def country_aliases(territory_code: str) -> Set[str]:
     """List valid country code aliases of a territory.
 
     Mainly used to check if a non-normalized country code can safely be
@@ -386,7 +395,9 @@ def country_aliases(territory_code):
         country_codes.update(country_aliases(parent_code))
         # Adding subdivision's country alias
         if territory_code in SUBDIVISION_COUNTRIES:
-            country_codes.update({SUBDIVISION_COUNTRIES.get(territory_code)})
+            subdiv_country = SUBDIVISION_COUNTRIES.get(territory_code)
+            if subdiv_country:
+                country_codes.add(subdiv_country)
 
     # Hunt for aliases
     for mapped_code in REVERSE_MAPPING.get(territory_code, []):

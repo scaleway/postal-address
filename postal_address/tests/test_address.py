@@ -19,7 +19,7 @@ from postal_address.territory import (
 
 
 class TestAddressIO:
-    def test_default_values(self):
+    def test_default_values(self) -> None:
         address = Address(
             line1="10, avenue des Champs Elysées",
             postal_code="75008",
@@ -33,7 +33,7 @@ class TestAddressIO:
         assert address.country_code == "FR"
         assert address.subdivision_code is None
 
-    def test_emptiness(self):
+    def test_emptiness(self) -> None:
         address = Address()
         assert address.empty is True
         assert not address
@@ -42,7 +42,7 @@ class TestAddressIO:
         assert address.empty is False
         assert address
 
-    def test_unknown_field(self):
+    def test_unknown_field(self) -> None:
         # Test constructor.
         with pytest.raises(KeyError):
             Address(bad_field="Blah blah blah")
@@ -52,32 +52,32 @@ class TestAddressIO:
         with pytest.raises(KeyError):
             address["bad_field"] = "Blah blah blah"
 
-    def test_non_string_field_value(self):
+    def test_non_string_field_value(self) -> None:
         # Test constructor.
         with pytest.raises(TypeError):
-            Address(line1=Decimal())
+            Address(line1=Decimal())  # type: ignore
 
         # Test attribute setter.
         address = random_address()
         with pytest.raises(TypeError):
-            address.line1 = Decimal()
+            address.line1 = Decimal()  # type: ignore
 
         # Test item setter.
         with pytest.raises(TypeError):
             address["line1"] = Decimal()
 
-    def test_non_string_field_id(self):
+    def test_non_string_field_id(self) -> None:
         address = random_address()
 
         # Test item getter.
         with pytest.raises(TypeError):
-            address[Decimal()]
+            address[Decimal()]  # type: ignore
 
         # Test item setter.
         with pytest.raises(TypeError):
-            address[Decimal()] = "Blah blah blah"
+            address[Decimal()] = "Blah blah blah"  # type: ignore
 
-    def test_field_deletion(self):
+    def test_field_deletion(self) -> None:
         address = Address(
             line1="1 Infinite Loop",
             postal_code="95014",
@@ -101,7 +101,7 @@ class TestAddressIO:
         with pytest.raises(AttributeError):
             assert address.state_name is None
 
-    def test_dict_access(self):
+    def test_dict_access(self) -> None:
         address = Address(
             line1="10, avenue des Champs Elysées",
             postal_code="75008",
@@ -132,7 +132,7 @@ class TestAddressIO:
         for key in address:
             assert getattr(address, key) == address[key]
 
-    def test_unicode_mess(self):
+    def test_unicode_mess(self) -> None:
         address = Address(
             line1="ब ♎ 1F: ̹ƶώ㎂🐎🐙💊 ꧲⋉ ⦼ Ė꧵┵",
             line2="⫇⻛⋯ ǖ╶🐎🐙💊ᵞᚘ⎢ ⚗ ⑆  ͋ụ 0 ⇚  � ῐ ",
@@ -145,11 +145,11 @@ class TestAddressIO:
         assert address.postal_code is not None
         assert address.city_name is not None
 
-    def test_render(self):
+    def test_render(self) -> None:
         address = random_address()
         assert address.render() == str(address)
 
-    def test_repr(self):
+    def test_repr(self) -> None:
         address = Address(
             line1="4 place du général Leclerc",
             postal_code="91401",
@@ -172,7 +172,7 @@ class TestAddressIO:
             "valid=True)"
         )
 
-    def test_rendering(self):
+    def test_rendering(self) -> None:
         # Test subdivision-less rendering.
         address = Address(
             line1="BP 438",
@@ -285,7 +285,7 @@ class TestAddressIO:
             United Kingdom"""
         )
 
-    def test_random_address(self):
+    def test_random_address(self) -> None:
         """Test generation, validation and rendering of random addresses."""
         for _ in range(999):
             address = random_address()
@@ -294,7 +294,7 @@ class TestAddressIO:
 
 
 class TestAddressValidation:
-    def test_address_validation(self):
+    def test_address_validation(self) -> None:
         # Test valid address.
         address = Address(
             line1="address_line1",
@@ -382,7 +382,7 @@ class TestAddressValidation:
         assert "invalid" not in str(err)
         assert "inconsistent" in str(err)
 
-    def test_blank_string_normalization(self):
+    def test_blank_string_normalization(self) -> None:
         address = Address(
             line1="10, avenue des Champs Elysées",
             line2="",
@@ -394,7 +394,7 @@ class TestAddressValidation:
         assert address.line2 is None
         assert address.subdivision_code is None
 
-    def test_invalid_code_normalization(self):
+    def test_invalid_code_normalization(self) -> None:
         # Invalid country and subdivision codes are normalized to None.
         address = Address(
             line1="10, avenue des Champs Elysées",
@@ -454,7 +454,7 @@ class TestAddressValidation:
         assert "invalid" not in str(err)
         assert "inconsistent" not in str(err)
 
-    def test_space_normalization(self):
+    def test_space_normalization(self) -> None:
         address = Address(
             line1="   10, avenue    des \n   Champs Elysées   ",
             line2="    ",
@@ -470,7 +470,7 @@ class TestAddressValidation:
         assert address.country_code == "FR"
         assert address.subdivision_code == "FR-75"
 
-    def test_postal_code_normalization(self):
+    def test_postal_code_normalization(self) -> None:
         address = Address(
             line1="10, avenue des Champs Elysées",
             postal_code="   -  f-  - -  75008 -   ",
@@ -504,7 +504,7 @@ class TestAddressValidation:
         )
         assert address.postal_code == "AAA 77B"
 
-    def test_blank_line_swap(self):
+    def test_blank_line_swap(self) -> None:
         address = Address(
             line1="",
             line2="10, avenue des Champs Elysées",
@@ -515,7 +515,7 @@ class TestAddressValidation:
         assert address.line1 == "10, avenue des Champs Elysées"
         assert address.line2 is None
 
-    def test_country_subdivision_validation(self):
+    def test_country_subdivision_validation(self) -> None:
         Address(
             line1="10, avenue des Champs Elysées",
             postal_code="75008",
@@ -556,7 +556,7 @@ class TestAddressValidation:
         assert "invalid" not in str(err)
         assert "inconsistent" in str(err)
 
-    def test_country_subdivision_reconciliation(self):
+    def test_country_subdivision_reconciliation(self) -> None:
         # Perfect, already normalized country and subdivision.
         address1 = Address(
             line1="1273 Pale San Vitores Road",
@@ -599,7 +599,7 @@ class TestAddressValidation:
             assert address.country_code == "GU"
             assert address.subdivision_code == "US-GU"
 
-    def test_country_alias_normalization(self):
+    def test_country_alias_normalization(self) -> None:
         address = Address(
             line1="Barack 31",
             postal_code="XXX No postal code on this atoll",
@@ -720,7 +720,7 @@ class TestAddressValidation:
             assert address.country_name == "Taiwan"
             assert address.subdivision_code == "TW-TTT"
 
-    def test_subdivision_derived_fields(self):
+    def test_subdivision_derived_fields(self) -> None:
         address = Address(
             line1="31, place du Théatre",
             postal_code="59000",
@@ -748,7 +748,7 @@ class TestAddressValidation:
         assert address.country_code == "FR"
         assert address.country_name == "France"
 
-    def test_subdivision_derived_city_fields(self):
+    def test_subdivision_derived_city_fields(self) -> None:
         address = Address(
             line1="2 King Edward Street",
             postal_code="EC1A 1HQ",
@@ -768,7 +768,7 @@ class TestAddressValidation:
 
         assert address.country_code == "GB"
 
-    def test_subdivision_derived_country(self):
+    def test_subdivision_derived_country(self) -> None:
         address = Address(
             line1="Senate House",
             line2="Tyndall Avenue",
@@ -785,7 +785,7 @@ class TestAddressValidation:
 
         assert address.country_code == "GB"
 
-    def test_city_override_by_subdivision(self):
+    def test_city_override_by_subdivision(self) -> None:
         Address(
             line1="2 King Edward Street",
             postal_code="EC1A 1HQ",
@@ -808,7 +808,7 @@ class TestAddressValidation:
         assert "invalid" not in str(err)
         assert "inconsistent" in str(err)
 
-    def test_non_strict_mode_normalization(self):
+    def test_non_strict_mode_normalization(self) -> None:
         # Test city name override by subdivision code.
         address = Address(
             strict=False,
@@ -900,7 +900,7 @@ class TestAddressValidation:
         assert address.country_name == "Taiwan"
         assert address.subdivision_code == "TW-TNN"
 
-    def test_all_country_codes(self):
+    def test_all_country_codes(self) -> None:
         """Validate & render random addresses with all supported countries."""
         for country_code in supported_country_codes():
             address = random_address()
@@ -910,7 +910,7 @@ class TestAddressValidation:
             address.validate()
             address.render()
 
-    def test_all_territory_codes(self):
+    def test_all_territory_codes(self) -> None:
         """Validate & render random addresses with all supported territories."""
         for territory_code in supported_subdivision_codes():
             address = random_address()

@@ -76,7 +76,7 @@ show_missing = true
 
 [tool.mypy]
 ignore_missing_imports = true
-disallow_untyped_defs = false  # TODO: enable type check and set to true
+disallow_untyped_defs = true
 warn_unused_configs = true
 warn_unused_ignores = true
 warn_redundant_casts = true
