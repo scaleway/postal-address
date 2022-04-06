@@ -386,7 +386,7 @@ class Address:
                                     tuple(sorted((field_id, "subdivision_code")))
                                 },
                                 extra_msg=(
-                                    f"{self.subdivision_code} subdivision is trying to"
+                                    f"{self.subdivision_code} subdivision is trying to "
                                     f"replace {field_id}={current_value!r} field by "
                                     f"{field_id}={new_value!r}"
                                 ),
