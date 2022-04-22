@@ -129,6 +129,7 @@ class Address:
     def __init__(
         self,
         strict: bool = True,
+        replace_city_name: bool = True,
         line1: Optional[str] = None,
         line2: Optional[str] = None,
         postal_code: Optional[str] = None,
@@ -145,7 +146,7 @@ class Address:
         unknown_fields = set(kwargs) - self.BASE_FIELD_IDS
         if unknown_fields:
             raise KeyError(
-                "{unknown_fields!r} fields are not allowed to be set freely."
+                f"{unknown_fields!r} fields are not allowed to be set freely."
             )
 
         # Load fields.
@@ -159,7 +160,7 @@ class Address:
         self.subdivision_code = subdivision_code
 
         # Normalize addresses fields.
-        self.normalize(strict=strict)
+        self.normalize(strict=strict, replace_city_name=replace_city_name)
 
     def __repr__(self) -> str:
         """Print all fields available from the address.
@@ -304,7 +305,7 @@ class Address:
         # Render the address block with the provided separator.
         return separator.join(lines)
 
-    def normalize(self, strict: bool = True) -> None:
+    def normalize(self, strict: bool = True, replace_city_name: bool = True) -> None:
         """Normalize address fields.
 
         If values are unrecognized or invalid, they will be set to None.
@@ -313,6 +314,9 @@ class Address:
         territory's parents are not allowed to overwrite valid address fields
         entered by the user. If set to ``False``, territory-derived values
         takes precedence over user's.
+
+        With ``replace_city_name`` set to False, we will use the value set by
+        the user for the city in any case.
 
         You need to call back the ``validate()`` method afterwards to properly
         check that the fully-qualified address is ready for consumption.
@@ -379,6 +383,9 @@ class Address:
                 self.subdivision_code, include_country=False
             ):
                 parent_metadata.update(subdivision_metadata(parent_subdiv))
+
+            if self.city_name and not replace_city_name:
+                parent_metadata.pop("city_name")
 
             # Parent metadata are not allowed to overwrite address fields
             # if not blank, unless strict mode is de-activated.
@@ -604,7 +611,7 @@ def subdivision_type_id(subdivision: pycountry.Subdivision) -> str:
 
     Here is the list of all subdivision types defined by ``pycountry`` v1.8::
 
-        >>> print '\n'.join(sorted(set([x.type for x in subdivisions])))
+        >>> print('\n'.join(sorted({x.type for x in subdivisions})))
         Administration
         Administrative Region
         Administrative Territory

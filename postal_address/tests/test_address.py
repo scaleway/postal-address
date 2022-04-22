@@ -556,48 +556,48 @@ class TestAddressValidation:
         assert "invalid" not in str(err)
         assert "inconsistent" in str(err)
 
-    def test_country_subdivision_reconciliation(self) -> None:
-        # Perfect, already normalized country and subdivision.
-        address1 = Address(
-            line1="1273 Pale San Vitores Road",
-            postal_code="96913",
-            city_name="Tamuning",
-            country_code="GU",
-            subdivision_code="US-GU",
-        )
-
-        # Non-normalized country.
-        address2 = Address(
-            line1="1273 Pale San Vitores Road",
-            postal_code="96913",
-            city_name="Tamuning",
-            country_code="US",
-            subdivision_code="US-GU",
-        )
-
-        # Country only, from which we guess the subdivision.
-        address3 = Address(
-            line1="1273 Pale San Vitores Road",
-            postal_code="96913",
-            city_name="Tamuning",
-            country_code="GU",
-        )
-
-        # Subdivision only, from which we derive the country.
-        address4 = Address(
-            line1="1273 Pale San Vitores Road",
-            postal_code="96913",
-            city_name="Tamuning",
-            subdivision_code="US-GU",
-        )
-
-        for address in [address1, address2, address3, address4]:
-            assert address.line1 == "1273 Pale San Vitores Road"
-            assert address.line2 is None
-            assert address.postal_code == "96913"
-            assert address.city_name == "Tamuning"
-            assert address.country_code == "GU"
-            assert address.subdivision_code == "US-GU"
+    @pytest.mark.parametrize(
+        "address",
+        [
+            # Perfect, already normalized country and subdivision.
+            Address(
+                line1="1273 Pale San Vitores Road",
+                postal_code="96913",
+                city_name="Tamuning",
+                country_code="GU",
+                subdivision_code="US-GU",
+            ),
+            # Non-normalized country.
+            Address(
+                line1="1273 Pale San Vitores Road",
+                postal_code="96913",
+                city_name="Tamuning",
+                country_code="US",
+                subdivision_code="US-GU",
+            ),
+            # Country only, from which we guess the subdivision.
+            Address(
+                line1="1273 Pale San Vitores Road",
+                postal_code="96913",
+                city_name="Tamuning",
+                country_code="GU",
+            ),
+            # Subdivision only, from which we derive the country.
+            Address(
+                line1="1273 Pale San Vitores Road",
+                postal_code="96913",
+                city_name="Tamuning",
+                subdivision_code="US-GU",
+            ),
+        ],
+    )
+    def test_country_subdivision_reconciliation(self, address: Address) -> None:
+        assert address.line1 == "1273 Pale San Vitores Road"
+        assert address.line2 is None
+        assert address.postal_code == "96913"
+        assert address.city_name == "Tamuning"
+        assert address.country_code == "GU"
+        assert address.subdivision_code == "US-GU"
 
     def test_country_alias_normalization(self) -> None:
         address = Address(
@@ -748,11 +748,13 @@ class TestAddressValidation:
         assert address.country_code == "FR"
         assert address.country_name == "France"
 
-    def test_subdivision_derived_city_fields(self) -> None:
+    @pytest.mark.parametrize("replace_city_name", [True, False])
+    def test_subdivision_derived_city_fields(self, replace_city_name: bool) -> None:
         address = Address(
             line1="2 King Edward Street",
             postal_code="EC1A 1HQ",
             subdivision_code="GB-LND",
+            replace_city_name=replace_city_name,
         )
 
         assert address.subdivision == subdivisions.get(code="GB-LND")
@@ -807,6 +809,16 @@ class TestAddressValidation:
         assert "required" not in str(err)
         assert "invalid" not in str(err)
         assert "inconsistent" in str(err)
+
+        # Make sure no error is raised when using replace_city_name=False
+        address = Address(
+            line1="2 King Edward Street",
+            postal_code="EC1A 1HQ",
+            city_name="Paris",
+            subdivision_code="GB-LND",
+            replace_city_name=False,
+        )
+        assert address.city_name == "Paris"
 
     def test_non_strict_mode_normalization(self) -> None:
         # Test city name override by subdivision code.
