@@ -1,6 +1,11 @@
 ChangeLog
 =========
 
+`22.4.22 <https://github.com/scaleway/postal-address/compare/22.4.6...22.4.22>`_
+----------------------------------------------------------------------------------
+
+* Add ``replace_city_name`` parameter to allow keeping the original value when normalizing.
+
 `22.4.6 <https://github.com/scaleway/postal-address/compare/22.4.1...22.4.6>`_
 ----------------------------------------------------------------------------------
 
