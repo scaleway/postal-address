@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postal-address"
-version = "22.4.6"
+version = "22.4.22"
 description = "Parse, normalize and render postal addresses."
 authors = ["Scaleway <opensource@scaleway.com>"]
 repository = "https://github.com/Scaleway/postal-address"
