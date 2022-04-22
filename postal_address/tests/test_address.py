@@ -770,13 +770,15 @@ class TestAddressValidation:
 
         assert address.country_code == "GB"
 
-    def test_subdivision_derived_country(self) -> None:
+    @pytest.mark.parametrize("replace_city_name", [True, False])
+    def test_subdivision_derived_country(self, replace_city_name: bool) -> None:
         address = Address(
             line1="Senate House",
             line2="Tyndall Avenue",
             postal_code="BS8 1TH",
             city_name="Bristol",
             subdivision_code="GB-BST",
+            replace_city_name=replace_city_name,
         )
 
         assert address.subdivision == subdivisions.get(code="GB-BST")

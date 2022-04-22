@@ -385,7 +385,7 @@ class Address:
                 parent_metadata.update(subdivision_metadata(parent_subdiv))
 
             if self.city_name and not replace_city_name:
-                parent_metadata.pop("city_name")
+                parent_metadata.pop("city_name", None)
 
             # Parent metadata are not allowed to overwrite address fields
             # if not blank, unless strict mode is de-activated.
